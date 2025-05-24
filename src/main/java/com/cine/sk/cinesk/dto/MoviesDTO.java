@@ -1,9 +1,12 @@
 package com.cine.sk.cinesk.dto;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -26,15 +29,15 @@ public class MoviesDTO {
 
     private Long price;
 
-    private String categoryUuid;
-
     private String producer;
 
     private String director;
 
     private String aboutDirector;
 
-    private String actors;
+    private List<String> actors;
 
     private boolean isFree;
+
+    private UUID categoryUuid;
 }

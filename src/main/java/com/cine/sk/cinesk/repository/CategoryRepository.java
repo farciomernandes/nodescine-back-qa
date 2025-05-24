@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,4 +20,9 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> 
     Optional<CategoryEntity> findActiveById(UUID uuid);
 
     Optional<CategoryEntity> findBySlug(String slug);
+
+    @Query("UPDATE CategoryEntity SET deletedAt = :deleteAt WHERE name = :name")
+    Optional<CategoryEntity> deleteByName(LocalDateTime deleteAt, String name);
+
+    Optional<CategoryEntity> findByName(String name);
 }
