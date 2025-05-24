@@ -6,6 +6,9 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.List;
+import java.util.UUID;
+
 @Entity
 @Table(name = "movie_tbl")
 @Getter
@@ -27,7 +30,7 @@ public class MovieEntity extends AbstractEntity {
 
     private Long price;
 
-    private String categoryUuid;
+    private UUID categoryUuid;
 
     private String producer;
 
@@ -36,8 +39,7 @@ public class MovieEntity extends AbstractEntity {
     @Column
     private String aboutDirector;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String actors;
 
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")

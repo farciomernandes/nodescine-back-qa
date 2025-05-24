@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,4 +21,9 @@ public interface MovieRepository extends JpaRepository<MovieEntity, UUID> {
     Optional<MovieEntity> findActiveById(UUID uuid);
 
     Optional<MovieEntity> findBySlug(String slug);
+
+    @Query("UPDATE MovieEntity SET deletedAt = :deleteAt WHERE uuid = :uuid")
+    void deleteById(LocalDateTime deleteAt, UUID uuid);
+
+
 }

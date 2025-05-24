@@ -1,9 +1,8 @@
 package com.cine.sk.cinesk.controller;
 
-
 import com.cine.sk.cinesk.dto.CategoryDTO;
-import com.cine.sk.cinesk.dto.MovieCategoriesDTO;
 import com.cine.sk.cinesk.dto.MoviesDTO;
+import com.cine.sk.cinesk.entity.MovieEntity;
 import com.cine.sk.cinesk.service.MoviesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,65 +14,38 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/movies")
+@RequestMapping("/movie")
 public class MovieController {
 
     private final MoviesService moviesService;
 
     @PostMapping
-    public ResponseEntity<MoviesDTO> create(@Valid @RequestBody MoviesDTO dto) {
-        MoviesDTO created = moviesService.create(dto);
-        return ResponseEntity.status(201).body(created);
-    }
-
-    @PostMapping("/category")
-    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO dto) {
-        CategoryDTO created = moviesService.createCategory(dto);
-        return ResponseEntity.status(201).body(created);
+    public ResponseEntity<MovieEntity> create(@Valid @RequestBody MoviesDTO dto) {
+        return moviesService.create(dto);
     }
 
     @PutMapping("/{uuid}")
     public ResponseEntity<MoviesDTO> update(@PathVariable UUID uuid, @Valid @RequestBody MoviesDTO dto) {
-        MoviesDTO updated = moviesService.update(uuid, dto);
-        return ResponseEntity.ok(updated);
+        return moviesService.update(uuid, dto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        moviesService.delete(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> delete(@PathVariable UUID uuid) {
+        return moviesService.delete(uuid);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<MoviesDTO> findById(@PathVariable UUID id) {
-        MoviesDTO dto = moviesService.findById(id);
-        return ResponseEntity.ok(dto);
+    @GetMapping("/{uuid}")
+    public ResponseEntity<MoviesDTO> findById(@PathVariable UUID uuid) {
+        return moviesService.findById(uuid);
     }
 
     @GetMapping
-    public ResponseEntity<List<MoviesDTO>> findAll() {
-        List<MoviesDTO> dtos = moviesService.findAll();
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<List<MovieEntity>> findAll() {
+        return moviesService.findAll();
     }
 
     @GetMapping("/slug/{slug}")
     public ResponseEntity<List<MoviesDTO>> findBySlug(@PathVariable String slug) {
-        List<MoviesDTO> dtos = moviesService.findBySlug(slug);
-        return ResponseEntity.ok(dtos);
-    }
-
-    @PostMapping("/{id}/categories")
-    public ResponseEntity<Void> addCategory(@PathVariable UUID id, @Valid @RequestBody MovieCategoriesDTO dto) {
-        if (!id.equals(dto.getMovieUuid())) {
-            throw new IllegalArgumentException("Movie ID in path and DTO must match");
-        }
-        moviesService.addCategoryToMovie(dto);
-        return ResponseEntity.status(201).build();
-    }
-
-    @DeleteMapping("/{id}/categories/{categoryId}")
-    public ResponseEntity<Void> removeCategory(@PathVariable UUID id, @PathVariable UUID categoryId) {
-        moviesService.removeCategoryFromMovie(id, categoryId);
-        return ResponseEntity.noContent().build();
+        return moviesService.findBySlug(slug);
     }
 }
