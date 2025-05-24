@@ -11,6 +11,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.util.encoders.Base64;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -101,8 +103,8 @@ public class MoviesService {
         }
     }
 
-    public ResponseEntity<List<MovieEntity>> findAll() {
-        List<MovieEntity> movies = movieRepository.findAllActive();
+    public ResponseEntity<Page<List<MovieEntity>>> findAll(Pageable pageable) {
+        Page<List<MovieEntity>> movies = movieRepository.findAllActive(pageable);
         return ResponseEntity.ok(movies);
     }
 
