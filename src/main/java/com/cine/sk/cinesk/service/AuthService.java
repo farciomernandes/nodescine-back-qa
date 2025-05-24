@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -86,6 +89,10 @@ public class AuthService {
         user.setName(requestDTO.getName());
         user.setRoles(Set.of(Role.CUSTOMER));
         userRepository.save(user);
+    }
+
+    public ResponseEntity<Page<List<UserEntity>>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(userRepository.findAllActive(pageable));
     }
 }
 

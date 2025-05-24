@@ -3,6 +3,7 @@ package com.cine.sk.cinesk.controller;
 import com.cine.sk.cinesk.dto.AuthRequestDTO;
 import com.cine.sk.cinesk.dto.AuthResponseDTO;
 import com.cine.sk.cinesk.dto.RegisterDTO;
+import com.cine.sk.cinesk.entity.UserEntity;
 import com.cine.sk.cinesk.service.AuthService;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,12 +12,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,5 +47,10 @@ public class AuthController {
     public ResponseEntity<String> registerCustomer(@Valid @RequestBody RegisterDTO registerRequest) {
         authService.registerCustomer(registerRequest);
         return ResponseEntity.ok("User registered successfully");
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<List<UserEntity>>>  getAllUsers(Pageable pageable) {
+        return authService.getAll(pageable);
     }
 }

@@ -6,6 +6,8 @@ import com.cine.sk.cinesk.entity.MovieEntity;
 import com.cine.sk.cinesk.service.MoviesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +42,8 @@ public class MovieController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MovieEntity>> findAll() {
-        return moviesService.findAll();
+    public ResponseEntity<Page<List<MovieEntity>>> findAll(Pageable pageable) {
+        return moviesService.findAll(pageable);
     }
 
     @GetMapping("/slug/{slug}")
