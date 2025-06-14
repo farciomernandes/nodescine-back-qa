@@ -11,9 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDTO {
+public class GenreDTO {
     private UUID uuid;
     private String name;
-    private String slug;
-    private String imageUrl;
 }

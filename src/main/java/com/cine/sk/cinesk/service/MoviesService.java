@@ -1,26 +1,24 @@
 package com.cine.sk.cinesk.service;
 
-
-import com.cine.sk.cinesk.dto.CategoryDTO;
 import com.cine.sk.cinesk.dto.MoviesDTO;
 import com.cine.sk.cinesk.entity.CategoryEntity;
+import com.cine.sk.cinesk.entity.GenreEntity;
 import com.cine.sk.cinesk.entity.MovieEntity;
 import com.cine.sk.cinesk.repository.CategoryRepository;
+import com.cine.sk.cinesk.repository.GenreRepository;
 import com.cine.sk.cinesk.repository.MovieRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.bouncycastle.util.encoders.Base64;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -31,51 +29,76 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MoviesService {
 
-    private static final String EMPTY_JSON_ARRAY = "[]";
     private final MovieRepository movieRepository;
-    private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
+    private final GenreRepository genreRepository;
     private final ObjectMapper objectMapper;
 
-    public ResponseEntity<MovieEntity> create(MoviesDTO dto) {
+    public ResponseEntity<MoviesDTO> create(MoviesDTO dto) {
         try {
-            categoryService.validateCategoryExists(dto.getCategoryUuid());
-            var actors = serializeActors(dto.getActors());
-            dto.setActors(null);
             MovieEntity movie = objectMapper.convertValue(dto, MovieEntity.class);
-            movie.setVideoUrl(new String(Base64.encode(dto.getVideoUrl().getBytes())));
-            movie.setThumbnailUrl(new String(Base64.encode(dto.getThumbnailUrl().getBytes())));
-            movie.setTrailerUrl(new String(Base64.encode(dto.getTrailerUrl().getBytes())));
-            movie.setActors(actors);
+
+            // Set category
+            if (dto.getCategory() != null && dto.getCategory().getUuid() != null) {
+                CategoryEntity category = categoryRepository.findById(dto.getCategory().getUuid())
+                    .orElseThrow(() -> new NoSuchElementException("Category not found"));
+                movie.setCategory(category);
+            }
+
+            // Set genres
+            if (dto.getGenres() != null && !dto.getGenres().isEmpty()) {
+                dto.getGenres().forEach(genreDTO -> {
+                    if (genreDTO.getUuid() != null) {
+                        GenreEntity genre = genreRepository.findById(genreDTO.getUuid())
+                            .orElseThrow(() -> new NoSuchElementException("Genre not found"));
+                        movie.getGenres().add(genre);
+                    }
+                });
+            }
+
             MovieEntity saved = movieRepository.save(movie);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+            MoviesDTO savedDto = objectMapper.convertValue(saved, MoviesDTO.class);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
-    private String serializeActors(List<String> actors) throws JsonProcessingException {
-        if (actors == null || actors.isEmpty()) {
-            return EMPTY_JSON_ARRAY;
-        }
-        return objectMapper.writeValueAsString(actors); // Convert List<String> to JSON string
-    }
-
-    private List<String> deserializeActors(String actorsJson) throws JsonProcessingException {
-        if (actorsJson == null || actorsJson.equals(EMPTY_JSON_ARRAY)) {
-            return List.of();
-        }
-        return objectMapper.readValue(actorsJson, new TypeReference<List<String>>() {});
-    }
-
     public ResponseEntity<MoviesDTO> update(UUID uuid, MoviesDTO dto) {
         try {
             MovieEntity movie = findActiveMovieById(uuid);
-            MovieEntity updated = objectMapper.updateValue(movie, dto);
-            updated.setVideoUrl(new String(Base64.encode(dto.getVideoUrl().getBytes())));
-            updated.setThumbnailUrl(new String(Base64.encode(dto.getThumbnailUrl().getBytes())));
-            updated.setTrailerUrl(new String(Base64.encode(dto.getTrailerUrl().getBytes())));
-            updated.setActors(serializeActors(dto.getActors()));
-            return ResponseEntity.ok(objectMapper.convertValue(movieRepository.save(updated), MoviesDTO.class));
+
+            // Update basic properties
+            movie.setTitle(dto.getTitle());
+            movie.setDirector(dto.getDirector());
+            movie.setReleaseYear(dto.getReleaseYear());
+            movie.setDurationInMinutes(dto.getDurationInMinutes());
+            movie.setDescription(dto.getDescription());
+            movie.setPosterUrl(dto.getPosterUrl());
+            movie.setPremium(dto.isPremium());
+            movie.setFeatured(dto.isFeatured());
+
+            // Update category
+            if (dto.getCategory() != null && dto.getCategory().getUuid() != null) {
+                CategoryEntity category = categoryRepository.findById(dto.getCategory().getUuid())
+                    .orElseThrow(() -> new NoSuchElementException("Category not found"));
+                movie.setCategory(category);
+            }
+
+            // Update genres
+            if (dto.getGenres() != null) {
+                movie.getGenres().clear();
+                dto.getGenres().forEach(genreDTO -> {
+                    if (genreDTO.getUuid() != null) {
+                        GenreEntity genre = genreRepository.findById(genreDTO.getUuid())
+                            .orElseThrow(() -> new NoSuchElementException("Genre not found"));
+                        movie.getGenres().add(genre);
+                    }
+                });
+            }
+
+            MovieEntity updated = movieRepository.save(movie);
+            return ResponseEntity.ok(objectMapper.convertValue(updated, MoviesDTO.class));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
@@ -83,10 +106,9 @@ public class MoviesService {
         }
     }
 
-
     public ResponseEntity<Void> delete(UUID uuid) {
         try {
-            movieRepository.deleteById(LocalDateTime.now() ,uuid);
+            movieRepository.deleteById(LocalDateTime.now(), uuid);
             return ResponseEntity.noContent().build();
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -103,25 +125,69 @@ public class MoviesService {
         }
     }
 
-    public ResponseEntity<Page<List<MovieEntity>>> findAll(Pageable pageable) {
+    public ResponseEntity<Page<List<MoviesDTO>>> findAll(String search, List<String> genres, Boolean isPremium, Pageable pageable) {
         Page<List<MovieEntity>> movies = movieRepository.findAllActive(pageable);
-        return ResponseEntity.ok(movies);
+
+        // Apply filters
+        Page<List<MoviesDTO>> dtoPage = movies.map(movieList -> 
+            movieList.stream()
+                // Filter by search term (title or description)
+                .filter(movie -> search == null || 
+                    movie.getTitle().toLowerCase().contains(search.toLowerCase()) || 
+                    (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(search.toLowerCase())))
+                // Filter by genres
+                .filter(movie -> genres == null || genres.isEmpty() || 
+                    movie.getGenres().stream()
+                        .anyMatch(genre -> genres.contains(genre.getName())))
+                // Filter by premium status
+                .filter(movie -> isPremium == null || movie.isPremium() == isPremium)
+                // Convert to DTO
+                .map(movie -> objectMapper.convertValue(movie, MoviesDTO.class))
+                .collect(Collectors.toList())
+        );
+
+        return ResponseEntity.ok(dtoPage);
     }
 
-    public ResponseEntity<List<MoviesDTO>> findBySlug(String slug) {
+    public ResponseEntity<List<MoviesDTO>> findFeatured() {
         try {
-            List<MoviesDTO> movies = movieRepository.findBySlug(slug)
-                    .filter(movie -> movie.getDeletedAt() == null)
-                    .map(movie -> {
-                        MoviesDTO dto = objectMapper.convertValue(movie, MoviesDTO.class);
-                        dto.setVideoUrl(Base64.decode(movie.getVideoUrl()).toString());
-                        return dto;
-                    })
-                    .map(List::of)
-                    .orElseThrow(() -> new NoSuchElementException("Movie not found"));
-            return ResponseEntity.ok(movies);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            // This is a placeholder implementation. In a real application, you would query
+            // the database for movies where isFeatured is true.
+            List<MovieEntity> featuredMovies = new ArrayList<>(); // Replace with actual query
+            List<MoviesDTO> dtos = featuredMovies.stream()
+                .map(movie -> objectMapper.convertValue(movie, MoviesDTO.class))
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    public ResponseEntity<List<MoviesDTO>> findNewReleases() {
+        try {
+            // This is a placeholder implementation. In a real application, you would query
+            // the database for recently added movies, sorted by createdAt.
+            List<MovieEntity> newReleases = new ArrayList<>(); // Replace with actual query
+            List<MoviesDTO> dtos = newReleases.stream()
+                .map(movie -> objectMapper.convertValue(movie, MoviesDTO.class))
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    public ResponseEntity<List<MoviesDTO>> findPopular() {
+        try {
+            // This is a placeholder implementation. In a real application, you would query
+            // the database for popular movies based on some criteria.
+            List<MovieEntity> popularMovies = new ArrayList<>(); // Replace with actual query
+            List<MoviesDTO> dtos = popularMovies.stream()
+                .map(movie -> objectMapper.convertValue(movie, MoviesDTO.class))
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

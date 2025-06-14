@@ -1,6 +1,5 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.dto.CategoryDTO;
 import com.cine.sk.cinesk.dto.MoviesDTO;
 import com.cine.sk.cinesk.entity.MovieEntity;
 import com.cine.sk.cinesk.service.MoviesService;
@@ -16,38 +15,52 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/movie")
+@RequestMapping("/api/films")
 public class MovieController {
 
     private final MoviesService moviesService;
 
     @PostMapping
-    public ResponseEntity<MovieEntity> create(@Valid @RequestBody MoviesDTO dto) {
+    public ResponseEntity<MoviesDTO> create(@Valid @RequestBody MoviesDTO dto) {
         return moviesService.create(dto);
     }
 
-    @PutMapping("/{uuid}")
-    public ResponseEntity<MoviesDTO> update(@PathVariable UUID uuid, @Valid @RequestBody MoviesDTO dto) {
-        return moviesService.update(uuid, dto);
+    @PutMapping("/{id}")
+    public ResponseEntity<MoviesDTO> update(@PathVariable UUID id, @Valid @RequestBody MoviesDTO dto) {
+        return moviesService.update(id, dto);
     }
 
-    @DeleteMapping("/{uuid}")
-    public ResponseEntity<Void> delete(@PathVariable UUID uuid) {
-        return moviesService.delete(uuid);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        return moviesService.delete(id);
     }
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<MoviesDTO> findById(@PathVariable UUID uuid) {
-        return moviesService.findById(uuid);
+    @GetMapping("/{id}")
+    public ResponseEntity<MoviesDTO> findById(@PathVariable UUID id) {
+        return moviesService.findById(id);
     }
 
     @GetMapping
-    public ResponseEntity<Page<List<MovieEntity>>> findAll(Pageable pageable) {
-        return moviesService.findAll(pageable);
+    public ResponseEntity<Page<List<MoviesDTO>>> findAll(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<String> genres,
+            @RequestParam(required = false) Boolean isPremium,
+            Pageable pageable) {
+        return moviesService.findAll(search, genres, isPremium, pageable);
     }
 
-    @GetMapping("/slug/{slug}")
-    public ResponseEntity<List<MoviesDTO>> findBySlug(@PathVariable String slug) {
-        return moviesService.findBySlug(slug);
+    @GetMapping("/featured")
+    public ResponseEntity<List<MoviesDTO>> findFeatured() {
+        return moviesService.findFeatured();
+    }
+
+    @GetMapping("/new-releases")
+    public ResponseEntity<List<MoviesDTO>> findNewReleases() {
+        return moviesService.findNewReleases();
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<MoviesDTO>> findPopular() {
+        return moviesService.findPopular();
     }
 }
