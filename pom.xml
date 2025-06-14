@@ -49,9 +49,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>3.4.2</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

@@ -1,17 +1,19 @@
 package com.cine.sk.cinesk.dto;
 
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MoviesDTO {
     private UUID uuid;
 
@@ -19,25 +21,29 @@ public class MoviesDTO {
 
     private String slug;
 
-    private String description;
-
-    private String trailerUrl;
-
-    private String videoUrl;
-
-    private String thumbnailUrl;
-
-    private Long price;
-
-    private String producer;
-
     private String director;
 
-    private String aboutDirector;
+    private Integer releaseYear;
 
-    private List<String> actors;
+    private Integer durationInMinutes;
 
-    private boolean isFree;
+    private String description;
 
-    private UUID categoryUuid;
+    private String posterUrl;
+
+    private boolean premium;
+
+    private boolean featured;
+
+    public boolean isPremium() {
+        return premium;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    private CategoryDTO category;
+
+    private Set<GenreDTO> genres = new HashSet<>();
 }
