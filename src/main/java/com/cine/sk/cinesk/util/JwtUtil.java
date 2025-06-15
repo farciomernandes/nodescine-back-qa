@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.util;
 
 
-import com.cine.sk.cinesk.entity.UserEntity;
+import com.cine.sk.cinesk.domain.user.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;

@@ -39,3 +39,7 @@ springdoc:
     path: /swagger-ui.html
 server:
   port: 8088
+
+asaas:
+  api:
+    url: https://sandbox.asaas.com/api/v3
