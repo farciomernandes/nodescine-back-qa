@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.dto.CategoryDTO;
-import com.cine.sk.cinesk.service.CategoryService;
+import com.cine.sk.cinesk.domain.movie.CategoryDTO;
+import com.cine.sk.cinesk.domain.movie.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

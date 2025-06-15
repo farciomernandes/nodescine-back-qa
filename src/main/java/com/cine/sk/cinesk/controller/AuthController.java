@@ -1,10 +1,10 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.dto.AuthRequestDTO;
-import com.cine.sk.cinesk.dto.AuthResponseDTO;
-import com.cine.sk.cinesk.dto.RegisterDTO;
-import com.cine.sk.cinesk.entity.UserEntity;
-import com.cine.sk.cinesk.service.AuthService;
+import com.cine.sk.cinesk.domain.user.AuthRequestDTO;
+import com.cine.sk.cinesk.domain.user.AuthResponseDTO;
+import com.cine.sk.cinesk.domain.user.RegisterDTO;
+import com.cine.sk.cinesk.domain.user.UserEntity;
+import com.cine.sk.cinesk.domain.user.AuthService;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
