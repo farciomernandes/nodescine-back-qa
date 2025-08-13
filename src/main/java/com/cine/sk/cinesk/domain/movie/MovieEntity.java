@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,10 +32,23 @@ public class MovieEntity extends AbstractEntity {
     private String description;
 
     private String posterUrl;
+    
+    private String trailerUrl;
+    
+    private String videoUrl;
 
     private boolean premium;
 
     private boolean featured;
+    
+    @ElementCollection
+    @CollectionTable(name = "film_cast", joinColumns = @JoinColumn(name = "film_id"))
+    @Column(name = "actor_name")
+    private List<String> cast = new ArrayList<>();
+    
+    private Double rating;
+    
+    private Integer viewCount;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
