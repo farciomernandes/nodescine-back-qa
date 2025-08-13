@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -50,5 +52,20 @@ public class CategoryService {
 
     public ResponseEntity<List<CategoryDTO>> getAll() {
         return ResponseEntity.ok(objectMapper.convertValue(categoryRepository.findAll(), List.class));
+    }
+
+    public List<Object> getAllCategoryDetails() {
+        List<CategoryEntity> categories = categoryRepository.findAll();
+        List<Object> result = new ArrayList<>();
+        for (CategoryEntity category : categories) {
+            int filmCount = category.getMovies() != null ? category.getMovies().size() : 0;
+            result.add(new LinkedHashMap<String, Object>() {{
+                put("id", category.getUuid().toString());
+                put("name", category.getName());
+                put("image_url", category.getImageUrl());
+                put("film_count", filmCount);
+            }});
+        }
+        return result;
     }
 }

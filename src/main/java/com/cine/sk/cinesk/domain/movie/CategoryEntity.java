@@ -24,5 +24,5 @@ public class CategoryEntity extends AbstractEntity {
     private String imageUrl;
 
     @OneToMany(mappedBy = "category")
-    private List<MovieEntity> films = new ArrayList<>();
+    private List<MovieEntity> movies = new ArrayList<>();
 }
