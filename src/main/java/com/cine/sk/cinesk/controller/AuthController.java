@@ -33,15 +33,15 @@ public class AuthController {
     @Operation(summary = "Login", description = "Authenticate a user and return a JWT token.")
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200",
-            description = "Authentication successful",
+            responseCode = "200", 
+            description = "Authentication successful", 
             content = @Content(
-                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                mediaType = MediaType.APPLICATION_JSON_VALUE, 
                 schema = @Schema(implementation = AuthResponseDTO.class)
             )
         ),
         @ApiResponse(
-            responseCode = "401",
+            responseCode = "401", 
             description = "Invalid credentials"
         )
     })
@@ -58,11 +58,11 @@ public class AuthController {
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200",
+            responseCode = "200", 
             description = "Admin user registered successfully"
         ),
         @ApiResponse(
-            responseCode = "400",
+            responseCode = "400", 
             description = "Invalid registration data or email already exists"
         )
     })
@@ -80,11 +80,11 @@ public class AuthController {
     )
     @ApiResponses(value = {
         @ApiResponse(
-            responseCode = "200",
+            responseCode = "200", 
             description = "Customer user registered successfully"
         ),
         @ApiResponse(
-            responseCode = "400",
+            responseCode = "400", 
             description = "Invalid registration data or email already exists"
         )
     })
