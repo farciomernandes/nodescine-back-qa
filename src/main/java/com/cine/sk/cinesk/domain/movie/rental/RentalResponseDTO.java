@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RentalResponseDTO {
-
+    
     private UUID rentalId;
     private UUID filmId;
     private UUID userId;
