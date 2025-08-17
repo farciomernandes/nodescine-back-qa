@@ -5,6 +5,7 @@ import com.cine.sk.cinesk.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -43,9 +44,10 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/auth/login").permitAll()
-//                        .requestMatchers("/api/auth/register").hasAnyAuthority(Role.ADMIN.name())
-//                        .requestMatchers("/order/**").hasAnyAuthority(Role.ADMIN.name())
+                        // Require JWT auth for new user profile/rentals endpoints only
+                        .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/rentals/*").authenticated()
+                        // keep all other endpoints accessible as before
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session

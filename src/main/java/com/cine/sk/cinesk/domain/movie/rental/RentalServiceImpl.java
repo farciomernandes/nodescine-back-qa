@@ -14,12 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class RentalServiceImpl implements RentalService {
-
-    // In a real implementation, these would be injected repositories
-    // private final RentalRepository rentalRepository;
-    // private final MovieRepository movieRepository;
-    // private final PaymentService paymentService;
-
+    
     @Override
     public ResponseEntity<RentalResponseDTO> processRental(RentalRequestDTO rentalRequest) {
         // In a real implementation:
@@ -29,18 +24,18 @@ public class RentalServiceImpl implements RentalService {
         // 4. Process the payment
         // 5. Create and save the rental record
         // 6. Generate streaming URL
-
+        
         try {
             // For demo purposes, we're generating data that would normally come from the database
             UUID rentalId = UUID.randomUUID();
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime expiresAt = now.plusHours(rentalRequest.getDurationHours());
             String paymentId = "pmt_" + UUID.randomUUID().toString().substring(0, 8);
-
+            
             // Generate a stream URL (in real implementation this would be secure and time-limited)
-            String streamUrl = "https://stream.cine-sk.com/movies/" +
+            String streamUrl = "https://stream.cine-sk.com/movies/" + 
                                rentalRequest.getFilmId() + "?token=xyz123";
-
+            
             RentalResponseDTO response = RentalResponseDTO.builder()
                     .rentalId(rentalId)
                     .filmId(rentalRequest.getFilmId())
@@ -52,17 +47,17 @@ public class RentalServiceImpl implements RentalService {
                     .streamUrl(streamUrl)
                     .message("Rental processed successfully. You can now start streaming the movie.")
                     .build();
-
+            
             // In a real implementation, save the rental entity to the database
-
-            log.info("Processed rental {} for user {} for movie {}",
+            
+            log.info("Processed rental {} for user {} for movie {}", 
                     rentalId, rentalRequest.getUserId(), rentalRequest.getFilmId());
-
+            
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             log.error("Error processing rental: {}", e.getMessage(), e);
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    HttpStatus.INTERNAL_SERVER_ERROR, 
                     "Failed to process rental: " + e.getMessage(), e);
         }
     }
