@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 @Tag(name = "User Profile", description = "API endpoints for user profile management")
 @SecurityRequirement(name = "Bearer Authentication")
-public class UserProfileController {
+public class UserController {
 
     private final UserService userService;
 
