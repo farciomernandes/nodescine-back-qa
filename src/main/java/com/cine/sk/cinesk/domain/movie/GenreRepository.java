@@ -2,7 +2,9 @@ package com.cine.sk.cinesk.domain.movie;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +22,8 @@ public interface GenreRepository extends JpaRepository<GenreEntity, UUID> {
 
     Optional<GenreEntity> findByName(String name);
 
-    @Query("UPDATE GenreEntity SET deletedAt = :deleteAt WHERE uuid = :uuid")
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("UPDATE GenreEntity g SET g.deletedAt = :deleteAt WHERE g.uuid = :uuid")
     void deleteById(LocalDateTime deleteAt, UUID uuid);
 }

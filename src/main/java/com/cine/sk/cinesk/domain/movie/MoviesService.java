@@ -46,8 +46,8 @@ public class MoviesService {
             // Set genres
             if (dto.getGenres() != null && !dto.getGenres().isEmpty()) {
                 dto.getGenres().forEach(genreDTO -> {
-                    if (genreDTO.getUuid() != null) {
-                        GenreEntity genre = genreRepository.findById(genreDTO.getUuid())
+                    if (genreDTO.getName() != null) {
+                        GenreEntity genre = genreRepository.findByName(genreDTO.getName())
                             .orElseThrow(() -> new NoSuchElementException("Genre not found"));
                         movie.getGenres().add(genre);
                     }
@@ -87,8 +87,8 @@ public class MoviesService {
             if (dto.getGenres() != null) {
                 movie.getGenres().clear();
                 dto.getGenres().forEach(genreDTO -> {
-                    if (genreDTO.getUuid() != null) {
-                        GenreEntity genre = genreRepository.findById(genreDTO.getUuid())
+                    if (genreDTO.getName() != null) {
+                        GenreEntity genre = genreRepository.findByName(genreDTO.getName())
                             .orElseThrow(() -> new NoSuchElementException("Genre not found"));
                         movie.getGenres().add(genre);
                     }
