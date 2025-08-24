@@ -1,20 +1,21 @@
 package com.cine.sk.cinesk.domain.movie.response;
 
-import com.cine.sk.cinesk.domain.movie.PaginatedFilmDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.cine.sk.cinesk.domain.movie.dto.PaginatedFilmDTO;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaginatedFilmsResponse {
     private List<PaginatedFilmDTO> films;
     private PaginationMetadata pagination;
 
-    @Data
+    @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PaginationMetadata {

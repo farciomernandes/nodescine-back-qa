@@ -1,8 +1,9 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.movie.MoviesDTO;
-import com.cine.sk.cinesk.domain.movie.MoviesService;
-import com.cine.sk.cinesk.domain.movie.MovieDetailDTO;
+import com.cine.sk.cinesk.domain.movie.dto.MovieDTO;
+import com.cine.sk.cinesk.domain.movie.MovieService;
+import com.cine.sk.cinesk.domain.movie.dto.MovieDetailDTO;
+import com.cine.sk.cinesk.domain.movie.response.PaginatedFilmsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ import java.util.UUID;
 @Tag(name = "Movies", description = "API endpoints for movie catalog management")
 public class MovieController {
 
-    private final MoviesService moviesService;
+    private final MovieService movieService;
 
     @Operation(
         summary = "Create a new movie",
@@ -38,15 +38,15 @@ public class MovieController {
             responseCode = "201",
             description = "Movie created successfully",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(implementation = MoviesDTO.class))
+            schema = @Schema(implementation = MovieDTO.class))
         ),
         @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
     @PostMapping
-    public ResponseEntity<MoviesDTO> create(
+    public ResponseEntity<MovieDTO> create(
             @Parameter(description = "Movie details", required = true)
-            @Valid @RequestBody MoviesDTO dto) {
-        return moviesService.create(dto);
+            @Valid @RequestBody MovieDTO dto) {
+        return movieService.create(dto);
     }
 
     @Operation(
@@ -58,18 +58,18 @@ public class MovieController {
             responseCode = "200",
             description = "Movie updated successfully",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(implementation = MoviesDTO.class))
+            schema = @Schema(implementation = MovieDTO.class))
         ),
         @ApiResponse(responseCode = "400", description = "Invalid input data"),
         @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<MoviesDTO> update(
+    public ResponseEntity<MovieDTO> update(
             @Parameter(description = "Movie identifier", required = true)
             @PathVariable UUID id,
             @Parameter(description = "Updated movie details", required = true)
-            @Valid @RequestBody MoviesDTO dto) {
-        return moviesService.update(id, dto);
+            @Valid @RequestBody MovieDTO dto) {
+        return movieService.update(id, dto);
     }
 
     @Operation(
@@ -84,7 +84,7 @@ public class MovieController {
     public ResponseEntity<Void> delete(
             @Parameter(description = "Movie identifier", required = true)
             @PathVariable UUID id) {
-        return moviesService.delete(id);
+        return movieService.delete(id);
     }
 
     @Operation(
@@ -104,31 +104,16 @@ public class MovieController {
     public ResponseEntity<MovieDetailDTO> findById(
             @Parameter(description = "Movie identifier", required = true)
             @PathVariable UUID id) {
-        return moviesService.findById(id);
+        return movieService.findById(id);
     }
 
-//    @GetMapping
-//    public ResponseEntity<Page<List<MoviesDTO>>> findAll(
-//            @RequestParam(required = false) String search,
-//            @RequestParam(required = false) List<String> genres,
-//            @RequestParam(required = false) Boolean isPremium,
-//            Pageable pageable) {
-//        return moviesService.findAll(search, genres, isPremium, pageable);
-//    }
-
-    @Operation(
-        summary = "Get featured films",
-        description = "Returns a curated list of featured films"
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Featured films retrieved successfully"
-        )
-    })
-    @GetMapping("/featured")
-    public ResponseEntity<?> getFeaturedFilms() {
-        return moviesService.getFeaturedFilms();
+    @GetMapping
+    public ResponseEntity<PaginatedFilmsResponse> findAll(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<String> genres,
+            @RequestParam(required = false) Boolean isPremium,
+            Pageable pageable) {
+        return movieService.findAll(search, genres, isPremium, pageable);
     }
 
     @Operation(
@@ -140,29 +125,12 @@ public class MovieController {
             responseCode = "200",
             description = "New releases retrieved successfully",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(implementation = MoviesDTO.class))
+            schema = @Schema(implementation = MovieDTO.class))
         )
     })
     @GetMapping("/new-releases")
-    public ResponseEntity<List<MoviesDTO>> findNewReleases() {
-        return moviesService.findNewReleases();
-    }
-
-    @Operation(
-        summary = "Get popular movies",
-        description = "Returns a list of popular movies based on view count or rating"
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Popular movies retrieved successfully",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(implementation = MoviesDTO.class))
-        )
-    })
-    @GetMapping("/popular")
-    public ResponseEntity<List<MoviesDTO>> findPopular() {
-        return moviesService.findPopular();
+    public ResponseEntity<List<MovieDTO>> findNewReleases() {
+        return movieService.findNewReleases();
     }
 
     @Operation(
@@ -177,49 +145,7 @@ public class MovieController {
     })
     @GetMapping("/categories")
     public ResponseEntity<?> getAllCategories() {
-        return moviesService.getAllCategories();
-    }
-
-    @Operation(
-        summary = "Get paginated film list",
-        description = "Returns a paginated list of films with sorting options"
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Films retrieved successfully"
-        )
-    })
-    @GetMapping
-    public ResponseEntity<?> getPaginatedFilms(
-            @Parameter(description = "Page number (zero-based)")
-            @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Number of items per page")
-            @RequestParam(defaultValue = "10") int limit,
-            @Parameter(description = "Field to sort by")
-            @RequestParam(defaultValue = "title") String sort,
-            @Parameter(description = "Sort direction (asc/desc)")
-            @RequestParam(defaultValue = "asc") String order) {
-        return moviesService.getPaginatedFilms(page, limit, sort, order);
-    }
-
-    @Operation(
-        summary = "Search films",
-        description = "Search films by title or director with relevance scoring"
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Search results retrieved successfully"
-        )
-    })
-    @GetMapping("/search")
-    public ResponseEntity<?> searchFilms(
-            @Parameter(description = "Search query", required = true)
-            @RequestParam String q,
-            @Parameter(description = "Maximum number of results")
-            @RequestParam(defaultValue = "10") int limit) {
-        return moviesService.searchFilms(q, limit);
+        return movieService.getAllCategories();
     }
 
     @Operation(
@@ -242,6 +168,6 @@ public class MovieController {
             @RequestParam(required = false) Integer year_max,
             @Parameter(description = "Filter by category")
             @RequestParam(required = false) String category) {
-        return moviesService.filterFilms(genre, year_min, year_max, category);
+        return movieService.filter(genre, year_min, year_max, category);
     }
 }

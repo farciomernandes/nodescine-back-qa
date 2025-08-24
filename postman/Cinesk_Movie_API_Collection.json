@@ -1,0 +1,322 @@
+{
+	"info": {
+		"_postman_id": "cinesk-movie-api-collection",
+		"name": "Cinesk Movie API",
+		"description": "Collection para testar a API de filmes do Cinesk\n\nBase URL: {{base_url}}\nPrefixo: /api/films\n\nVariáveis de ambiente sugeridas:\n- base_url: http://localhost:8080\n- movie_id: UUID de um filme existente",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CRUD Operations",
+			"item": [
+				{
+					"name": "Create Movie",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Avatar: O Caminho da Água\",\n  \"slug\": \"avatar-o-caminho-da-agua\",\n  \"director\": \"James Cameron\",\n  \"releaseYear\": 2022,\n  \"durationInMinutes\": 192,\n  \"description\": \"Jake Sully vive com sua nova família formada no planeta de Pandora. Quando uma ameaça familiar retorna para terminar o que começou anteriormente, Jake deve trabalhar com Neytiri e o exército da raça Na'vi para proteger seu planeta.\",\n  \"price\": \"19.90\",\n  \"posterUrl\": \"https://image.tmdb.org/t/p/w500/94xxm5701CzOdJdUEdIuwqZaowx.jpg\",\n  \"premium\": true,\n  \"featured\": true,\n  \"category\": {\n    \"name\": \"Ação\",\n    \"slug\": \"acao\",\n    \"imageUrl\": \"https://example.com/categories/acao.jpg\"\n  },\n  \"genres\": [\n    {\n      \"name\": \"Ficção Científica\"\n    },\n    {\n      \"name\": \"Aventura\"\n    },\n    {\n      \"name\": \"Ação\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/films",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films"
+							]
+						},
+						"description": "Criar um novo filme no catálogo"
+					}
+				},
+				{
+					"name": "Update Movie",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Avatar: O Caminho da Água (Versão Estendida)\",\n  \"slug\": \"avatar-o-caminho-da-agua-estendida\",\n  \"director\": \"James Cameron\",\n  \"releaseYear\": 2022,\n  \"durationInMinutes\": 215,\n  \"description\": \"Versão estendida do épico de James Cameron. Jake Sully vive com sua nova família formada no planeta de Pandora. Quando uma ameaça familiar retorna para terminar o que começou anteriormente, Jake deve trabalhar com Neytiri e o exército da raça Na'vi para proteger seu planeta.\",\n  \"price\": \"24.90\",\n  \"posterUrl\": \"https://image.tmdb.org/t/p/w500/94xxm5701CzOdJdUEdIuwqZaowx.jpg\",\n  \"premium\": true,\n  \"featured\": true,\n  \"category\": {\n    \"name\": \"Ação\",\n    \"slug\": \"acao\",\n    \"imageUrl\": \"https://example.com/categories/acao.jpg\"\n  },\n  \"genres\": [\n    {\n      \"name\": \"Ficção Científica\"\n    },\n    {\n      \"name\": \"Aventura\"\n    },\n    {\n      \"name\": \"Ação\"\n    },\n    {\n      \"name\": \"Drama\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/films/{{movie_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"{{movie_id}}"
+							]
+						},
+						"description": "Atualizar um filme existente"
+					}
+				},
+				{
+					"name": "Get Movie by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films/{{movie_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"{{movie_id}}"
+							]
+						},
+						"description": "Buscar detalhes de um filme específico"
+					}
+				},
+				{
+					"name": "Delete Movie",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films/{{movie_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"{{movie_id}}"
+							]
+						},
+						"description": "Deletar um filme do catálogo"
+					}
+				}
+			],
+			"description": "Operações básicas de CRUD para filmes"
+		},
+		{
+			"name": "Search & Filter",
+			"item": [
+				{
+					"name": "Get Paginated Films",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films?page=0&limit=10&sort=title&order=asc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Página (começando em 0)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Quantidade de itens por página"
+								},
+								{
+									"key": "sort",
+									"value": "title",
+									"description": "Campo para ordenação"
+								},
+								{
+									"key": "order",
+									"value": "asc",
+									"description": "Direção da ordenação (asc/desc)"
+								}
+							]
+						},
+						"description": "Buscar filmes com paginação e ordenação"
+					}
+				},
+				{
+					"name": "Search Films",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films/search?q=avatar&limit=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "avatar",
+									"description": "Termo de busca"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"description": "Máximo de resultados"
+								}
+							]
+						},
+						"description": "Buscar filmes por título ou diretor"
+					}
+				},
+				{
+					"name": "Filter Films",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films/filter?genre=Ação&year_min=2020&year_max=2023&category=Premium",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "genre",
+									"value": "Ação",
+									"description": "Filtrar por gênero"
+								},
+								{
+									"key": "year_min",
+									"value": "2020",
+									"description": "Ano mínimo"
+								},
+								{
+									"key": "year_max",
+									"value": "2023",
+									"description": "Ano máximo"
+								},
+								{
+									"key": "category",
+									"value": "Premium",
+									"description": "Filtrar por categoria"
+								}
+							]
+						},
+						"description": "Filtrar filmes por diversos critérios"
+					}
+				}
+			],
+			"description": "Endpoints para busca e filtros avançados"
+		},
+		{
+			"name": "Special Collections",
+			"item": [
+				{
+					"name": "Get Featured Films",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films/featured",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"featured"
+							]
+						},
+						"description": "Buscar filmes em destaque"
+					}
+				},
+				{
+					"name": "Get New Releases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films/new-releases",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"new-releases"
+							]
+						},
+						"description": "Buscar novos lançamentos"
+					}
+				},
+				{
+					"name": "Get Popular Films",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films/popular",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"popular"
+							]
+						},
+						"description": "Buscar filmes populares"
+					}
+				},
+				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/films/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"films",
+								"categories"
+							]
+						},
+						"description": "Buscar todas as categorias disponíveis"
+					}
+				}
+			],
+			"description": "Endpoints para coleções especiais de filmes"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "movie_id",
+			"value": "550e8400-e29b-41d4-a716-446655440000",
+			"type": "string",
+			"description": "UUID de exemplo para testes"
+		}
+	]
+}
