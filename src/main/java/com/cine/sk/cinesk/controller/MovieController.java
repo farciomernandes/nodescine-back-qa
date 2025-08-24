@@ -63,13 +63,13 @@ public class MovieController {
         @ApiResponse(responseCode = "400", description = "Invalid input data"),
         @ApiResponse(responseCode = "404", description = "Movie not found")
     })
-    @PutMapping("/{id}")
+    @PutMapping("/{uuid}")
     public ResponseEntity<MovieDTO> update(
             @Parameter(description = "Movie identifier", required = true)
-            @PathVariable UUID id,
+            @PathVariable UUID uuid,
             @Parameter(description = "Updated movie details", required = true)
             @Valid @RequestBody MovieDTO dto) {
-        return movieService.update(id, dto);
+        return movieService.update(uuid, dto);
     }
 
     @Operation(
