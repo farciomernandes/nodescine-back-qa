@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 @Setter
 public class CorsProperties {
 
-    @Value("security.cors.origins")
+    @Value("${security.cors.origins}")
     private String allowedOrigins;
 
-    @Value("security.cors.headers")
+    @Value("${security.cors.headers}")
     private String allowedHeaders;
 
-    @Value("security.cors.methods")
+    @Value("${security.cors.methods}")
     private String allowedMethods;
 
 }
