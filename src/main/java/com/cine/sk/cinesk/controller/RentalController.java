@@ -1,9 +1,9 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.movie.rental.RentalRequestDTO;
-import com.cine.sk.cinesk.domain.movie.rental.RentalResponseDTO;
-import com.cine.sk.cinesk.domain.movie.rental.RentalService;
-import com.cine.sk.cinesk.domain.rental.UserRentalService;
+import com.cine.sk.cinesk.domain.rental.dto.RentalRequestDTO;
+import com.cine.sk.cinesk.domain.rental.dto.RentalResponseDTO;
+import com.cine.sk.cinesk.domain.rental.service.RentalService;
+import com.cine.sk.cinesk.domain.rental.service.UserRentalService;
 import com.cine.sk.cinesk.domain.rental.dto.CancelRentalRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

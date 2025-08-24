@@ -1,6 +1,8 @@
 package com.cine.sk.cinesk.domain.movie;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
+import com.cine.sk.cinesk.domain.movie.category.CategoryEntity;
+import com.cine.sk.cinesk.domain.movie.genre.GenreEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

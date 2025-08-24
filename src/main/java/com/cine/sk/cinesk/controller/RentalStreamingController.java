@@ -1,10 +1,10 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.movie.rental.ProgressResponseDTO;
-import com.cine.sk.cinesk.domain.movie.rental.ProgressUpdateDTO;
-import com.cine.sk.cinesk.domain.movie.rental.RentalStreamingService;
-import com.cine.sk.cinesk.domain.movie.rental.StreamInfoDTO;
-import com.cine.sk.cinesk.domain.movie.rental.SubtitleDTO;
+import com.cine.sk.cinesk.domain.rental.dto.ProgressResponseDTO;
+import com.cine.sk.cinesk.domain.rental.dto.ProgressUpdateDTO;
+import com.cine.sk.cinesk.domain.rental.service.RentalStreamingService;
+import com.cine.sk.cinesk.domain.rental.dto.StreamInfoDTO;
+import com.cine.sk.cinesk.domain.rental.dto.SubtitleDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
