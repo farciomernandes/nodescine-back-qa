@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.movie.category;
+package com.cine.sk.cinesk.domain.film.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDTO {
-    private UUID uuid;
+    private Long id;
     private String name;
     private String slug;
     private String imageUrl;

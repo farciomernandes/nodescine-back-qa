@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.movie.dto;
+package com.cine.sk.cinesk.domain.film.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaginatedFilmDTO {
-    private UUID uuid;
+    private Long id;
     private String title;
     private String director;
     private String poster_url;
