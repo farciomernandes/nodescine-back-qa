@@ -1,7 +1,7 @@
-package com.cine.sk.cinesk.domain.movie.category;
+package com.cine.sk.cinesk.domain.film.category;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
-import com.cine.sk.cinesk.domain.movie.MovieEntity;
+import com.cine.sk.cinesk.domain.film.Movie;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "category_tbl")
+@Table(name = "categories")
 @Getter
 @Setter
-public class CategoryEntity extends AbstractEntity {
+public class Category extends AbstractEntity {
 
     @Column
     private String name;
@@ -25,5 +25,5 @@ public class CategoryEntity extends AbstractEntity {
     private String imageUrl;
 
     @OneToMany(mappedBy = "category")
-    private List<MovieEntity> movies = new ArrayList<>();
+    private List<Movie> movies = new ArrayList<>();
 }

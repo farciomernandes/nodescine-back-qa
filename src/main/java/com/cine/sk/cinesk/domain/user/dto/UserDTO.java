@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(name = "User", description = "User profile information")
 public class UserDTO {
-    @Schema(example = "user123")
-    @JsonProperty("uuid")
-    private String uuid;
+    @Schema(example = "45")
+    @JsonProperty("id")
+    private Long id;
 
     @Schema(example = "Ana Silva")
     @JsonProperty("name")

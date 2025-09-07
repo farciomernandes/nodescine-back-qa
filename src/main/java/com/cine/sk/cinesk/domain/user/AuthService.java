@@ -1,6 +1,6 @@
 package com.cine.sk.cinesk.domain.user;
 
-import com.cine.sk.cinesk.domain.movie.Role;
+import com.cine.sk.cinesk.domain.film.Role;
 import com.cine.sk.cinesk.util.JwtUtil;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
