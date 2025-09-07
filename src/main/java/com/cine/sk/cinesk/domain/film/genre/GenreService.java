@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.movie.genre;
+package com.cine.sk.cinesk.domain.film.genre;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,8 +23,8 @@ public class GenreService {
         try {
             boolean result = validateGenreExistsByName(dto.getName());
             if (!result) {
-                GenreEntity genre = objectMapper.convertValue(dto, GenreEntity.class);
-                GenreEntity saved = genreRepository.save(genre);
+                Genre genre = objectMapper.convertValue(dto, Genre.class);
+                Genre saved = genreRepository.save(genre);
                 return ResponseEntity.status(HttpStatus.CREATED).body(objectMapper.convertValue(saved, GenreDTO.class));
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -34,17 +33,17 @@ public class GenreService {
         }
     }
 
-    public void deleteById(UUID uuid) {
-        genreRepository.deleteById(LocalDateTime.now(), uuid);
+    public void deleteById(Long id) {
+        genreRepository.deleteById(LocalDateTime.now(), id);
     }
 
     private boolean validateGenreExistsByName(String genreName) {
-        Optional<GenreEntity> genre = genreRepository.findByName(genreName);
+        Optional<Genre> genre = genreRepository.findByName(genreName);
         return genre.isPresent();
     }
 
-    public void validateGenreExists(UUID genreUuid) {
-        genreRepository.findById(genreUuid)
+    public void validateGenreExists(Long id) {
+        genreRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Genre not found"));
     }
 

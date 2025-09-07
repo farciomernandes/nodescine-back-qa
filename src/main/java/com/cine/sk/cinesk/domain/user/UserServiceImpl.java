@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         return UserDTO.builder()
-                .uuid(user.getUuid().toString())
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .avatar("https://...")

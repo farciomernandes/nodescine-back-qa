@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
-import com.cine.sk.cinesk.domain.movie.genre.GenreService;
+import com.cine.sk.cinesk.domain.film.genre.GenreDTO;
+import com.cine.sk.cinesk.domain.film.genre.GenreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -54,11 +54,11 @@ public class GenreController {
         @ApiResponse(responseCode = "204", description = "Genre deleted successfully"),
         @ApiResponse(responseCode = "404", description = "Genre not found")
     })
-    @DeleteMapping("/{uuid}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeGenre(
             @Parameter(description = "Genre identifier", required = true)
-            @PathVariable UUID uuid) {
-        genreService.deleteById(uuid);
+            @PathVariable Long id) {
+        genreService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

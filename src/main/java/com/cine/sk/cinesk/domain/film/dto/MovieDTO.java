@@ -1,7 +1,7 @@
-package com.cine.sk.cinesk.domain.movie.dto;
+package com.cine.sk.cinesk.domain.film.dto;
 
-import com.cine.sk.cinesk.domain.movie.category.CategoryDTO;
-import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
+import com.cine.sk.cinesk.domain.film.category.CategoryDTO;
+import com.cine.sk.cinesk.domain.film.genre.GenreDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MovieDTO {
-    private UUID uuid;
+    private Long id;
 
     private String title;
 

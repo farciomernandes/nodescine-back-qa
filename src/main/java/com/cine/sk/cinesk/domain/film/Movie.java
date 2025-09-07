@@ -1,8 +1,8 @@
-package com.cine.sk.cinesk.domain.movie;
+package com.cine.sk.cinesk.domain.film;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
-import com.cine.sk.cinesk.domain.movie.category.CategoryEntity;
-import com.cine.sk.cinesk.domain.movie.genre.GenreEntity;
+import com.cine.sk.cinesk.domain.film.category.Category;
+import com.cine.sk.cinesk.domain.film.genre.Genre;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "film_tbl")
+@Table(name = "movie")
 @Getter
 @Setter
-public class MovieEntity extends AbstractEntity {
+public class Movie extends AbstractEntity {
 
     private String title;
 
@@ -54,7 +54,7 @@ public class MovieEntity extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private CategoryEntity category;
+    private Category category;
 
     @ManyToMany
     @JoinTable(
@@ -62,5 +62,5 @@ public class MovieEntity extends AbstractEntity {
         joinColumns = @JoinColumn(name = "film_id"),
         inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private Set<GenreEntity> genres = new HashSet<>();
+    private Set<Genre> genres = new HashSet<>();
 }
