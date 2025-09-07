@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.movie.dto;
+package com.cine.sk.cinesk.domain.film.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

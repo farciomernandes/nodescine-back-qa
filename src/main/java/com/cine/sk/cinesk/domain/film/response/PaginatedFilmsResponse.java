@@ -1,6 +1,6 @@
-package com.cine.sk.cinesk.domain.movie.response;
+package com.cine.sk.cinesk.domain.film.response;
 
-import com.cine.sk.cinesk.domain.movie.dto.PaginatedFilmDTO;
+import com.cine.sk.cinesk.domain.film.dto.PaginatedFilmDTO;
 import lombok.*;
 
 import java.util.List;

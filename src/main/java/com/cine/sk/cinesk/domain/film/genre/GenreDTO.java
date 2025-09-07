@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.movie.genre;
+package com.cine.sk.cinesk.domain.film.genre;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GenreDTO {
-    private UUID uuid;
+    private Long id;
 
     private String name;
 }
