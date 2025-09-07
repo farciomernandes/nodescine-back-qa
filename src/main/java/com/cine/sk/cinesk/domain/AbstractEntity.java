@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 public abstract class AbstractEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @CreationTimestamp
     @Column(updatable = false)

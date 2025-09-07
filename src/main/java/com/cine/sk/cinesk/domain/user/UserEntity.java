@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.domain.user;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
-import com.cine.sk.cinesk.domain.movie.Role;
+import com.cine.sk.cinesk.domain.film.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

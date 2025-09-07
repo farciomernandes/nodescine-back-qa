@@ -1,6 +1,6 @@
-package com.cine.sk.cinesk.domain.movie.response;
+package com.cine.sk.cinesk.domain.film.response;
 
-import com.cine.sk.cinesk.domain.movie.dto.FilteredFilmDTO;
+import com.cine.sk.cinesk.domain.film.dto.FilteredFilmDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
