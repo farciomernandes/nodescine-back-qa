@@ -3,8 +3,10 @@ security:
     origins: ${CORS_ORIGINS:*}
     headers: ${CORS_HEADERS:*}
     methods: ${CORS_METHODS:*}
+
 jwt:
   secret: 100b12a1b6488d45fef5ecbae98ffcaf37a06c3d7d5a3781abf3391647a029c1f262b2fe476fd83415ef06852bdada5f95422dceb6814adce4f3ea520ecde2bbbe9d672a738447283ed4113dfad2405bf673f9c7d7034ef78d2bdc2b8dfd9bf6d4eae3e629b8b4a42c8d6057fbda3dac5c41f58699efd2cc028b33639ffc0db2c287d1a8c6976681b736f2e624113a9cdcf5dc1ac65579489b29c75549fe65a8046bb133c8410d7f629a1583b464d011cffce79c58c29de344a15cdffc9339331d80cc06b0f5f5211824eca924b60855a75ef7df62445f9488f7fd6e58212e3e632f9a5b6cc08a948fd32a61244f9d8a26b4ca2890824daa4c71a406b1996488
+
 spring:
   devtools:
     restart:
@@ -35,6 +37,7 @@ spring:
     locations: classpath:db/migration
     default-schema: public
     baseline-on-migrate: true
+
 springdoc:
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
@@ -44,9 +47,16 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+
 server:
   port: 8088
 
 asaas:
   api:
     url: https://sandbox.asaas.com/api/v3
+
+application:
+  security:
+    jwt:
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000

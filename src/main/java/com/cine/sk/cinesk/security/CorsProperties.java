@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.configuration;
+package com.cine.sk.cinesk.security;
 
 import lombok.Getter;
 import lombok.Setter;
