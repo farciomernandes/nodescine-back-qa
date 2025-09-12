@@ -1,6 +1,5 @@
-package com.cine.sk.cinesk.domain.security;
+package com.cine.sk.cinesk.security;
 
-import com.cine.sk.cinesk.configuration.CorsProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

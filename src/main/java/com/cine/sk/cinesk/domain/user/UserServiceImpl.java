@@ -1,6 +1,7 @@
 package com.cine.sk.cinesk.domain.user;
 
 import com.cine.sk.cinesk.domain.user.dto.*;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    public UserEntity findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+    }
+
     @Override
     public ResponseEntity<UserProfileResponseDTO> getUserProfile(String userEmail) {
         UserEntity user = userRepository.findByEmail(userEmail)
@@ -30,14 +36,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<UpdateProfileResponseDTO> updateUserProfile(String userEmail, UpdateProfileRequestDTO request) {
-        UserEntity user = userRepository.findByEmail(userEmail)
+    public ResponseEntity<UpdateProfileResponseDTO> updateUserProfile(Long id, UpdateProfileRequestDTO request) {
+        UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update user fields
         user.setName(request.getName());
-        // Note: In a real implementation, preferences would be stored in database
-
         userRepository.save(user);
 
         UserDTO userDTO = mapToUserDTO(user);
@@ -103,5 +106,12 @@ public class UserServiceImpl implements UserService {
                 .subscription(subscription)
                 .preferences(preferences)
                 .build();
+    }
+
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("User not found with ID: " + id);
+        }
+        userRepository.deleteById(id);
     }
 }

@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.user;
+package com.cine.sk.cinesk.domain.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
