@@ -1,6 +1,4 @@
-package com.cine.sk.cinesk.domain.user;
-
-import com.cine.sk.cinesk.domain.user.dto.UserDTO;
+package com.cine.sk.cinesk.domain.user.dto;
 
 public class UpdateProfileResponseDTO {
     public UserDTO user;
