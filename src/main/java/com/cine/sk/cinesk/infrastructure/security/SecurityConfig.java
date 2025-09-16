@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.infrastructure.security;
 
+import com.cine.sk.cinesk.domain.auth.Role;
 import com.cine.sk.cinesk.domain.user.CustomUserDetailsService;
 import com.cine.sk.cinesk.infrastructure.cors.CorsProperties;
 import com.cine.sk.cinesk.infrastructure.jwt.JwtAuthenticationFilter;
@@ -64,7 +65,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
+                        .requestMatchers("/path-de-exemplo/**").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/path-de-exemplo2/**").hasAnyAuthority(Role.ADMIN.name(),Role.CUSTOMER.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
