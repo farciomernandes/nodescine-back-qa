@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.domain.user;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
-import com.cine.sk.cinesk.domain.film.Role;
+import com.cine.sk.cinesk.domain.auth.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class UserEntity extends AbstractEntity implements UserDetails {
+public class User extends AbstractEntity implements UserDetails {
 
     @Email
     @NotBlank
