@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.security;
+package com.cine.sk.cinesk.infrastructure.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
