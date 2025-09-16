@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.security;
+package com.cine.sk.cinesk.infrastructure.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

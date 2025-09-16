@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.security;
+package com.cine.sk.cinesk.infrastructure.cors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
