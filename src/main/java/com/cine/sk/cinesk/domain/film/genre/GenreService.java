@@ -53,4 +53,16 @@ public class GenreService {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(genres);
     }
+
+    public Optional<Genre> findById(Long id) {
+        return genreRepository.findById(id);
+    }
+
+    public Genre save(GenreDTO genreDTO) {
+        return genreRepository.save(objectMapper.convertValue(genreDTO, Genre.class));
+    }
+
+    public Optional<Genre> findByName(String name) {
+        return genreRepository.findByName(name);
+    }
 }

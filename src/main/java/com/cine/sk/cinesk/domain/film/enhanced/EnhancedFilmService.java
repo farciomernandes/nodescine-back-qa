@@ -23,11 +23,12 @@ public class EnhancedFilmService {
     }
 
     public EnhancedFilmDTO create(EnhancedFilmDTO dto) {
+        validateCreateEnhancedFilmDTO(dto);
         return movieService.create(dto);
     }
 
     public EnhancedFilmDTO update(Long id, EnhancedFilmDTO dto) {
-        validateEnhancedFilmDTO(dto);
+        validateUpdateEnhancedFilmDTO(dto);
         return movieService.update(id, dto);
     }
 
@@ -35,12 +36,19 @@ public class EnhancedFilmService {
         movieService.delete(id);
     }
 
-    private void validateEnhancedFilmDTO(EnhancedFilmDTO dto) {
-        // Validar presença de pelo menos um gênero
+    private void validateCreateEnhancedFilmDTO(EnhancedFilmDTO dto) {
+        // Validar presença de pelo menos um gênero na criação
         if (dto.getGenres() == null || dto.getGenres().isEmpty()) {
             throw new IllegalArgumentException("Precisa ter pelo menos um genero");
         }
         // Validar formato de rentalPrice (ex.: "4.99")
+        if (dto.getRentalPrice() != null && !Pattern.matches("\\d+\\.\\d{2}", dto.getRentalPrice())) {
+            throw new IllegalArgumentException("Invalid rentalPrice format: " + dto.getRentalPrice() + ". Expected format: '4.99'");
+        }
+    }
+
+    private void validateUpdateEnhancedFilmDTO(EnhancedFilmDTO dto) {
+        // Para update, apenas validar campos fornecidos; campos ausentes permanecem inalterados
         if (dto.getRentalPrice() != null && !Pattern.matches("\\d+\\.\\d{2}", dto.getRentalPrice())) {
             throw new IllegalArgumentException("Invalid rentalPrice format: " + dto.getRentalPrice() + ". Expected format: '4.99'");
         }
