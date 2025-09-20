@@ -4,6 +4,7 @@ import com.cine.sk.cinesk.domain.auth.Role;
 import com.cine.sk.cinesk.domain.auth.UserTokenRepository;
 import com.cine.sk.cinesk.domain.user.dto.UpdateUserDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,6 +64,7 @@ public class UserService {
         return ResponseEntity.ok(mapToDto(saved));
     }
 
+    @Transactional
     public ResponseEntity<Void> deleteById(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
@@ -76,11 +78,10 @@ public class UserService {
 
         if (user.getStatus() != UserStatus.INACTIVE) {
             user.setStatus(UserStatus.INACTIVE);
+            userTokenRepository.deactivateAllUserTokens(user.getEmail());
             userRepository.save(user);
         }
-
-        userTokenRepository.deactivateAllUserTokens(user.getEmail());
-
+        
         return ResponseEntity.noContent().build();
     }
 
