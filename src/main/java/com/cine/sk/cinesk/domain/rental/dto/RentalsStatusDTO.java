@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "RentalsStats", description = "Statistics for user rentals")
-public class RentalsStatsDTO {
+public class RentalsStatusDTO {
     @JsonProperty("total_rentals")
     private Integer totalRentals;
 
