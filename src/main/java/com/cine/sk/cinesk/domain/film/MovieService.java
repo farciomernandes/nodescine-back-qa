@@ -11,6 +11,7 @@ import com.cine.sk.cinesk.domain.film.enhanced.EnhancedFilmDTO;
 import com.cine.sk.cinesk.domain.film.genre.GenreDTO;
 import com.cine.sk.cinesk.domain.film.genre.Genre;
 import com.cine.sk.cinesk.domain.film.genre.GenreRepository;
+import com.cine.sk.cinesk.domain.film.genre.GenreService;
 import com.cine.sk.cinesk.domain.film.response.FilteredFilmsResponse;
 import com.cine.sk.cinesk.domain.film.response.PaginatedFilmsResponse;
 import jakarta.transaction.Transactional;
@@ -36,8 +37,7 @@ public class MovieService {
 
     private final MovieRepository movieRepository;
     private final CategoryRepository categoryRepository;
-    private final GenreRepository genreRepository;
-    private final ObjectMapper objectMapper;
+    private final GenreService genreService;
     private final CategoryService categoryService;
 
     public List<EnhancedFilmDTO> findAll() {
@@ -118,6 +118,7 @@ public class MovieService {
         }
     }
 
+    @Transactional
     public EnhancedFilmDTO create(EnhancedFilmDTO dto) {
         Movie movie = toEntity(dto);
 
@@ -130,8 +131,13 @@ public class MovieService {
         movie.setCategory(category);
 
         movie.setGenres(dto.getGenres().stream()
-                .map(genreDTO -> genreRepository.findById(genreDTO.getId())
-                        .orElseThrow(() -> new RuntimeException("Genero não encontrado com ID: " + genreDTO.getId())))
+                .map(genreDTO -> {
+                    if (genreDTO.getName() == null || genreDTO.getName().isBlank()) {
+                        throw new IllegalArgumentException("Genre name is required");
+                    }
+                    return genreService.findByName(genreDTO.getName())
+                            .orElseGet(() -> genreService.save(new GenreDTO(null, genreDTO.getName())));
+                })
                 .collect(Collectors.toSet()));
 
         movie = movieRepository.save(movie);
@@ -159,8 +165,13 @@ public class MovieService {
         }
         if (dto.getGenres() != null && !dto.getGenres().isEmpty()) {
             movie.setGenres(dto.getGenres().stream()
-                    .map(genreDTO -> genreRepository.findById(genreDTO.getId())
-                            .orElseThrow(() -> new RuntimeException("Genero não encontrado com ID: " + genreDTO.getId())))
+                    .map(genreDTO -> {
+                        if (genreDTO.getName() == null || genreDTO.getName().isBlank()) {
+                            throw new IllegalArgumentException("Genre name is required");
+                        }
+                        return genreService.findByName(genreDTO.getName())
+                                .orElseGet(() -> genreService.save(new GenreDTO(null, genreDTO.getName())));
+                    })
                     .collect(Collectors.toSet()));
         }
 
@@ -174,39 +185,11 @@ public class MovieService {
         movieRepository.delete(movie);
     }
 
-//    public ResponseEntity<MovieDTO> create(MovieDTO dto) {
-//        try {
-//            Movie movie = objectMapper.convertValue(dto, Movie.class);
-//
-//            if (dto.getCategory() != null && dto.getCategory().getId() != null) {
-//                Category category = categoryRepository.findById(dto.getCategory().getId())
-//                    .orElseThrow(() -> new NoSuchElementException("Categoria não encontrada"));
-//                movie.setCategory(category);
-//            }
-//
-//            if (dto.getGenres() != null && !dto.getGenres().isEmpty()) {
-//                dto.getGenres().forEach(genreDTO -> {
-//                    if (genreDTO.getName() != null) {
-//                        Genre genre = genreRepository.findByName(genreDTO.getName())
-//                            .orElseThrow(() -> new NoSuchElementException("Genero não encontrado"));
-//                        movie.getGenres().add(genre);
-//                    }
-//                });
-//            }
-//
-//            Movie saved = movieRepository.save(movie);
-//            MovieDTO savedDto = mapToMovieDTO(saved);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-//        }
-//    }
-
+    @Transactional
     public ResponseEntity<MovieDTO> update(Long id, MovieDTO dto) {
         try {
             Movie movie = findActiveMovieById(id);
 
-            // Update basic properties
             movie.setTitle(dto.getTitle());
             movie.setDirector(dto.getDirector());
             movie.setReleaseYear(dto.getReleaseYear());
@@ -226,7 +209,7 @@ public class MovieService {
                 movie.getGenres().clear();
                 dto.getGenres().forEach(genreDTO -> {
                     if (genreDTO.getName() != null) {
-                        Genre genre = genreRepository.findByName(genreDTO.getName())
+                        Genre genre = genreService.findByName(genreDTO.getName())
                             .orElseThrow(() -> new NoSuchElementException("Genero não encontrado"));
                         movie.getGenres().add(genre);
                     }

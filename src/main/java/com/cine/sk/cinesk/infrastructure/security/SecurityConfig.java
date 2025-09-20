@@ -8,6 +8,7 @@ import com.cine.sk.cinesk.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -68,7 +69,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/auth/register/customer",
                                 "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                         .requestMatchers("/auth/register/moderator").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
-                        .requestMatchers("/path-de-exemplo2/**").hasAnyAuthority(Role.ADMIN.name(),Role.CUSTOMER.name())
+                        .requestMatchers(HttpMethod.POST, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
+                        .requestMatchers(HttpMethod.PUT, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
