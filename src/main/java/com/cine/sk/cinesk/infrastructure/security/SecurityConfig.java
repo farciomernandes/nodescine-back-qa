@@ -65,7 +65,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/register", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                         .requestMatchers("/path-de-exemplo/**").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/path-de-exemplo2/**").hasAnyAuthority(Role.ADMIN.name(),Role.CUSTOMER.name())
                         .anyRequest().authenticated()

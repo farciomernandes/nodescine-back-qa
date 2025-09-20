@@ -86,7 +86,16 @@ public class AuthService {
 
 
     @Transactional
-    public void changePassword(User user, ChangePasswordRequestDTO request) {
+    public void changePassword(ChangePasswordRequestDTO request) {
+        var authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("User is not authenticated");
+        }
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         if (!passwordEncoder.matches(request.oldPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Incorrect old password");
         }

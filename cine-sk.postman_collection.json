@@ -1,0 +1,313 @@
+{
+  "info": {
+    "_postman_id": "7f9f6f3b-2a54-4a8c-9e83-3f2f8a3e9e10",
+    "name": "Cine-SK API",
+    "description": "Coleção Postman das APIs da aplicação Cine-SK.\n\nInstruções rápidas:\n- Ajuste a variável {{baseUrl}} conforme o host/porta da sua aplicação.\n- Use a requisição Auth > Login para obter um token JWT. Copie o valor do campo token da resposta e preencha a variável {{token}} (ou configure Authorization no nível da coleção).\n- As rotas marcadas com cadeado exigem Bearer Token (Authorization: Bearer {{token}}).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Registrar usuário",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"P@ssw0rd\",\n  \"name\": \"John Doe\",\n  \"roles\": [\"USER\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"P@ssw0rd\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alterar senha (protegido)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "change-password"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"P@ssw0rd\",\n  \"newPassword\": \"N3wP@ssw0rd\",\n  \"confirmNewPassword\": \"N3wP@ssw0rd\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Genres",
+      "item": [
+        {
+          "name": "Criar gênero",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/genres",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "genres"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"name\": \"Action\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar gêneros",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/genres",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "genres"]
+            }
+          }
+        },
+        {
+          "name": "Remover gênero por ID",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/genres/{{genreId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "genres", "{{genreId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Enhanced Films",
+      "item": [
+        {
+          "name": "Criar filme",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/enhanced-films", "host": ["{{baseUrl}}"], "path": ["enhanced-films"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": null,\n  \"title\": \"Matrix\",\n  \"description\": \"Sci-fi classic\",\n  \"releaseYear\": 1999,\n  \"genres\": [\"Action\", \"Sci-Fi\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar filme por ID",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/enhanced-films/{{filmId}}", "host": ["{{baseUrl}}"], "path": ["enhanced-films", "{{filmId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Matrix Reloaded\",\n  \"description\": \"Sequel\",\n  \"releaseYear\": 2003,\n  \"genres\": [\"Action\", \"Sci-Fi\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar filmes",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/enhanced-films", "host": ["{{baseUrl}}"], "path": ["enhanced-films"] }
+          }
+        },
+        {
+          "name": "Buscar filme por ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/enhanced-films/{{filmId}}", "host": ["{{baseUrl}}"], "path": ["enhanced-films", "{{filmId}}"] }
+          }
+        },
+        {
+          "name": "Excluir filme por ID",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/enhanced-films/{{filmId}}", "host": ["{{baseUrl}}"], "path": ["enhanced-films", "{{filmId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rentals",
+      "item": [
+        {
+          "name": "Processar aluguel",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/rentals", "host": ["{{baseUrl}}"], "path": ["api", "rentals"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmId\": \"11111111-1111-1111-1111-111111111111\",\n  \"userId\": \"22222222-2222-2222-2222-222222222222\",\n  \"paymentMethod\": \"CREDIT_CARD\",\n  \"durationHours\": 48\n}"
+            }
+          }
+        },
+        {
+          "name": "Cancelar aluguel por ID (protegido)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/rentals/{{rentalId}}", "host": ["{{baseUrl}}"], "path": ["api", "rentals", "{{rentalId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"changed_mind\",\n  \"feedback\": \"Não consegui assistir no prazo\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rental Streaming",
+      "item": [
+        {
+          "name": "Obter URL de streaming por aluguel ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/rentals/{{rentalIdUUID}}/stream", "host": ["{{baseUrl}}"], "path": ["api", "rentals", "{{rentalIdUUID}}", "stream"] }
+          }
+        },
+        {
+          "name": "Atualizar progresso de visualização",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/rentals/{{rentalIdUUID}}/progress", "host": ["{{baseUrl}}"], "path": ["api", "rentals", "{{rentalIdUUID}}", "progress"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentTime\": 120,\n  \"totalDuration\": 7200,\n  \"quality\": \"1080p\",\n  \"device\": \"Web Chrome\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar legendas por aluguel ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/rentals/{{rentalIdUUID}}/subtitles", "host": ["{{baseUrl}}"], "path": ["api", "rentals", "{{rentalIdUUID}}", "subtitles"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Listar históricos de aluguel do usuário (protegido)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/user/rentals?status=all&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "user", "rentals"],
+              "query": [
+                { "key": "status", "value": "all" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar aluguéis ativos do usuário (protegido)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/user/rentals/active", "host": ["{{baseUrl}}"], "path": ["api", "user", "rentals", "active"] }
+          }
+        },
+        {
+          "name": "Cancelar aluguel do usuário por ID (protegido)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/user/rentals/{{rentalId}}", "host": ["{{baseUrl}}"], "path": ["api", "user", "rentals", "{{rentalId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"changed_mind\",\n  \"feedback\": \"Não consegui assistir no prazo\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Checkout",
+      "item": [
+        {
+          "name": "Processar pagamento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/checkout/process", "host": ["{{baseUrl}}"], "path": ["api", "checkout", "process"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order\": {\n    \"id\": \"ord_123\",\n    \"total\": 19.90\n  },\n  \"user\": {\n    \"name\": \"John Doe\",\n    \"email\": \"user@example.com\",\n    \"phone\": \"11999999999\",\n    \"cpf\": \"12345678901\"\n  },\n  \"payment\": {\n    \"method\": \"CREDIT_CARD\",\n    \"creditCardHolder\": \"JOHN DOE\",\n    \"creditCardNumber\": \"4111111111111111\",\n    \"creditCardExpiration\": \"12/2028\",\n    \"creditCardSecurityCode\": \"123\"\n  },\n  \"address\": {\n    \"street\": \"Rua A\",\n    \"number\": \"123\",\n    \"complement\": \"Apto 10\",\n    \"neighborhood\": \"Centro\",\n    \"zipCode\": \"01001000\"\n  }\n}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "genreId", "value": "1" },
+    { "key": "filmId", "value": "1" },
+    { "key": "rentalId", "value": "rent_123" },
+    { "key": "rentalIdUUID", "value": "aaaaaaaa-bbbb-cccc-dddd-eeeeffffffff" }
+  ]
+}

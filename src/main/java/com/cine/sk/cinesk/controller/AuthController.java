@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(name = "Authentication", description = "API endpoints for user authenticate flow")
 public class AuthController {
 
     private final AuthService authService;
@@ -34,9 +33,8 @@ public class AuthController {
 
     @PostMapping("/change-password")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequestDTO request,
-                                               @AuthenticationPrincipal User user) {
-        authService.changePassword(user, request);
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequestDTO request) {
+        authService.changePassword(request);
         return ResponseEntity.ok().build();
     }
 }
