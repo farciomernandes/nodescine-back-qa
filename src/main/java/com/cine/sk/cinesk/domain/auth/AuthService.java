@@ -122,6 +122,7 @@ public class AuthService {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .createdAt(user.getCreatedAt())
                 .build();
         return ResponseEntity.ok(dto);
     }
