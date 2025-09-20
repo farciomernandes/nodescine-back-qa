@@ -11,7 +11,8 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class RegisterDTO {
+@Schema(description = "Request object for user registration containing email, password, name, and roles.")
+public class CustomerRegisterDTO {
 
     @NotBlank
     @Email
@@ -27,8 +28,4 @@ public class RegisterDTO {
     private String name;
 
     private String avatar;
-
-    @NotBlank
-    @Schema(description = "Set of roles assigned to the user", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Set<Role> roles;
 }

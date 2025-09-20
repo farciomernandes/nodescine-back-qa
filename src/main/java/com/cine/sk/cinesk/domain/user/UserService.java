@@ -1,10 +1,15 @@
 package com.cine.sk.cinesk.domain.user;
 
+import com.cine.sk.cinesk.domain.auth.Role;
+import com.cine.sk.cinesk.domain.auth.UserTokenRepository;
 import com.cine.sk.cinesk.domain.user.dto.UpdateUserDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,6 +20,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserTokenRepository userTokenRepository;
 
     public ResponseEntity<UserDTO> getById(Long id) {
         User user = userRepository.findById(id)
@@ -25,6 +31,14 @@ public class UserService {
     public ResponseEntity<UserDTO> updateById(Long id, UpdateUserDTO request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (!isSelfOrStaff(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        if (user.getStatus() == UserStatus.INACTIVE) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is deactivated");
+        }
 
         if (request.getName() != null && !request.getName().isBlank()) {
             user.setName(request.getName());
@@ -54,8 +68,34 @@ public class UserService {
         if (userOpt.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        userRepository.deleteById(id);
+        User user = userOpt.get();
+
+        if (!isSelfOrStaff(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        if (user.getStatus() != UserStatus.INACTIVE) {
+            user.setStatus(UserStatus.INACTIVE);
+            userRepository.save(user);
+        }
+
+        userTokenRepository.deactivateAllUserTokens(user.getEmail());
+
         return ResponseEntity.noContent().build();
+    }
+
+    private boolean isSelfOrStaff(User targetUser) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) return false;
+        String currentEmail = auth.getName();
+        if (targetUser.getEmail().equalsIgnoreCase(currentEmail)) return true;
+        for (GrantedAuthority authority : auth.getAuthorities()) {
+            String authName = authority.getAuthority();
+            if (Role.ADMIN.name().equals(authName) || Role.MODERATOR.name().equals(authName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private UserDTO mapToDto(User user) {

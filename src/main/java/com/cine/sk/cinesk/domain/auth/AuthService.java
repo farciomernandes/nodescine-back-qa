@@ -6,6 +6,7 @@ import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
 import com.cine.sk.cinesk.domain.user.UserStatus;
+import com.cine.sk.cinesk.domain.user.dto.CustomerRegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.RegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
 import com.cine.sk.cinesk.infrastructure.jwt.JwtService;
@@ -36,15 +37,29 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public ResponseEntity<AuthResponseDTO> register(RegisterDTO request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already in use");
+        var existingOpt = userRepository.findByEmail(request.getEmail());
+        User user;
+        if (existingOpt.isPresent()) {
+            User existing = existingOpt.get();
+            if (existing.getStatus() == UserStatus.INACTIVE) {
+                existing.setName(request.getName());
+                existing.setPassword(passwordEncoder.encode(request.getPassword()));
+                existing.setRoles(request.getRoles());
+                existing.setAvatar(request.getAvatar());
+                existing.setStatus(UserStatus.ACTIVE);
+                user = existing;
+            } else {
+                throw new IllegalArgumentException("Email already in use");
+            }
+        } else {
+            user = new User();
+            user.setName(request.getName());
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setRoles(request.getRoles());
+            user.setAvatar(request.getAvatar());
+            user.setStatus(UserStatus.ACTIVE);
         }
-
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(Set.of(Role.CUSTOMER));
 
         User savedUser = userRepository.save(user);
         String jwtToken = jwtService.generateToken(savedUser);
@@ -59,6 +74,42 @@ public class AuthService {
         return ResponseEntity.ok(authResponseDTO);
     }
 
+
+    public ResponseEntity<AuthResponseDTO> registerCustomer(CustomerRegisterDTO request) {
+        var existingOpt = userRepository.findByEmail(request.getEmail());
+        User user;
+        if (existingOpt.isPresent()) {
+            User existing = existingOpt.get();
+            if (existing.getStatus() == UserStatus.INACTIVE) {
+                existing.setName(request.getName());
+                existing.setPassword(passwordEncoder.encode(request.getPassword()));
+                existing.setRoles(Set.of(Role.CUSTOMER));
+                existing.setStatus(UserStatus.ACTIVE);
+                user = existing;
+            } else {
+                throw new IllegalArgumentException("Email already in use");
+            }
+        } else {
+            user = new User();
+            user.setName(request.getName());
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setRoles(Set.of(Role.CUSTOMER));
+            user.setStatus(UserStatus.ACTIVE);
+        }
+
+        User savedUser = userRepository.save(user);
+        String jwtToken = jwtService.generateToken(savedUser);
+
+        AuthResponseDTO authResponseDTO = AuthResponseDTO.builder()
+                .token(jwtToken)
+                .name(savedUser.getName())
+                .roles(user.getRoles())
+                .email(savedUser.getEmail())
+                .build();
+
+        return ResponseEntity.ok(authResponseDTO);
+    }
 
     public ResponseEntity<AuthResponseDTO> login(@Valid AuthRequestDTO authRequestDTO) {
         try {
