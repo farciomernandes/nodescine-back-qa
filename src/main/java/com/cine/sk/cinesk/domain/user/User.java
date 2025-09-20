@@ -38,7 +38,7 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String avatar;
 
     @Enumerated(EnumType.STRING)
