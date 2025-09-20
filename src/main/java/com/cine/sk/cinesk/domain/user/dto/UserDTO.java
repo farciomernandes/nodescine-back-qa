@@ -38,7 +38,7 @@ public class UserDTO {
 
     @Schema(example = "2024-01-22T14:15:00Z")
     @JsonProperty("updated_at")
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
     @JsonProperty("subscription")
     private SubscriptionDTO subscription;
