@@ -111,7 +111,7 @@ public class AuthService {
     }
 
     public ResponseEntity<UserDTO> me() {
-        var authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -119,11 +119,13 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        var dto = com.cine.sk.cinesk.domain.user.dto.UserDTO.builder()
+        var dto = UserDTO.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .status(user.getStatus())
                 .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
         return ResponseEntity.ok(dto);
     }

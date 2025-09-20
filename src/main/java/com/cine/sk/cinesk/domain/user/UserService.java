@@ -65,7 +65,7 @@ public class UserService {
                 .email(user.getEmail())
                 .status(user.getStatus())
                 .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt().toString() : null)
+                .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt() : null)
                 .subscription(null)
                 .preferences(null)
                 .build();
