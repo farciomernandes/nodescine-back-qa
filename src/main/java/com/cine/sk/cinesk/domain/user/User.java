@@ -38,6 +38,13 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String avatar;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private UserStatus status = UserStatus.ACTIVE;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
@@ -73,6 +80,6 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.status == UserStatus.ACTIVE;
     }
 }

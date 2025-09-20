@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.domain.user.dto;
 
+import com.cine.sk.cinesk.domain.user.UserStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -27,9 +28,9 @@ public class UserDTO {
     @JsonProperty("email")
     private String email;
 
-    @Schema(example = "https://...")
-    @JsonProperty("avatar")
-    private String avatar;
+    @Schema(example = "ACTIVE")
+    @JsonProperty("status")
+    private UserStatus status;
 
     @Schema(example = "2024-01-15T10:30:00Z")
     @JsonProperty("created_at")

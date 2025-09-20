@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-@Tag(name = "User Rentals", description = "API endpoints for user rental management")
-@SecurityRequirement(name = "Bearer Authentication")
 public class UserRentalsController {
 
     private final UserRentalService userRentalService;

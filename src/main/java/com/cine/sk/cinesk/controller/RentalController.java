@@ -63,26 +63,6 @@ public class RentalController {
         return rentalService.processRental(rentalRequest);
     }
 
-    /**
-     * Cancel a rental
-     *
-     * @param authentication The authenticated user
-     * @param id The rental ID to cancel
-     * @param request Cancellation reason and feedback
-     * @return No content on successful cancellation
-     */
-    @Operation(
-            summary = "Cancel a rental",
-            description = "Cancels a user's rental with reason and optional feedback"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Rental cancelled successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid cancellation reason"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing JWT"),
-            @ApiResponse(responseCode = "403", description = "Forbidden - rental does not belong to user"),
-            @ApiResponse(responseCode = "404", description = "Rental not found")
-    })
-    @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancelRental(
             Authentication authentication,
