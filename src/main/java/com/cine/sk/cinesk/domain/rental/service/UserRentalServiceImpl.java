@@ -50,7 +50,7 @@ public class UserRentalServiceImpl implements UserRentalService {
                 .totalItems(totalItems)
                 .build();
 
-        RentalsStatsDTO stats = RentalsStatsDTO.builder()
+        RentalsStatusDTO stats = RentalsStatusDTO.builder()
                 .totalRentals(25)
                 .activeRentals(3)
                 .totalSpent("R$ 287,50")
