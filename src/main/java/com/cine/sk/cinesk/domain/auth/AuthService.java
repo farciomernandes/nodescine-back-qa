@@ -6,6 +6,7 @@ import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
 import com.cine.sk.cinesk.domain.user.dto.RegisterDTO;
+import com.cine.sk.cinesk.domain.user.dto.UserDTO;
 import com.cine.sk.cinesk.infrastructure.jwt.JwtService;
 import com.cine.sk.cinesk.util.JwtUtil;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -87,7 +89,7 @@ public class AuthService {
 
     @Transactional
     public void changePassword(ChangePasswordRequestDTO request) {
-        var authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalStateException("User is not authenticated");
         }
@@ -105,5 +107,22 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(request.newPassword()));
         userRepository.save(user);
+    }
+
+    public ResponseEntity<UserDTO> me() {
+        var authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        var dto = com.cine.sk.cinesk.domain.user.dto.UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+        return ResponseEntity.ok(dto);
     }
 }
