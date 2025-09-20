@@ -33,7 +33,6 @@ public class AuthController {
     }
 
     @PostMapping("/change-password")
-    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequestDTO request) {
         authService.changePassword(request);
         return ResponseEntity.ok().build();
