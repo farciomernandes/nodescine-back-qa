@@ -5,6 +5,7 @@ import com.cine.sk.cinesk.domain.auth.dto.AuthResponseDTO;
 import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
 import com.cine.sk.cinesk.domain.auth.AuthService;
 import com.cine.sk.cinesk.domain.user.User;
+import com.cine.sk.cinesk.domain.user.dto.CustomerRegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.RegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,9 +23,14 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/register")
+    @PostMapping("/register/moderator")
     public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody RegisterDTO registerRequest) {
         return authService.register(registerRequest);
+    }
+
+    @PostMapping("/register/customer")
+    public ResponseEntity<AuthResponseDTO> registerCustomer(@Valid @RequestBody CustomerRegisterDTO registerRequest) {
+        return authService.registerCustomer(registerRequest);
     }
 
     @PostMapping("/login")
