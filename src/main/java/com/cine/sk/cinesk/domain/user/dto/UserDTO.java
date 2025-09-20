@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -31,7 +33,7 @@ public class UserDTO {
 
     @Schema(example = "2024-01-15T10:30:00Z")
     @JsonProperty("created_at")
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     @Schema(example = "2024-01-22T14:15:00Z")
     @JsonProperty("updated_at")
