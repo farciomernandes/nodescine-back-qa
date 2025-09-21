@@ -1,6 +1,6 @@
 package com.cine.sk.cinesk.domain.auth.dto;
 
-import com.cine.sk.cinesk.domain.auth.Role;
+import com.cine.sk.cinesk.domain.auth.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,7 +2,7 @@ package com.cine.sk.cinesk.util;
 
 
 import com.cine.sk.cinesk.domain.user.User;
-import com.cine.sk.cinesk.domain.auth.UserTokenService;
+import com.cine.sk.cinesk.domain.auth.usertoken.UserTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;

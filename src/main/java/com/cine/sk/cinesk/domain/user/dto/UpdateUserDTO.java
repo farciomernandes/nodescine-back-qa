@@ -1,6 +1,6 @@
 package com.cine.sk.cinesk.domain.user.dto;
 
-import com.cine.sk.cinesk.domain.auth.Role;
+import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.user.UserStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

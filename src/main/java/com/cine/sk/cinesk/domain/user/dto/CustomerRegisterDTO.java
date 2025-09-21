@@ -1,13 +1,10 @@
 package com.cine.sk.cinesk.domain.user.dto;
 
-import com.cine.sk.cinesk.domain.auth.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter
