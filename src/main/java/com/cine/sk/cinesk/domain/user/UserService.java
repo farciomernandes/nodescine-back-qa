@@ -108,7 +108,6 @@ public class UserService {
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt() : null)
                 .subscription(null)
-                .preferences(null)
                 .build();
     }
 }

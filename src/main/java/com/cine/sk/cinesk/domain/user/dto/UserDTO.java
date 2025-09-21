@@ -43,6 +43,4 @@ public class UserDTO {
     @JsonProperty("subscription")
     private SubscriptionDTO subscription;
 
-    @JsonProperty("preferences")
-    private PreferencesDTO preferences;
 }
