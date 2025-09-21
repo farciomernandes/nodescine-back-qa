@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.film.enhanced.EnhancedFilmDTO;
-import com.cine.sk.cinesk.domain.film.enhanced.EnhancedFilmService;
+import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
+import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

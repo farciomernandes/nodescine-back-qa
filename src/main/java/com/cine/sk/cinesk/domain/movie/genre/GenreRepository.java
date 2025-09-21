@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.film.genre;
+package com.cine.sk.cinesk.domain.movie.genre;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
