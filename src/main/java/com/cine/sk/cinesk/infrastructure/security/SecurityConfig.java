@@ -71,6 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/register/moderator").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.POST, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.PUT, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
+                        .requestMatchers(HttpMethod.DELETE, "/genres", "/genres/**").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
