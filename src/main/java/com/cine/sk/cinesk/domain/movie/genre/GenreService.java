@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.film.genre;
+package com.cine.sk.cinesk.domain.movie.genre;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

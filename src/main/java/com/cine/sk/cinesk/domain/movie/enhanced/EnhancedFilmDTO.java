@@ -1,6 +1,6 @@
-package com.cine.sk.cinesk.domain.film.enhanced;
+package com.cine.sk.cinesk.domain.movie.enhanced;
 
-import com.cine.sk.cinesk.domain.film.genre.GenreDTO;
+import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import lombok.Getter;
 import lombok.Setter;
 

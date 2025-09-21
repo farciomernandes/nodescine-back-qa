@@ -1,12 +1,11 @@
-package com.cine.sk.cinesk.domain.film.enhanced;
+package com.cine.sk.cinesk.domain.movie.enhanced;
 
-import com.cine.sk.cinesk.domain.film.MovieService;
+import com.cine.sk.cinesk.domain.movie.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,18 +36,15 @@ public class EnhancedFilmService {
     }
 
     private void validateCreateEnhancedFilmDTO(EnhancedFilmDTO dto) {
-        // Validar presença de pelo menos um gênero na criação
         if (dto.getGenres() == null || dto.getGenres().isEmpty()) {
             throw new IllegalArgumentException("Precisa ter pelo menos um genero");
         }
-        // Validar formato de rentalPrice (ex.: "4.99")
         if (dto.getRentalPrice() != null && !Pattern.matches("\\d+\\.\\d{2}", dto.getRentalPrice())) {
             throw new IllegalArgumentException("Invalid rentalPrice format: " + dto.getRentalPrice() + ". Expected format: '4.99'");
         }
     }
 
     private void validateUpdateEnhancedFilmDTO(EnhancedFilmDTO dto) {
-        // Para update, apenas validar campos fornecidos; campos ausentes permanecem inalterados
         if (dto.getRentalPrice() != null && !Pattern.matches("\\d+\\.\\d{2}", dto.getRentalPrice())) {
             throw new IllegalArgumentException("Invalid rentalPrice format: " + dto.getRentalPrice() + ". Expected format: '4.99'");
         }
