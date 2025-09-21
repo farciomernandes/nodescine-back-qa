@@ -1,7 +1,10 @@
-package com.cine.sk.cinesk.domain.user;
+package com.cine.sk.cinesk.domain.user.service;
 
 import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.auth.usertoken.UserTokenRepository;
+import com.cine.sk.cinesk.domain.user.User;
+import com.cine.sk.cinesk.domain.user.UserRepository;
+import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import com.cine.sk.cinesk.domain.user.dto.UpdateUserDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
 import jakarta.transaction.Transactional;
