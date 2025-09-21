@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.auth;
+package com.cine.sk.cinesk.domain.auth.usertoken;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

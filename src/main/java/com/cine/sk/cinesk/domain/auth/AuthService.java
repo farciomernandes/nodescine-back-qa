@@ -3,6 +3,7 @@ package com.cine.sk.cinesk.domain.auth;
 import com.cine.sk.cinesk.domain.auth.dto.AuthRequestDTO;
 import com.cine.sk.cinesk.domain.auth.dto.AuthResponseDTO;
 import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
+import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
 import com.cine.sk.cinesk.domain.user.UserStatus;

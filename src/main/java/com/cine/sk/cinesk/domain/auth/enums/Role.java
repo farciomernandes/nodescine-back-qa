@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.auth;
+package com.cine.sk.cinesk.domain.auth.enums;
 
 public enum Role {
     CUSTOMER,

@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.auth;
+package com.cine.sk.cinesk.domain.auth.usertoken;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
