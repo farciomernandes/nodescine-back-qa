@@ -6,7 +6,7 @@ import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
 import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
-import com.cine.sk.cinesk.domain.user.UserStatus;
+import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import com.cine.sk.cinesk.domain.user.dto.CustomerRegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.RegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;

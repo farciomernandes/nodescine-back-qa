@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.infrastructure.security;
 
 import com.cine.sk.cinesk.domain.auth.enums.Role;
-import com.cine.sk.cinesk.domain.user.CustomUserDetailsService;
+import com.cine.sk.cinesk.domain.user.service.CustomUserDetailsService;
 import com.cine.sk.cinesk.infrastructure.cors.CorsProperties;
 import com.cine.sk.cinesk.infrastructure.jwt.JwtAuthenticationFilter;
 import com.cine.sk.cinesk.util.JwtUtil;

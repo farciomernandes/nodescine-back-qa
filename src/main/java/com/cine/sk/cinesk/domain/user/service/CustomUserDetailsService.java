@@ -1,5 +1,7 @@
-package com.cine.sk.cinesk.domain.user;
+package com.cine.sk.cinesk.domain.user.service;
 
+import com.cine.sk.cinesk.domain.user.User;
+import com.cine.sk.cinesk.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

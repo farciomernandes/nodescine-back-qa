@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.domain.user.dto;
 
 import com.cine.sk.cinesk.domain.auth.enums.Role;
-import com.cine.sk.cinesk.domain.user.UserStatus;
+import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,6 +1,6 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.user.UserService;
+import com.cine.sk.cinesk.domain.user.service.UserService;
 import com.cine.sk.cinesk.domain.user.dto.UpdateUserDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
