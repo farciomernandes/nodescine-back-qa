@@ -16,9 +16,6 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
     @Query("SELECT g FROM Genre g WHERE g.deletedAt IS NULL")
     List<Genre> findAllActive();
 
-    @Query("SELECT g FROM Genre g WHERE g.id = :id AND g.deletedAt IS NULL")
-    Optional<Genre> findActiveById(Long id);
-
     Optional<Genre> findByName(String name);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)

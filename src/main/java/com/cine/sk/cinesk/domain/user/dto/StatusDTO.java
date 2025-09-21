@@ -31,7 +31,5 @@ public class StatusDTO {
     @JsonProperty("last_activity")
     private String lastActivity;
 
-    @JsonProperty("monthly_usage")
-    private MonthlyUsageDTO monthlyUsage;
 }
 

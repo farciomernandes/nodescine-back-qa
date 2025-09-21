@@ -9,14 +9,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,26 +23,6 @@ import java.util.UUID;
 public class GenreController {
 
     private final GenreService genreService;
-
-    @Operation(
-        summary = "Create a new genre",
-        description = "Adds a new genre to the system"
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "201",
-            description = "Genre created successfully",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(implementation = GenreDTO.class))
-        ),
-        @ApiResponse(responseCode = "400", description = "Invalid input data")
-    })
-    @PostMapping
-    public ResponseEntity<GenreDTO> createGenre(
-            @Parameter(description = "Genre details", required = true)
-            @Valid @RequestBody GenreDTO dto) {
-        return genreService.create(dto);
-    }
 
     @Operation(
         summary = "Delete a genre",
