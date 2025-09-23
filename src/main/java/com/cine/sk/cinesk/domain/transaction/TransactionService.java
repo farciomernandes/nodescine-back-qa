@@ -46,6 +46,8 @@ public class TransactionService {
 
     public Transaction create(String filmId, String amount) {
         User user = currentUser();
+
+        // O que significa o builder?
         Transaction tx = Transaction.builder()
                 .user(user)
                 .film(filmId)

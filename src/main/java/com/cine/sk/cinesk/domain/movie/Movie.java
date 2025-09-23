@@ -63,4 +63,10 @@ public class Movie extends AbstractEntity {
         inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private Set<Genre> genres = new HashSet<>();
+
+    /**
+     * Relação com filmes adquiridos pelos usuários
+     */
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    private List<com.cine.sk.cinesk.domain.user.UserMovie> userMovies = new ArrayList<>();
 }

@@ -58,6 +58,12 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
 
+    /**
+     * Filmes adquiridos pelo usuário
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserMovie> userMovies = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
