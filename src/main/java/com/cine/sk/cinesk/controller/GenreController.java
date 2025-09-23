@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
-import com.cine.sk.cinesk.domain.movie.genre.GenreService;
+import com.cine.sk.cinesk.domain.film.genre.GenreDTO;
+import com.cine.sk.cinesk.domain.film.genre.GenreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
