@@ -2,6 +2,7 @@ package com.cine.sk.cinesk.domain.user;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
 import com.cine.sk.cinesk.domain.auth.enums.Role;
+import com.cine.sk.cinesk.domain.transaction.Transaction;
 import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -14,7 +15,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,6 +54,9 @@ public class User extends AbstractEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Set<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Transaction> transactions = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

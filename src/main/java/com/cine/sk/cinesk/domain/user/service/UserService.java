@@ -102,6 +102,10 @@ public class UserService {
         return false;
     }
 
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
     private UserDTO mapToDto(User user) {
         return UserDTO.builder()
                 .id(user.getId())
