@@ -60,3 +60,65 @@ application:
     jwt:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       expiration: 86400000
+
+# Configurações de Pagamento
+payment:
+  # Configurações de Split
+  split:
+    system:
+      percentage: 10
+    movie-owner:
+      percentage: 90
+  
+  # Sistema
+  system:
+    account-id: ${PAYMENT_SYSTEM_ACCOUNT_ID:system-account-default}
+    user-id: ${PAYMENT_SYSTEM_USER_ID:1}
+  
+  # Asaas
+  asaas:
+    api:
+      url: ${ASAAS_API_URL:https://sandbox.asaas.com/api/v3}
+      key: ${ASAAS_API_KEY:your-asaas-api-key}
+    webhook:
+      secret: ${ASAAS_WEBHOOK_SECRET:your-asaas-webhook-secret}
+  
+  # Stripe
+  stripe:
+    api:
+      key: ${STRIPE_API_KEY:your-stripe-api-key}
+    webhook:
+      secret: ${STRIPE_WEBHOOK_SECRET:your-stripe-webhook-secret}
+  
+  # PagSeguro
+  pagseguro:
+    api:
+      url: ${PAGSEGURO_API_URL:https://sandbox.api.pagseguro.com}
+      key: ${PAGSEGURO_API_KEY:your-pagseguro-api-key}
+    webhook:
+      secret: ${PAGSEGURO_WEBHOOK_SECRET:your-pagseguro-webhook-secret}
+  
+  # Configurações de Retry e Expiração
+  retry:
+    max-attempts: ${PAYMENT_MAX_RETRIES:3}
+    delay-hours: ${PAYMENT_RETRY_DELAY_HOURS:24}
+  
+  webhook:
+    max-retries: ${WEBHOOK_MAX_RETRIES:5}
+  
+  expiration:
+    pending-hours: ${PAYMENT_PENDING_EXPIRY_HOURS:72}
+    pix-hours: ${PAYMENT_PIX_EXPIRY_HOURS:24}
+    boleto-days: ${PAYMENT_BOLETO_EXPIRY_DAYS:3}
+  
+  # URLs de Callback
+  callback:
+    success-url: ${PAYMENT_SUCCESS_URL:${APP_URL:http://localhost:8088}/payment/success}
+    failure-url: ${PAYMENT_FAILURE_URL:${APP_URL:http://localhost:8088}/payment/failure}
+    webhook-base-url: ${PAYMENT_WEBHOOK_BASE_URL:${APP_URL:http://localhost:8088}/api/payments/webhook}
+  
+  # Scheduler
+  scheduler:
+    enabled: ${PAYMENT_SCHEDULER_ENABLED:true}
+
+
