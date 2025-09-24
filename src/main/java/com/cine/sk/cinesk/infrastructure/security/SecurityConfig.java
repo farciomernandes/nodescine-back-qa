@@ -68,11 +68,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/register/customer",
                                 "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
-                        .requestMatchers("/auth/register/moderator").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
-                        .requestMatchers(HttpMethod.POST, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
-                        .requestMatchers(HttpMethod.PUT, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
+                        .requestMatchers("/auth/register/moderator").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
+                        .requestMatchers(HttpMethod.POST, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
+                        .requestMatchers(HttpMethod.PUT, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.GET, "/enhanced-films", "/enhanced-films/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/genres", "/genres/**").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
+                        .requestMatchers(HttpMethod.DELETE, "/genres", "/genres/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.GET, "/genres", "/genres/**").permitAll()
                         .anyRequest().authenticated()
                 )

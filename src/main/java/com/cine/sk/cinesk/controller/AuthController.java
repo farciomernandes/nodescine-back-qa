@@ -4,16 +4,12 @@ import com.cine.sk.cinesk.domain.auth.dto.AuthRequestDTO;
 import com.cine.sk.cinesk.domain.auth.dto.AuthResponseDTO;
 import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
 import com.cine.sk.cinesk.domain.auth.AuthService;
-import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.dto.CustomerRegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.RegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

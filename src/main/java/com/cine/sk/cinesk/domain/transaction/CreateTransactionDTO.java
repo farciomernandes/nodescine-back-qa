@@ -10,6 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateTransactionDTO {
-    private String filmId;
-    private String amount;
+    private Long movieId;
 }

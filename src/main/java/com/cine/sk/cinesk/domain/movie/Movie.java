@@ -3,6 +3,7 @@ package com.cine.sk.cinesk.domain.movie;
 import com.cine.sk.cinesk.domain.AbstractEntity;
 import com.cine.sk.cinesk.domain.movie.category.Category;
 import com.cine.sk.cinesk.domain.movie.genre.Genre;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Table(name = "movie")
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Movie extends AbstractEntity {
 
     private String title;
@@ -24,33 +26,26 @@ public class Movie extends AbstractEntity {
 
     private String director;
 
-    private Integer releaseYear;
+    private Integer year;
 
-    private String price;
+    private Long price;
 
     private Integer durationInMinutes;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String posterUrl;
+    @Column(columnDefinition = "TEXT")
+    private String poster;
     
-    private String trailerUrl;
+    private String trailer;
     
-    private String videoUrl;
+    private String movieUrl;
 
-    private boolean premium;
-
-    private boolean featured;
-    
     @ElementCollection
-    @CollectionTable(name = "film_cast", joinColumns = @JoinColumn(name = "film_id"))
+    @CollectionTable(name = "movie_cast", joinColumns = @JoinColumn(name = "movie_id"))
     @Column(name = "actor_name")
     private List<String> cast = new ArrayList<>();
-    
-    private Double rating;
-    
-    private Integer viewCount;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -58,15 +53,9 @@ public class Movie extends AbstractEntity {
 
     @ManyToMany
     @JoinTable(
-        name = "film_genres",
-        joinColumns = @JoinColumn(name = "film_id"),
+        name = "movie_genres",
+        joinColumns = @JoinColumn(name = "movie_id"),
         inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private Set<Genre> genres = new HashSet<>();
-
-    /**
-     * Relação com filmes adquiridos pelos usuários
-     */
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private List<com.cine.sk.cinesk.domain.user.UserMovie> userMovies = new ArrayList<>();
 }
