@@ -5,8 +5,10 @@ import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,6 +40,15 @@ public class EnhancedFilmController {
     public ResponseEntity<EnhancedFilmDTO> update(@PathVariable Long id, @Valid @RequestBody EnhancedFilmDTO dto) {
         return ResponseEntity.ok(enhancedFilmService.update(id, dto));
     }
+
+    @PostMapping(value = "/poster", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> insertPoster(
+            @RequestParam("id") Long id,
+            @RequestParam("file") MultipartFile file) {
+       enhancedFilmService.insertPoster(id, file);
+       return ResponseEntity.ok("Poster inserted successfully");
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

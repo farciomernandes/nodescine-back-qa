@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,18 +39,17 @@ public class MovieService {
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());
         dto.setDirector(entity.getDirector());
-        dto.setYear(entity.getReleaseYear());
+        dto.setYear(entity.getYear());
         dto.setCategory(entity.getCategory() != null ? entity.getCategory().getName() : null);
         dto.setGenres(entity.getGenres().stream()
                 .map(genre -> new GenreDTO(genre.getId(), genre.getName()))
                 .collect(Collectors.toList()));
         dto.setDuration(minutesToDuration(entity.getDurationInMinutes()));
-        dto.setPosterUrl(entity.getPosterUrl());
-        dto.setFilmUrl(entity.getVideoUrl());
-        dto.setTrailerUrl(entity.getTrailerUrl());
-        dto.setRentalPrice(entity.getPrice());
+        dto.setMovieUrl(entity.getMovieUrl());
+        dto.setTrailerUrl(entity.getTrailer());
+        dto.setPrice(entity.getPrice());
         dto.setSynopsis(entity.getDescription());
-        dto.setIsPremium(entity.isPremium());
+        dto.setPoster(entity.getPoster());
         return dto;
     }
 
@@ -58,13 +58,11 @@ public class MovieService {
         entity.setTitle(dto.getTitle());
         entity.setSlug(titleToSlug(dto.getTitle()));
         entity.setDirector(dto.getDirector());
-        entity.setReleaseYear(dto.getYear());
-        entity.setPrice(dto.getRentalPrice());
+        entity.setYear(dto.getYear());
+        entity.setPrice(dto.getPrice());
         entity.setDescription(dto.getSynopsis());
-        entity.setPosterUrl(dto.getPosterUrl());
-        entity.setVideoUrl(dto.getFilmUrl());
-        entity.setTrailerUrl(dto.getTrailerUrl());
-        entity.setPremium(dto.getIsPremium() != null ? dto.getIsPremium() : false);
+        entity.setMovieUrl(dto.getMovieUrl());
+        entity.setTrailer(dto.getTrailerUrl());
         entity.setDurationInMinutes(durationToMinutes(dto.getDuration()));
         return entity;
     }
@@ -134,7 +132,7 @@ public class MovieService {
             movie.setSlug(titleToSlug(dto.getTitle()));
         }
         if (dto.getDirector() != null) movie.setDirector(dto.getDirector());
-        if (dto.getYear() != null) movie.setReleaseYear(dto.getYear());
+        if (dto.getYear() != null) movie.setYear(dto.getYear());
         if (dto.getCategory() != null) {
             Category category = categoryRepository.findByName(dto.getCategory()).orElse(null);
             if (category == null) {
@@ -166,4 +164,11 @@ public class MovieService {
         movieRepository.delete(movie);
     }
 
+
+    public void insertPoster(byte[] poster, Long id) {
+        Movie movie = movieRepository.findById(id).orElse(null);
+        if (movie == null) return;
+        movie.setPoster(Base64.getEncoder().encodeToString(poster));
+        movieRepository.save(movie);
+    }
 }

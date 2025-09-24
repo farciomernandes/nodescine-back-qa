@@ -1,7 +1,8 @@
 package com.cine.sk.cinesk.domain.transaction;
 
+import com.cine.sk.cinesk.domain.movie.Movie;
+import com.cine.sk.cinesk.domain.movie.MovieRepository;
 import com.cine.sk.cinesk.domain.user.User;
-import com.cine.sk.cinesk.domain.user.UserRepository;
 import com.cine.sk.cinesk.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.List;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final MovieRepository movieRepository;
     private final UserService userService;
 
     private User currentUser() {
@@ -31,11 +33,6 @@ public class TransactionService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autorizado ou não encontrado"));
     }
 
-    public List<Transaction> listForCurrentUser() {
-        User user = currentUser();
-        return transactionRepository.findByUser(user);
-    }
-
     public Transaction getById(Long id) {
         User user = currentUser();
         Transaction tx = transactionRepository.findById(id)
@@ -44,17 +41,23 @@ public class TransactionService {
         return tx;
     }
 
-    public Transaction create(String filmId, String amount) {
+    public Transaction create(Long movieId) {
         User user = currentUser();
 
-        // O que significa o builder?
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Filme não encontrado"));
+
         Transaction tx = Transaction.builder()
                 .user(user)
-                .film(filmId)
-                .amount(amount)
+                .movie(movie)
+                .amount(movie.getPrice())
                 .date(OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                 .status(TransactionStatus.ACTIVE)
                 .build();
         return transactionRepository.save(tx);
+    }
+
+    public List<Transaction> findTransactionByUser(User user) {
+        return transactionRepository.findByUser(user);
     }
 }

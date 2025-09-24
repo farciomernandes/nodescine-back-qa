@@ -2,7 +2,9 @@ package com.cine.sk.cinesk.domain.user;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
 import com.cine.sk.cinesk.domain.auth.enums.Role;
+import com.cine.sk.cinesk.domain.movie.Movie;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
+import com.cine.sk.cinesk.domain.transaction.TransactionStatus;
 import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -55,14 +57,18 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "role")
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
 
-    /**
-     * Filmes adquiridos pelo usuário
-     */
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserMovie> userMovies = new ArrayList<>();
+    // Filmes adquiridos pelo usuário (derivado das transações ativas)
+    @Transient
+    public List<Movie> getAcquiredMovies() {
+        return transactions.stream()
+                .filter(t -> t.getStatus() == TransactionStatus.ACTIVE && t.getMovie() != null)
+                .map(Transaction::getMovie)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

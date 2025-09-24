@@ -95,7 +95,7 @@ public class UserService {
         if (targetUser.getEmail().equalsIgnoreCase(currentEmail)) return true;
         for (GrantedAuthority authority : auth.getAuthorities()) {
             String authName = authority.getAuthority();
-            if (Role.ADMIN.name().equals(authName) || Role.MODERATOR.name().equals(authName)) {
+            if (Role.MOVIE_DIRECTOR.name().equals(authName) || Role.MODERATOR.name().equals(authName)) {
                 return true;
             }
         }
@@ -114,7 +114,7 @@ public class UserService {
                 .status(user.getStatus())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt() : null)
-                .subscription(null)
+                .transactions(null)
                 .build();
     }
 }
