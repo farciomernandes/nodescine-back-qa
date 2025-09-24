@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste de CORS</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif; margin: 2rem; }
+    fieldset { border: 1px solid #888; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    legend { padding: 0 .5rem; }
+    label { display: block; margin: .25rem 0; }
+    input, select, textarea { width: 100%; box-sizing: border-box; margin: .25rem 0 .75rem; padding: .5rem; }
+    textarea { min-height: 120px; font-family: ui-monospace, Consolas, Menlo, monospace; }
+    .row { display: flex; gap: .5rem; align-items: center; }
+    .row > * { flex: 1; }
+    button { padding: .6rem 1rem; cursor: pointer; }
+    .ok { color: #0a7a0a; }
+    .err { color: #b00020; }
+    pre { white-space: pre-wrap; word-break: break-word; background: rgba(127,127,127,.1); padding: .75rem; border-radius: 8px; }
+    .small { font-size: .9rem; opacity: .8; }
+  </style>
+</head>
+<body>
+  <h1>Teste rápido de CORS</h1>
+  <p class="small">Abra este arquivo via: http://localhost:8080/cors-test.html (servido pelo Spring Boot em resources/static)</p>
+
+  <fieldset>
+    <legend>Requisição</legend>
+    <label>URL do endpoint
+      <input id="url" placeholder="http://localhost:8080/transactions/1">
+    </label>
+    <div class="row">
+      <label>Método
+        <select id="method">
+          <option>GET</option>
+          <option>POST</option>
+          <option>PUT</option>
+          <option>PATCH</option>
+          <option>DELETE</option>
+          <option>OPTIONS</option>
+        </select>
+      </label>
+      <label>Enviar credenciais (cookies)
+        <select id="credentials">
+          <option value="omit">omit</option>
+          <option value="same-origin">same-origin</option>
+          <option value="include">include</option>
+        </select>
+      </label>
+      <label>Content-Type
+        <select id="contentType">
+          <option value="">(nenhum)</option>
+          <option>application/json</option>
+          <option>application/x-www-form-urlencoded</option>
+          <option>text/plain</option>
+        </select>
+      </label>
+    </div>
+    <label>Headers adicionais (JSON: {"Authorization":"Bearer ..."})
+      <textarea id="headers" placeholder='{"Authorization":"Bearer XYZ"}'></textarea>
+    </label>
+    <label>Body (JSON ou texto)
+      <textarea id="body" placeholder='{"movieId": 1}'></textarea>
+    </label>
+    <button id="send">Enviar</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Resposta</legend>
+    <div id="status"></div>
+    <h3>Headers</h3>
+    <pre id="respHeaders"></pre>
+    <h3>Body</h3>
+    <pre id="respBody"></pre>
+  </fieldset>
+
+  <fieldset>
+    <legend>Dicas</legend>
+    <ul>
+      <li class="small">Se aparecer erro de CORS no console do navegador, normalmente o backend não está enviando os headers certos (Access-Control-Allow-*) para a origem desta página.</li>
+      <li class="small">Para requisições com credenciais, o backend precisa setar Access-Control-Allow-Credentials: true e a origem não pode ser "*".</li>
+      <li class="small">Alguns headers/métodos exigem uma preflight (OPTIONS). Se a preflight falhar, a requisição principal nem é enviada.</li>
+    </ul>
+  </fieldset>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const defaultUrl = location.origin + '/transactions/1';
+    $('url').value = defaultUrl;
+
+    function parseJSONSafe(txt) {
+      if (!txt) return undefined;
+      try { return JSON.parse(txt); } catch { return undefined; }
+    }
+
+    function showHeaders(h) {
+      const obj = {};
+      h.forEach((v, k) => obj[k] = v);
+      return JSON.stringify(obj, null, 2);
+    }
+
+    $('send').addEventListener('click', async () => {
+      const url = $('url').value.trim();
+      const method = $('method').value;
+      const credentials = $('credentials').value;
+      const contentType = $('contentType').value;
+      const extraHeaders = parseJSONSafe($('headers').value) || {};
+      const bodyRaw = $('body').value;
+
+      const headers = new Headers();
+      if (contentType) headers.set('Content-Type', contentType);
+      for (const [k, v] of Object.entries(extraHeaders)) headers.set(k, v);
+
+      const init = { method, headers, credentials };
+      if (!['GET','HEAD','OPTIONS'].includes(method) && bodyRaw) {
+        init.body = bodyRaw;
+      }
+
+      $('status').textContent = 'Enviando...';
+      $('status').className = '';
+      $('respHeaders').textContent = '';
+      $('respBody').textContent = '';
+
+      try {
+        const resp = await fetch(url, init);
+        const ct = resp.headers.get('content-type') || '';
+        let text;
+        if (ct.includes('application/json')) {
+          try { text = JSON.stringify(await resp.json(), null, 2); }
+          catch { text = await resp.text(); }
+        } else {
+          text = await resp.text();
+        }
+        $('status').textContent = `Status: ${resp.status} ${resp.statusText}`;
+        $('status').className = resp.ok ? 'ok' : 'err';
+        $('respHeaders').textContent = showHeaders(resp.headers);
+        $('respBody').textContent = text;
+      } catch (e) {
+        $('status').textContent = 'Falha na requisição. Possível erro de CORS (veja o console do navegador).';
+        $('status').className = 'err';
+        $('respHeaders').textContent = '';
+        $('respBody').textContent = String(e);
+        console.error('Erro fetch:', e);
+      }
+    });
+  </script>
+</body>
+</html>
