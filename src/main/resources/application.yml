@@ -15,7 +15,7 @@ spring:
       enabled: false
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -28,12 +28,12 @@ spring:
   application:
     name: cineSk
   datasource:
-    url: ${DATABASE_HOST:jdbc:postgresql://localhost:5432/cine}
-    username: ${DATABASE_USER:postgres}
-    password: ${DATABASE_PASS:123}
+    url: ${DATABASE_HOST:jdbc:postgresql://dpg-d3a34tqli9vc739b2540-a.ohio-postgres.render.com:5432/cinesdk?sslmode=require}
+    username: ${DATABASE_USER:cinesdk_user}
+    password: ${DATABASE_PASS:CqC4dUgdOOGmy6msditxQFbtSLsFB70H}
     driver-class-name: org.postgresql.Driver
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
     default-schema: public
     baseline-on-migrate: true
