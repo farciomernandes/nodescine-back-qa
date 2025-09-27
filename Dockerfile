@@ -1,19 +1,30 @@
+FROM openjdk:24-jdk-slim AS build
+
+WORKDIR /app
+
+# Instalar Maven
+RUN apt-get update && apt-get install -y maven
+
+# Copiar apenas o pom.xml primeiro (para cache de dependências)
+COPY pom.xml ./
+
+# Baixar dependências sem código-fonte (isso é cacheado pelo Docker)
+RUN mvn dependency:go-offline -B
+
+# Agora copiar o código fonte
+COPY src ./src
+
+# Compilar a aplicação
+RUN mvn clean package -DskipTests
+
+# --- Fase final, só com o JAR ---
 FROM openjdk:24-jdk-slim
 
 WORKDIR /app
 
-# Copiar arquivos de configuração do Maven
-COPY pom.xml ./
+# Copiar o JAR da fase de build
+COPY --from=build /app/target/*.jar app.jar
 
-# Copiar código fonte
-COPY src ./src
-
-# Instalar Maven e construir aplicação
-RUN apt-get update && apt-get install -y maven
-RUN mvn clean package -DskipTests
-
-# Expor porta
 EXPOSE 8080
 
-# Executar aplicação
-CMD ["java", "-jar", "target/*.jar"]
+CMD ["java", "-jar", "app.jar"]
