@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class MovieService {
 
@@ -50,6 +49,7 @@ public class MovieService {
         dto.setPrice(entity.getPrice());
         dto.setSynopsis(entity.getDescription());
         dto.setPoster(entity.getPoster());
+        dto.setCast(entity.getCast());
         return dto;
     }
 
@@ -108,6 +108,10 @@ public class MovieService {
             categoryRepository.save(category);
         }
         movie.setCategory(category);
+
+        if(dto.getCast() != null) {
+            movie.setCast(dto.getCast());
+        }
 
         movie.setGenres(dto.getGenres().stream()
                 .map(genreDTO -> {
