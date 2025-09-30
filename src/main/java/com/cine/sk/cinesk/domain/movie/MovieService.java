@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.domain.movie;
 
+import com.cine.sk.cinesk.domain.file.File;
 import com.cine.sk.cinesk.domain.movie.category.Category;
 import com.cine.sk.cinesk.domain.movie.category.CategoryRepository;
 import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
@@ -169,10 +170,10 @@ public class MovieService {
     }
 
 
-    public void insertPoster(byte[] poster, Long id) {
+    public void insertPoster(File file, Long id) {
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie == null) return;
-        movie.setPoster(Base64.getEncoder().encodeToString(poster));
+        movie.setPoster(file.getUri());
         movieRepository.save(movie);
     }
 }

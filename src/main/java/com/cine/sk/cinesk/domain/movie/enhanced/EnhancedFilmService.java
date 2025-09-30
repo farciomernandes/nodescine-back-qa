@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.domain.movie.enhanced;
 
+import com.cine.sk.cinesk.domain.file.aws.AwsService;
 import com.cine.sk.cinesk.domain.movie.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -7,13 +8,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class EnhancedFilmService {
 
     private final MovieService movieService;
+    private final AwsService awsService;
 
     public List<EnhancedFilmDTO> findAll() {
         return movieService.findAll();
@@ -33,14 +34,8 @@ public class EnhancedFilmService {
     }
 
     public void insertPoster(Long id, MultipartFile file) {
-        byte[] poster;
-        try {
-            poster = file.getBytes();
-            movieService.insertPoster(poster, id);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        var uploaded = awsService.upload(file, "poster", id.toString(), file.getName());
+        movieService.insertPoster(uploaded, id);
     }
 
     public void delete(Long id) {
