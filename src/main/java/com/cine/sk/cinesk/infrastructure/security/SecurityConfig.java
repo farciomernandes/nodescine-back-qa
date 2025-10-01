@@ -35,6 +35,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final CustomAuthenticationEntryPoint customAuthEntryPoint;
 
     @Bean
     public CorsFilter corsFilter(CorsProperties corsProperties) {
@@ -76,6 +77,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/genres", "/genres/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(customAuthEntryPoint)  // Para 401
+                )
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
