@@ -44,6 +44,22 @@ public class TransactionService {
         return tx;
     }
 
+    public Transaction createMock(CreateTransactionDTO transaction) {
+        User user = currentUser();
+
+        Movie movie = movieRepository.findById(transaction.getMovieId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Filme não encontrado"));
+
+        Transaction tx = Transaction.builder()
+                .user(user)
+                .movie(movie)
+                .amount(movie.getPrice())
+                .date(OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                .status(OrderStatusEnum.PENDING)
+                .build();
+        return transactionRepository.save(tx);
+    }
+
     public Transaction create(CreateTransactionDTO transaction) {
         User user = currentUser();
 

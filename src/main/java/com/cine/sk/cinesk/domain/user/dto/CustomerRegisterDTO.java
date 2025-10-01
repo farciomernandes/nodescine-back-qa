@@ -25,4 +25,25 @@ public class CustomerRegisterDTO {
     private String name;
 
     private String avatar;
+
+    @NotBlank
+    private String cpf;
+
+    @NotBlank
+    private String phone;
+
+    @NotBlank
+    private String postalCode;
+
+    @NotBlank
+    private String address;
+
+    @NotBlank
+    private String addressNumber;
+
+    @NotBlank
+    private String complement;
+
+    @NotBlank
+    private String province;
 }

@@ -298,6 +298,17 @@
             "body": { "mode": "raw", "raw": "{\n  \"movieId\": {{movieId}}\n}" }
           },
           "response": []
+        },
+        {
+          "name": "Create Transaction (Mock)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/transactions/mock", "host": ["{{baseUrl}}"], "path": ["transactions", "mock"] },
+            "body": { "mode": "raw", "raw": "{\n  \"movieId\": {{movieId}}\n}" }
+          },
+          "response": []
         }
       ]
     }

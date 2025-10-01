@@ -53,8 +53,15 @@ public class AuthService {
                 existing.setName(request.getName());
                 existing.setPassword(passwordEncoder.encode(request.getPassword()));
                 existing.setRoles(request.getRoles());
-                existing.setAvatar(request.getAvatar());
                 existing.setStatus(UserStatus.ACTIVE);
+                existing.setAvatar(request.getAvatar());
+                existing.setCpf(request.getCpf());
+                existing.setAddress(request.getAddress());
+                existing.setAddressNumber(request.getAddressNumber());
+                existing.setComplement(request.getComplement());
+                existing.setPostalCode(request.getPostalCode());
+                existing.setPhone(request.getPhone());
+                existing.setProvince(request.getProvince());
                 user = existing;
             } else {
                 throw new IllegalArgumentException("Email already in use");
@@ -65,21 +72,22 @@ public class AuthService {
             user.setEmail(request.getEmail());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRoles(request.getRoles());
-            user.setAvatar(request.getAvatar());
             user.setStatus(UserStatus.ACTIVE);
+            user.setAvatar(request.getAvatar());
+            user.setCpf(request.getCpf());
+            user.setAddress(request.getAddress());
+            user.setAddressNumber(request.getAddressNumber());
+            user.setComplement(request.getComplement());
+            user.setPostalCode(request.getPostalCode());
+            user.setPhone(request.getPhone());
+            user.setProvince(request.getProvince());
         }
 
+
         User savedUser = userRepository.save(user);
-        String jwtToken = jwtService.generateToken(savedUser);
-
-        AuthResponseDTO authResponseDTO = AuthResponseDTO.builder()
-                .token(jwtToken)
-                .name(savedUser.getName())
-                .roles(user.getRoles())
-                .email(savedUser.getEmail())
-                .build();
-
-        return ResponseEntity.ok(authResponseDTO);
+        var userSession = AuthRequestDTO.builder()
+                .email(savedUser.getEmail()).password(savedUser.getPassword()).build();
+        return login(userSession);
     }
 
 
@@ -93,6 +101,14 @@ public class AuthService {
                 existing.setPassword(passwordEncoder.encode(request.getPassword()));
                 existing.setRoles(Set.of(Role.CUSTOMER));
                 existing.setStatus(UserStatus.ACTIVE);
+                existing.setAvatar(request.getAvatar());
+                existing.setCpf(request.getCpf());
+                existing.setAddress(request.getAddress());
+                existing.setAddressNumber(request.getAddressNumber());
+                existing.setComplement(request.getComplement());
+                existing.setPostalCode(request.getPostalCode());
+                existing.setPhone(request.getPhone());
+                existing.setProvince(request.getProvince());
                 user = existing;
             } else {
                 throw new IllegalArgumentException("Email already in use");
@@ -104,19 +120,20 @@ public class AuthService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRoles(Set.of(Role.CUSTOMER));
             user.setStatus(UserStatus.ACTIVE);
+            user.setAvatar(request.getAvatar());
+            user.setCpf(request.getCpf());
+            user.setAddress(request.getAddress());
+            user.setAddressNumber(request.getAddressNumber());
+            user.setComplement(request.getComplement());
+            user.setPostalCode(request.getPostalCode());
+            user.setPhone(request.getPhone());
+            user.setProvince(request.getProvince());
         }
 
         User savedUser = userRepository.save(user);
-        String jwtToken = jwtService.generateToken(savedUser);
-
-        AuthResponseDTO authResponseDTO = AuthResponseDTO.builder()
-                .token(jwtToken)
-                .name(savedUser.getName())
-                .roles(user.getRoles())
-                .email(savedUser.getEmail())
-                .build();
-
-        return ResponseEntity.ok(authResponseDTO);
+        var userSession = AuthRequestDTO.builder()
+                .email(savedUser.getEmail()).password(savedUser.getPassword()).build();
+        return login(userSession);
     }
 
     public ResponseEntity<AuthResponseDTO> login(@Valid AuthRequestDTO authRequestDTO) {

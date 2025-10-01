@@ -28,4 +28,10 @@ public class TransactionController {
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
+    @PostMapping("/mock")
+    public ResponseEntity<Transaction> createMock(@RequestBody CreateTransactionDTO createTransaction) {
+        Transaction created = transactionService.createMock(createTransaction);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
 }

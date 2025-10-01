@@ -31,4 +31,27 @@ public class RegisterDTO {
     @NotBlank
     @Schema(description = "Set of roles assigned to the user", requiredMode = Schema.RequiredMode.REQUIRED)
     private Set<Role> roles;
+
+
+    @NotBlank
+    private String cpf;
+
+    @NotBlank
+    private String phone;
+
+    @NotBlank
+    private String postalCode;
+
+    @NotBlank
+    private String address;
+
+    @NotBlank
+    private String addressNumber;
+
+    @NotBlank
+    private String complement;
+
+    @NotBlank
+    private String province;
+
 }
