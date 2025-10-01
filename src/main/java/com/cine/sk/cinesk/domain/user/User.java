@@ -47,6 +47,27 @@ public class User extends AbstractEntity implements UserDetails {
     @Column
     private String avatar;
 
+    @Column
+    private String cpf;
+
+    @Column
+    private String phone;
+
+    @Column
+    private String postalCode;
+
+    @Column
+    private String address;
+
+    @Column
+    private String addressNumber;
+
+    @Column
+    private String complement;
+
+    @Column
+    private String province;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
@@ -59,16 +80,6 @@ public class User extends AbstractEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user",fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
-
-    // Filmes adquiridos pelo usuário (derivado das transações ativas)
-    @Transient
-    public List<Movie> getAcquiredMovies() {
-        return transactions.stream()
-                .filter(t -> t.getStatus() == TransactionStatus.ACTIVE && t.getMovie() != null)
-                .map(Transaction::getMovie)
-                .distinct()
-                .collect(Collectors.toList());
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

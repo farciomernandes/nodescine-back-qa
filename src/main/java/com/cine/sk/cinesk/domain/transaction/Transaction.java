@@ -2,6 +2,7 @@ package com.cine.sk.cinesk.domain.transaction;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
 import com.cine.sk.cinesk.domain.movie.Movie;
+import com.cine.sk.cinesk.domain.transaction.payment.OrderStatusEnum;
 import com.cine.sk.cinesk.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +21,8 @@ public class Transaction extends AbstractEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    private String transactionId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
@@ -32,5 +35,5 @@ public class Transaction extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionStatus status;
+    private OrderStatusEnum status;
 }

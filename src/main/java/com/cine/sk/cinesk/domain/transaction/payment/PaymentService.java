@@ -47,7 +47,7 @@ public class PaymentService {
                 .billingType(payment.getMethod().name())
                 .value(order.getTotal())
                 .dueDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
-                .description("Casa das bicicletas - Pedido #" + order.getId())
+                .description("CineSK - Pedido #" + order.getId())
                 .externalReference(payment.getMethod().name() + " - " + order.getId());
 
         if (payment.getMethod() == PaymentMethodEnum.CREDIT_CARD) {
