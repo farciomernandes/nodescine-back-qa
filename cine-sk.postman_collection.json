@@ -61,7 +61,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"moderator@example.com\",\n  \"password\": \"P@ssw0rd\",\n  \"name\": \"Moderator User\",\n  \"avatar\": \"https://example.com/avatar.png\",\n  \"roles\": [\n    \"MODERATOR\"\n  ]\n}"
+              "raw": "{\n  \"email\": \"moderator@example.com\",\n  \"password\": \"P@ssw0rd\",\n  \"name\": \"Moderator User\",\n  \"avatar\": \"https://example.com/avatar.png\",\n  \"roles\": [\n    \"MODERATOR\"\n  ],\n  \"cpf\": \"12345678900\",\n  \"phone\": \"+55 11 99999-8888\",\n  \"postalCode\": \"01001-000\",\n  \"address\": \"Av. Paulista\",\n  \"addressNumber\": \"1000\",\n  \"complement\": \"Conj. 101\",\n  \"province\": \"SP\"\n}"
             }
           },
           "response": []
@@ -80,7 +80,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"P@ssw0rd\",\n  \"name\": \"Customer User\",\n  \"avatar\": \"https://example.com/avatar.png\"\n}"
+              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"P@ssw0rd\",\n  \"name\": \"Customer User\",\n  \"avatar\": \"https://example.com/avatar.png\",\n  \"cpf\": \"98765432100\",\n  \"phone\": \"+55 11 98888-7777\",\n  \"postalCode\": \"01002-000\",\n  \"address\": \"Rua Exemplo\",\n  \"addressNumber\": \"123\",\n  \"complement\": \"Apto 45\",\n  \"province\": \"SP\"\n}"
             }
           },
           "response": []
@@ -229,7 +229,7 @@
             "url": { "raw": "{{baseUrl}}/enhanced-films", "host": ["{{baseUrl}}"], "path": ["enhanced-films"] },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Inception\",\n  \"director\": \"Christopher Nolan\",\n  \"year\": 2010,\n  \"category\": \"Sci-Fi\",\n  \"price\": 1990,\n  \"genres\": [ { \"name\": \"Sci-Fi\" }, { \"name\": \"Thriller\" } ],\n  \"duration\": \"2h 28m\",\n  \"movieUrl\": \"https://example.com/movies/inception.mp4\",\n  \"trailerUrl\": \"https://example.com/trailers/inception.mp4\",\n  \"synopsis\": \"A mind-bending heist across dream layers.\",\n  \"cast\": [\"Leonardo DiCaprio\", \"Joseph Gordon-Levitt\"]\n}"
+              "raw": "{\n  \"title\": \"Inception\",\n  \"director\": \"Christopher Nolan\",\n  \"year\": 2010,\n  \"category\": \"Sci-Fi\",\n  \"price\": 1990,\n  \"genres\": [ { \"id\": 1, \"name\": \"Sci-Fi\" }, { \"id\": 2, \"name\": \"Thriller\" } ],\n  \"duration\": \"2h 28m\",\n  \"poster\": \"https://example.com/posters/inception.jpg\",\n  \"movieUrl\": \"https://example.com/movies/inception.mp4\",\n  \"trailerUrl\": \"https://example.com/trailers/inception.mp4\",\n  \"synopsis\": \"A mind-bending heist across dream layers.\",\n  \"cast\": [\"Leonardo DiCaprio\", \"Joseph Gordon-Levitt\"]\n}"
             }
           },
           "response": []

@@ -33,7 +33,6 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Email
     @NotBlank
-    @Column(unique = true, nullable = false)
     private String email;
 
     @NotBlank

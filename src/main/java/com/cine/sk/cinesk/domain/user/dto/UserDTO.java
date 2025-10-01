@@ -3,6 +3,8 @@ package com.cine.sk.cinesk.domain.user.dto;
 import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,6 +38,20 @@ public class UserDTO {
 
     @Schema(example = "2024-01-22T14:15:00Z")
     private LocalDateTime updatedAt;
+
+    private String cpf;
+
+    private String phone;
+
+    private String postalCode;
+
+    private String address;
+
+    private String addressNumber;
+
+    private String complement;
+
+    private String province;
 
     private List<TransactionDTO> transactions = new ArrayList<>();
 

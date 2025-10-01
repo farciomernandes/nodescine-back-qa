@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,20 +45,30 @@ public class TransactionService {
         return tx;
     }
 
-    public Transaction createMock(CreateTransactionDTO transaction) {
+    public TransactionResponse createMock(CreateTransactionDTO transaction) {
         User user = currentUser();
 
         Movie movie = movieRepository.findById(transaction.getMovieId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Filme não encontrado"));
 
-        Transaction tx = Transaction.builder()
+        Transaction transactionToSave = Transaction.builder()
                 .user(user)
                 .movie(movie)
                 .amount(movie.getPrice())
+                .transactionId(UUID.randomUUID().toString())
                 .date(OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                 .status(OrderStatusEnum.PENDING)
                 .build();
-        return transactionRepository.save(tx);
+        var tx = transactionRepository.save(transactionToSave);
+        return TransactionResponse.builder()
+                .id(tx.getId())
+                .transactionId(tx.getTransactionId())
+                .amount(tx.getAmount())
+                .status(tx.getStatus())
+                .date(tx.getDate())
+                .movieId(tx.getMovie().getId())
+                .build();
+
     }
 
     public Transaction create(CreateTransactionDTO transaction) {

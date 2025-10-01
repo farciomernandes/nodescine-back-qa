@@ -20,12 +20,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register/moderator")
-    public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody RegisterDTO registerRequest) {
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterDTO registerRequest) {
         return authService.register(registerRequest);
     }
 
     @PostMapping("/register/customer")
-    public ResponseEntity<AuthResponseDTO> registerCustomer(@Valid @RequestBody CustomerRegisterDTO registerRequest) {
+    public ResponseEntity<String> registerCustomer(@Valid @RequestBody CustomerRegisterDTO registerRequest) {
         return authService.registerCustomer(registerRequest);
     }
 

@@ -17,7 +17,6 @@ import com.cine.sk.cinesk.infrastructure.jwt.JwtService;
 import com.cine.sk.cinesk.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,7 +43,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    public ResponseEntity<AuthResponseDTO> register(RegisterDTO request) {
+    public ResponseEntity<String> register(RegisterDTO request) {
         var existingOpt = userRepository.findByEmail(request.getEmail());
         User user;
         if (existingOpt.isPresent()) {
@@ -84,14 +83,12 @@ public class AuthService {
         }
 
 
-        User savedUser = userRepository.save(user);
-        var userSession = AuthRequestDTO.builder()
-                .email(savedUser.getEmail()).password(savedUser.getPassword()).build();
-        return login(userSession);
+        userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }
 
 
-    public ResponseEntity<AuthResponseDTO> registerCustomer(CustomerRegisterDTO request) {
+    public ResponseEntity<String> registerCustomer(CustomerRegisterDTO request) {
         var existingOpt = userRepository.findByEmail(request.getEmail());
         User user;
         if (existingOpt.isPresent()) {
@@ -120,7 +117,6 @@ public class AuthService {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRoles(Set.of(Role.CUSTOMER));
             user.setStatus(UserStatus.ACTIVE);
-            user.setAvatar(request.getAvatar());
             user.setCpf(request.getCpf());
             user.setAddress(request.getAddress());
             user.setAddressNumber(request.getAddressNumber());
@@ -130,10 +126,8 @@ public class AuthService {
             user.setProvince(request.getProvince());
         }
 
-        User savedUser = userRepository.save(user);
-        var userSession = AuthRequestDTO.builder()
-                .email(savedUser.getEmail()).password(savedUser.getPassword()).build();
-        return login(userSession);
+        userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }
 
     public ResponseEntity<AuthResponseDTO> login(@Valid AuthRequestDTO authRequestDTO) {
@@ -207,6 +201,13 @@ public class AuthService {
                 .name(user.getName())
                 .email(user.getEmail())
                 .status(user.getStatus())
+                .cpf(user.getCpf())
+                .address(user.getAddress())
+                .addressNumber(user.getAddressNumber())
+                .complement(user.getComplement())
+                .postalCode(user.getPostalCode())
+                .phone(user.getPhone())
+                .province(user.getProvince())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .transactions(transactions)

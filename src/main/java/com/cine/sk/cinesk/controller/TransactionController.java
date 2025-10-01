@@ -2,6 +2,7 @@ package com.cine.sk.cinesk.controller;
 
 import com.cine.sk.cinesk.domain.transaction.CreateTransactionDTO;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
+import com.cine.sk.cinesk.domain.transaction.TransactionResponse;
 import com.cine.sk.cinesk.domain.transaction.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,9 +30,8 @@ public class TransactionController {
     }
 
     @PostMapping("/mock")
-    public ResponseEntity<Transaction> createMock(@RequestBody CreateTransactionDTO createTransaction) {
-        Transaction created = transactionService.createMock(createTransaction);
+    public ResponseEntity<TransactionResponse> createMock(@RequestBody CreateTransactionDTO createTransaction) {
+        TransactionResponse created = transactionService.createMock(createTransaction);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
-
 }
