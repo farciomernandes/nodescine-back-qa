@@ -33,7 +33,7 @@ public class JwtUtil {
 
     private final UserTokenService userTokenService;
 
-    @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String jwtSecret;
 
     private static final long EXPIRATION_TIME = 86400000; // 24 hours

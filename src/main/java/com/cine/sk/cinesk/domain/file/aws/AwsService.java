@@ -36,19 +36,19 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class AwsService extends FileManagerService {
 
-    @Value("${aws.s3.bucket}")
+    @Value("${AWS_S3_BUCKET}")
     private String bucketName;
 
-    @Value("${aws.s3.region}")
+    @Value("${AWS_S3_REGION}")
     private String region;
 
-    @Value("${aws.s3.accessKey:}")
+    @Value("${AWS_S3_ACCESS_KEY:}")
     private String accessKey;
 
-    @Value("${aws.s3.secretKey:}")
+    @Value("${AWS_S3_SECRET_KEY:}")
     private String secretKey;
 
-    @Value("${aws.s3.sessionToken:}")
+    @Value("${AWS_S3_SESSION_TOKEN:}")
     private String sessionToken;
 
     private S3Client s3Client;

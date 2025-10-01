@@ -3,22 +3,20 @@ package com.cine.sk.cinesk.infrastructure.cors;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "security.cors")
 @Getter
 @Setter
 public class CorsProperties {
 
-    @Value("${security.cors.origins}")
+    @Value("${CORS_ORIGINS:http://localhost:3000}")
     private String allowedOrigins;
 
-    @Value("${security.cors.headers}")
+    @Value("${CORS_HEADERS}")
     private String allowedHeaders;
 
-    @Value("${security.cors.methods}")
+    @Value("${CORS_METHODS}")
     private String allowedMethods;
 
 }

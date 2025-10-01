@@ -9,7 +9,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "asaas-api", url = "${asaas.api.url}")
+import com.cine.sk.cinesk.domain.transaction.payment.*;
+import feign.Headers;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@FeignClient(name = "asaas-api", url = "${ASAAS_API_URL}")
 @Headers("Content-Type: application/json")
 public interface AsaasApiClient {
 
