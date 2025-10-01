@@ -1,0 +1,316 @@
+{
+  "info": {
+    "_postman_id": "c1e86d4b-32dc-4d5a-9b5a-9f7a7d9a3c10",
+    "name": "cine-sk API Collection (Atual)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Coleção Postman atualizada para testar as APIs do projeto cine-sk. Inclui rotas de Autenticação, Usuários, Filmes (Enhanced), Gêneros e Transações. Use a variável {{baseUrl}} para apontar para seu ambiente e {{token}} para autenticação Bearer."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8088",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "movieId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "genreId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Rotas de autenticação e gestão de credenciais",
+      "item": [
+        {
+          "name": "Register Moderator",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/moderator",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "auth", "register", "moderator" ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"moderator@example.com\",\n  \"password\": \"P@ssw0rd\",\n  \"name\": \"Moderator User\",\n  \"avatar\": \"https://example.com/avatar.png\",\n  \"roles\": [\n    \"MODERATOR\"\n  ],\n  \"cpf\": \"12345678900\",\n  \"phone\": \"+55 11 99999-8888\",\n  \"postalCode\": \"01001-000\",\n  \"address\": \"Av. Paulista\",\n  \"addressNumber\": \"1000\",\n  \"complement\": \"Conj. 101\",\n  \"province\": \"SP\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/customer",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "auth", "register", "customer" ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"P@ssw0rd\",\n  \"name\": \"Customer User\",\n  \"avatar\": \"https://example.com/avatar.png\",\n  \"cpf\": \"98765432100\",\n  \"phone\": \"+55 11 98888-7777\",\n  \"postalCode\": \"01002-000\",\n  \"address\": \"Rua Exemplo\",\n  \"addressNumber\": \"123\",\n  \"complement\": \"Apto 45\",\n  \"province\": \"SP\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Salva o token JWT na variável de coleção",
+                  "const json = pm.response.json();",
+                  "if (json && json.token) {",
+                  "  pm.collectionVariables.set('token', json.token);",
+                  "  pm.test('Token salvo na variável de coleção', function () { pm.expect(pm.collectionVariables.get('token')).to.be.a('string'); });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "auth", "login" ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"P@ssw0rd\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/change-password", "host": ["{{baseUrl}}"], "path": ["auth","change-password"] },
+            "body": { "mode": "raw", "raw": "{\n  \"oldPassword\": \"P@ssw0rd\",\n  \"newPassword\": \"N3wP@ssw0rd\",\n  \"confirmNewPassword\": \"N3wP@ssw0rd\"\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth","me"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get User by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\",\n  \"avatar\": \"https://example.com/avatar2.png\",\n  \"roles\": [\n    \"CUSTOMER\"\n  ],\n  \"status\": \"ACTIVE\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Genres",
+      "item": [
+        {
+          "name": "Get All Genres",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/genres", "host": ["{{baseUrl}}"], "path": ["genres"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Genre by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/genres/{{genreId}}", "host": ["{{baseUrl}}"], "path": ["genres", "{{genreId}}"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Enhanced Films",
+      "item": [
+        {
+          "name": "Get All Films",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/enhanced-films", "host": ["{{baseUrl}}"], "path": ["enhanced-films"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Film by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/enhanced-films/{{movieId}}", "host": ["{{baseUrl}}"], "path": ["enhanced-films", "{{movieId}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Film",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/enhanced-films", "host": ["{{baseUrl}}"], "path": ["enhanced-films"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception\",\n  \"director\": \"Christopher Nolan\",\n  \"year\": 2010,\n  \"category\": \"Sci-Fi\",\n  \"price\": 1990,\n  \"genres\": [ { \"id\": 1, \"name\": \"Sci-Fi\" }, { \"id\": 2, \"name\": \"Thriller\" } ],\n  \"duration\": \"2h 28m\",\n  \"poster\": \"https://example.com/posters/inception.jpg\",\n  \"movieUrl\": \"https://example.com/movies/inception.mp4\",\n  \"trailerUrl\": \"https://example.com/trailers/inception.mp4\",\n  \"synopsis\": \"A mind-bending heist across dream layers.\",\n  \"cast\": [\"Leonardo DiCaprio\", \"Joseph Gordon-Levitt\"]\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Film",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/enhanced-films/{{movieId}}", "host": ["{{baseUrl}}"], "path": ["enhanced-films", "{{movieId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception (Director's Cut)\",\n  \"price\": 2490,\n  \"genres\": [ { \"name\": \"Sci-Fi\" } ]\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Insert Poster (multipart/form-data)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "multipart/form-data" } ],
+            "url": { "raw": "{{baseUrl}}/enhanced-films/poster", "host": ["{{baseUrl}}"], "path": ["enhanced-films", "poster"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "id", "value": "{{movieId}}", "type": "text" },
+                { "key": "file", "type": "file", "src": [ "<selecione-um-arquivo-no-postman>" ] }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Film",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/enhanced-films/{{movieId}}", "host": ["{{baseUrl}}"], "path": ["enhanced-films", "{{movieId}}"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Get Transaction by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/transactions/1", "host": ["{{baseUrl}}"], "path": ["transactions", "1"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Transaction",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/transactions", "host": ["{{baseUrl}}"], "path": ["transactions"] },
+            "body": { "mode": "raw", "raw": "{\n  \"movieId\": {{movieId}}\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Transaction (Mock)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/transactions/mock", "host": ["{{baseUrl}}"], "path": ["transactions", "mock"] },
+            "body": { "mode": "raw", "raw": "{\n  \"movieId\": {{movieId}}\n}" }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
