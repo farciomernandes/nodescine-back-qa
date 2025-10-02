@@ -211,6 +211,7 @@ public class AuthService {
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .transactions(transactions)
+                .roles(user.getRoles())
                 .build();
         return ResponseEntity.ok(dto);
     }

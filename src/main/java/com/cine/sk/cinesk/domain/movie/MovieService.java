@@ -10,7 +10,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -170,10 +169,13 @@ public class MovieService {
     }
 
 
-    public void insertPoster(File file, Long id) {
+    public EnhancedFilmDTO insertPoster(File file, Long id) {
         Movie movie = movieRepository.findById(id).orElse(null);
-        if (movie == null) return;
+        if (movie == null) {
+            throw new RuntimeException("Movie not found with id: " + id + " ");
+        }
         movie.setPoster(file.getUri());
-        movieRepository.save(movie);
+        movie = movieRepository.save(movie);
+        return toDTO(movie);
     }
 }

@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -33,9 +32,9 @@ public class EnhancedFilmService {
         return movieService.update(id, dto);
     }
 
-    public void insertPoster(Long id, MultipartFile file) {
+    public EnhancedFilmDTO insertPoster(Long id, MultipartFile file) {
         var uploaded = awsService.upload(file, "poster", id.toString(), file.getName());
-        movieService.insertPoster(uploaded, id);
+        return movieService.insertPoster(uploaded, id);
     }
 
     public void delete(Long id) {

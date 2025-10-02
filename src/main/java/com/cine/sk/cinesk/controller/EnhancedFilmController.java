@@ -3,6 +3,7 @@ package com.cine.sk.cinesk.controller;
 import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
 import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmService;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -31,9 +32,19 @@ public class EnhancedFilmController {
         return ResponseEntity.ok(enhancedFilmService.findAll());
     }
 
-    @PostMapping
-    public ResponseEntity<EnhancedFilmDTO> create(@Valid @RequestBody EnhancedFilmDTO dto) {
-        return ResponseEntity.ok(enhancedFilmService.create(dto));
+    @Transactional
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<EnhancedFilmDTO> create(
+            @Valid @RequestPart("dto") EnhancedFilmDTO dto,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        var created = enhancedFilmService.create(dto);
+        if (file != null && !file.isEmpty()) {
+            var movieWithPoster = enhancedFilmService.insertPoster(created.getId(), file);
+            return ResponseEntity.ok(movieWithPoster);
+        }
+
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{id}")

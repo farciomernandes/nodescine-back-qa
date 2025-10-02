@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.domain.user.dto;
 
+import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -52,6 +54,8 @@ public class UserDTO {
     private String complement;
 
     private String province;
+
+    private Set<Role> roles;
 
     private List<TransactionDTO> transactions = new ArrayList<>();
 
