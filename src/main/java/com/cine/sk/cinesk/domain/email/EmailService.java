@@ -72,14 +72,14 @@ public class EmailService {
     }
 
     public void sendTransactionConfirmationEmail(String emailTo, String customerName, String transactionId) {
-        String subject = "Confirmação de Transação - CineSK";
+        String subject = "Confirmação de Transação - Nordescine";
         String text = String.format(
                 "Olá %s,\n\n" +
                 "Sua transação foi processada com sucesso!\n\n" +
                 "ID da Transação: %s\n\n" +
-                "Obrigado por escolher o CineSK!\n\n" +
+                "Obrigado por escolher o Nordescine!\n\n" +
                 "Atenciosamente,\n" +
-                "Equipe CineSK",
+                "Equipe Nordescine",
                 customerName, transactionId
         );
         
@@ -87,14 +87,14 @@ public class EmailService {
     }
 
     public void sendTransactionCompletedEmail(String emailTo, String customerName, String transactionId) {
-        String subject = "Transação Finalizada - CineSK";
+        String subject = "Transação Finalizada - Nordescine";
         String text = String.format(
                 "Olá %s,\n\n" +
                 "Sua transação foi finalizada com sucesso!\n\n" +
                 "ID da Transação: %s\n\n" +
                 "Aproveite nossos serviços!\n\n" +
                 "Atenciosamente,\n" +
-                "Equipe CineSK",
+                "Equipe Nordescine",
                 customerName, transactionId
         );
         
