@@ -26,3 +26,5 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+.env

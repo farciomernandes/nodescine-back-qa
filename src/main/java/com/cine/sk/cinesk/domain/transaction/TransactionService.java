@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.domain.transaction;
 
+import com.cine.sk.cinesk.domain.email.EmailService;
 import com.cine.sk.cinesk.domain.movie.Movie;
 import com.cine.sk.cinesk.domain.movie.MovieRepository;
 import com.cine.sk.cinesk.domain.transaction.payment.*;
@@ -26,6 +27,7 @@ public class TransactionService {
     private final MovieRepository movieRepository;
     private final UserService userService;
     private final PaymentService paymentService;
+    private final EmailService emailService;
 
     private User currentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -39,6 +41,7 @@ public class TransactionService {
 
     public Transaction getById(Long id) {
         User user = currentUser();
+
         Transaction tx = transactionRepository.findById(id)
                 .filter(t -> t.getUser() != null && t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transação não encontrada"));
@@ -60,6 +63,12 @@ public class TransactionService {
                 .status(OrderStatusEnum.PENDING)
                 .build();
         var tx = transactionRepository.save(transactionToSave);
+
+        // Aqui seria colocado order se fosse a oficinal
+        this.emailService.sendEmail(currentUser().getEmail(),
+                "Nordescine - Transação iniciada" + movie.getTitle() + "  R$ " + movie.getPrice(),
+                "✅ Email de confirmação de transação enviado com sucesso, aguardando confirmação da operadora."
+        );
         return TransactionResponse.builder()
                 .id(tx.getId())
                 .transactionId(tx.getTransactionId())
@@ -98,6 +107,11 @@ public class TransactionService {
                 .status(response.getStatus())
                 .transactionId(response.getTransactionId())
                 .build();
+
+        this.emailService.sendEmail(currentUser().getEmail(),
+                "Nordescine - Transação iniciada" + movie.getTitle() + "  R$ " + order.getTotal(),
+                "✅ Email de confirmação de transação enviado com sucesso, aguardando confirmação da operadora."
+        );
         return transactionRepository.save(tx);
     }
 
