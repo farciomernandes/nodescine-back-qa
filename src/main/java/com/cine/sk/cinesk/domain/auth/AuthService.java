@@ -91,12 +91,17 @@ public class AuthService {
     public ResponseEntity<String> registerCustomer(CustomerRegisterDTO request) {
         var existingOpt = userRepository.findByEmail(request.getEmail());
         User user;
+
+        if(request.getRoles() != null && request.getRoles().contains(Role.MODERATOR)){
+            throw new IllegalArgumentException("Moderators cannot be registered as customers");
+        }
+
         if (existingOpt.isPresent()) {
             User existing = existingOpt.get();
             if (existing.getStatus() == UserStatus.INACTIVE) {
                 existing.setName(request.getName());
                 existing.setPassword(passwordEncoder.encode(request.getPassword()));
-                existing.setRoles(Set.of(Role.CUSTOMER));
+                existing.setRoles(request.getRoles());
                 existing.setStatus(UserStatus.ACTIVE);
                 existing.setAvatar(request.getAvatar());
                 existing.setCpf(request.getCpf());
@@ -115,7 +120,7 @@ public class AuthService {
             user.setName(request.getName());
             user.setEmail(request.getEmail());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
-            user.setRoles(Set.of(Role.CUSTOMER));
+            user.setRoles(request.getRoles());
             user.setStatus(UserStatus.ACTIVE);
             user.setCpf(request.getCpf());
             user.setAddress(request.getAddress());

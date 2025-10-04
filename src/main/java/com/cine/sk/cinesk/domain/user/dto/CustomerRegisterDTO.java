@@ -1,11 +1,14 @@
 package com.cine.sk.cinesk.domain.user.dto;
 
+import com.cine.sk.cinesk.domain.auth.enums.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -57,4 +60,9 @@ public class CustomerRegisterDTO {
     @NotBlank
     @NotNull
     private String province;
+
+    @NotBlank
+    @Schema(description = "Set of roles assigned to the user", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Set<Role> roles;
+
 }
