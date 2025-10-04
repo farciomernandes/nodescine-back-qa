@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -116,5 +117,11 @@ public class UserService {
                 .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt() : null)
                 .transactions(null)
                 .build();
+    }
+
+    public ResponseEntity<List<UserDTO>> getAll() {
+        List<User> users = userRepository.findAll();
+        var usersDTO = users.stream().map(this::mapToDto).toList();
+        return ResponseEntity.ok(usersDTO);
     }
 }
