@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class PaymentService {
     private final AsaasApiClient asaasApiClient;
 
-    @Value("${ASAAS_API_KEY}")
+    @Value("${ASAAS_API_KEY:test}")
     private String apiKey;
 
     public ProcessPaymentResponse process(OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address) {
