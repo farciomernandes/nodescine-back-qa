@@ -80,6 +80,9 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user",fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
 
+    @Column
+    private String walletId;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()

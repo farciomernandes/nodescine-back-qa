@@ -5,7 +5,8 @@ import com.cine.sk.cinesk.domain.auth.dto.AuthResponseDTO;
 import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
 import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
-import com.cine.sk.cinesk.domain.transaction.TransactionService;
+import com.cine.sk.cinesk.domain.transaction.payment.AsaasAccountRequest;
+import com.cine.sk.cinesk.domain.transaction.payment.PaymentService;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
 import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
@@ -13,7 +14,6 @@ import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import com.cine.sk.cinesk.domain.user.dto.CustomerRegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.RegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
-import com.cine.sk.cinesk.infrastructure.jwt.JwtService;
 import com.cine.sk.cinesk.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,9 +36,8 @@ import java.util.stream.Collectors;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final TransactionService transactionService;
+    private final PaymentService paymentService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
@@ -131,8 +129,38 @@ public class AuthService {
             user.setProvince(request.getProvince());
         }
 
+        if(user.getRoles() != null && user.getRoles().contains(Role.MOVIE_DIRECTOR)){
+            AsaasAccountRequest asaasAccount = map(user);
+            String walletId = paymentService.createAccount(asaasAccount);
+            user.setWalletId(walletId);
+        }
+
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
+    }
+
+    public AsaasAccountRequest map(User user) {
+        AsaasAccountRequest dto = new AsaasAccountRequest();
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setLoginEmail(user.getEmail());
+        dto.setCpfCnpj(user.getCpf());
+        dto.setPhone(user.getPhone());
+        dto.setMobilePhone(user.getPhone());
+        dto.setAddress(user.getAddress());
+        dto.setAddressNumber(user.getAddressNumber());
+        dto.setProvince(user.getProvince());
+        dto.setPostalCode(user.getPostalCode());
+        dto.setComplement(user.getComplement());
+
+
+        dto.setIncomeValue(null);
+        dto.setBirthDate(null);
+        dto.setCompanyType(null);
+        dto.setSite(null);
+        dto.setWebhooks(null);
+
+        return dto;
     }
 
     public ResponseEntity<AuthResponseDTO> login(@Valid AuthRequestDTO authRequestDTO) {

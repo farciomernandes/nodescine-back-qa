@@ -4,14 +4,9 @@ import com.cine.sk.cinesk.domain.transaction.payment.AsaasPaymentRequest;
 import com.cine.sk.cinesk.domain.transaction.payment.AsaasPaymentResponse;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.cine.sk.cinesk.domain.transaction.payment.*;
-import feign.Headers;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface AsaasApiClient {
 
     @GetMapping("/customers")
-    AsaasCustomerListResponse findCustomerByEmail(@RequestParam("email") String email);
+    AsaasCustomerListResponse findCustomerByEmail(@RequestHeader("access_token") String accessToken, @RequestParam("email") String email);
 
     @PostMapping("/customers")
-    AsaasCustomerResponse createCustomer(@RequestBody AsaasCustomerResponse customerData);
+    AsaasCustomerResponse createCustomer(@RequestHeader("access_token") String accessToken, @RequestBody AsaasCustomerResponse customerData);
+
+    @PostMapping("/v3/accounts")
+    AsaasAccountResponse createAccount(@RequestHeader("access_token") String accessToken, @RequestBody AsaasAccountRequest paymentRequest);
 
     @PostMapping("/payments")
-    AsaasPaymentResponse createPayment(@RequestBody AsaasPaymentRequest paymentRequest);
+    AsaasPaymentResponse createPayment(@RequestHeader("access_token") String accessToken, @RequestBody AsaasPaymentRequest paymentRequest);
 }

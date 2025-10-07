@@ -89,6 +89,7 @@ public class TransactionService {
         var order = OrderDTO.builder().total(BigDecimal.valueOf(movie.getPrice())).build();
         var userPayment = UserPaymentDTO.builder().cpf(user.getCpf())
                 .name(user.getName())
+                .email(user.getEmail())
                 .phone(user.getPhone())
                 .build();
 

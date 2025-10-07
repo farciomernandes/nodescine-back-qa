@@ -1,6 +1,7 @@
 package com.cine.sk.cinesk.domain.transaction.payment;
 
 import com.cine.sk.cinesk.domain.transaction.payment.client.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,6 +15,9 @@ import java.time.format.DateTimeFormatter;
 public class PaymentService {
     private final AsaasApiClient asaasApiClient;
 
+    @Value("${ASAAS_API_KEY}")
+    private String apiKey;
+
     public ProcessPaymentResponse process(OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address) {
         try {
             String customerId = findOrCreateCustomer(user, address);
@@ -25,7 +29,7 @@ public class PaymentService {
     }
 
     private String findOrCreateCustomer(UserPaymentDTO user, AddressDTO address) {
-        AsaasCustomerListResponse existingCustomers = asaasApiClient.findCustomerByEmail(user.getEmail());
+        AsaasCustomerListResponse existingCustomers = asaasApiClient.findCustomerByEmail(apiKey, user.getEmail());
 
         if (existingCustomers != null && existingCustomers.getData() != null && !existingCustomers.getData().isEmpty()) {
             return existingCustomers.getData().get(0).getId();
@@ -37,7 +41,7 @@ public class PaymentService {
         newCustomerData.setMobilePhone(user.getPhone());
         newCustomerData.setCpfCnpj(user.getCpf());
 
-        AsaasCustomerResponse createdCustomer = asaasApiClient.createCustomer(newCustomerData);
+        AsaasCustomerResponse createdCustomer = asaasApiClient.createCustomer(apiKey, newCustomerData);
         return createdCustomer.getId();
     }
 
@@ -72,7 +76,12 @@ public class PaymentService {
                     .build());
         }
 
-        return asaasApiClient.createPayment(requestBuilder.build());
+        return asaasApiClient.createPayment(apiKey, requestBuilder.build());
+    }
+
+    public String createAccount(AsaasAccountRequest asaasAccount){
+        AsaasAccountResponse asaasAccountResponse = asaasApiClient.createAccount(apiKey, asaasAccount);
+        return asaasAccountResponse.getWalletId();
     }
 
     private ProcessPaymentResponse buildProcessPaymentResponse(AsaasPaymentResponse response) {
