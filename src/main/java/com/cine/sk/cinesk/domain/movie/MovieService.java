@@ -21,8 +21,17 @@ public class MovieService {
     private final CategoryRepository categoryRepository;
     private final GenreService genreService;
 
-    public List<EnhancedFilmDTO> findAll() {
-        return movieRepository.findAll().stream()
+    public List<EnhancedFilmDTO> findAll(String search, String title, String director,
+                                         List<String> genres, String category, String cast) {
+        search = search != null && search.isBlank() ? null : search;
+        title = title != null && title.isBlank() ? null : title;
+        director = director != null && director.isBlank() ? null : director;
+        category = category != null && category.isBlank() ? null : category;
+        cast = cast != null && cast.isBlank() ? null : cast;
+        genres = genres != null && genres.isEmpty() ? null : genres;
+
+        return movieRepository.findAllByFilters(search, title, director, genres, category, cast)
+                .stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }

@@ -15,8 +15,9 @@ public class EnhancedFilmService {
     private final MovieService movieService;
     private final AwsService awsService;
 
-    public List<EnhancedFilmDTO> findAll() {
-        return movieService.findAll();
+    public List<EnhancedFilmDTO> findAll(String search,String title, String director,
+                                         List<String> genres, String  category, String cast) {
+        return movieService.findAll(search, title, director, genres, category, cast);
     }
 
     public EnhancedFilmDTO findById(Long id) {
