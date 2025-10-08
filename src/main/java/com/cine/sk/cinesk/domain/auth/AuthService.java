@@ -87,12 +87,24 @@ public class AuthService {
 
 
     public ResponseEntity<String> registerCustomer(CustomerRegisterDTO request) {
+        if(request.getRoles() == null){
+            throw new IllegalArgumentException("Roles cannot be null");
+        }
         var existingOpt = userRepository.findByEmail(request.getEmail());
         User user;
 
         if(request.getRoles() != null && request.getRoles().contains(Role.MODERATOR)){
             throw new IllegalArgumentException("Moderators cannot be registered as customers");
         }
+
+        String phone;
+        if (request.getPhone() == null) return null;
+        phone = request.getPhone().replaceAll("\\D", "");
+
+        if (!phone.matches("^[0-9]{11}$")) {
+            throw new IllegalArgumentException("O telefone deve ter 11 dígitos após limpeza");
+        }
+
 
         if (existingOpt.isPresent()) {
             User existing = existingOpt.get();
@@ -107,8 +119,10 @@ public class AuthService {
                 existing.setAddressNumber(request.getAddressNumber());
                 existing.setComplement(request.getComplement());
                 existing.setPostalCode(request.getPostalCode());
-                existing.setPhone(request.getPhone());
+                existing.setPhone(phone);
                 existing.setProvince(request.getProvince());
+                existing.setBirthDate(request.getBirthDate());
+                existing.setIncomeValue(request.getIncomeValue());
                 user = existing;
             } else {
                 throw new IllegalArgumentException("Email already in use");
@@ -125,11 +139,16 @@ public class AuthService {
             user.setAddressNumber(request.getAddressNumber());
             user.setComplement(request.getComplement());
             user.setPostalCode(request.getPostalCode());
-            user.setPhone(request.getPhone());
+            user.setPhone(phone);
             user.setProvince(request.getProvince());
+            user.setBirthDate(request.getBirthDate());
+            user.setIncomeValue(request.getIncomeValue());
         }
 
         if(user.getRoles() != null && user.getRoles().contains(Role.MOVIE_DIRECTOR)){
+            if(user.getIncomeValue() == null){
+                throw new IllegalArgumentException("Income value cannot be null for movie directors");
+            }
             AsaasAccountRequest asaasAccount = map(user);
             String walletId = paymentService.createAccount(asaasAccount);
             user.setWalletId(walletId);
@@ -152,10 +171,8 @@ public class AuthService {
         dto.setProvince(user.getProvince());
         dto.setPostalCode(user.getPostalCode());
         dto.setComplement(user.getComplement());
-
-
-        dto.setIncomeValue(null);
-        dto.setBirthDate(null);
+        dto.setIncomeValue(user.getIncomeValue());
+        dto.setBirthDate(user.getBirthDate());
         dto.setCompanyType(null);
         dto.setSite(null);
         dto.setWebhooks(null);

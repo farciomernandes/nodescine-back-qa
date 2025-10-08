@@ -2,11 +2,10 @@ package com.cine.sk.cinesk.domain.user.dto;
 
 import com.cine.sk.cinesk.domain.auth.enums.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Set;
 
@@ -61,8 +60,14 @@ public class CustomerRegisterDTO {
     @NotNull
     private String province;
 
-    @NotBlank
+    @NotEmpty(message = "O set de roles não pode ser null ou vazio")
     @Schema(description = "Set of roles assigned to the user", requiredMode = Schema.RequiredMode.REQUIRED)
     private Set<Role> roles;
 
+    @NotBlank(message = "Data de nascimento é obrigatória")
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Formato deve ser yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private String birthDate;
+
+    private Integer incomeValue;
 }

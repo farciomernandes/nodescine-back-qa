@@ -83,6 +83,12 @@ public class User extends AbstractEntity implements UserDetails {
     @Column
     private String walletId;
 
+    @Column
+    private String birthDate;
+
+    @Column
+    private Integer incomeValue;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()

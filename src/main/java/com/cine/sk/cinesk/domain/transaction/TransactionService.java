@@ -98,7 +98,9 @@ public class TransactionService {
                 .complement(user.getComplement())
                 .zipCode(user.getPostalCode())
                         .number(user.getAddressNumber()).build();
-        var response = paymentService.process(order,userPayment, transaction.getPayment(), address);
+        User userDirector = userService.findByEmail(movie.getCreatedBy())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autorizado ou não encontrado"));
+        var response = paymentService.process(order,userPayment, transaction.getPayment(), address, userDirector.getWalletId());
 
         Transaction tx = Transaction.builder()
                 .user(user)

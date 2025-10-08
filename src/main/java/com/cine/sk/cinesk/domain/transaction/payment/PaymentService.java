@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,10 +20,12 @@ public class PaymentService {
     @Value("${ASAAS_API_KEY:test}")
     private String apiKey;
 
-    public ProcessPaymentResponse process(OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address) {
+    private String OWNER_WALLET = "e0ec6a7b-eaad-4d43-a519-bb4211b0b41a";
+
+    public ProcessPaymentResponse process(OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address, String movieWallet) {
         try {
             String customerId = findOrCreateCustomer(user, address);
-            AsaasPaymentResponse transactionResponse = createTransaction(customerId, order, user, payment, address);
+            AsaasPaymentResponse transactionResponse = createTransaction(customerId, order, user, payment, address, movieWallet);
             return buildProcessPaymentResponse(transactionResponse);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falha ao processar pagamento com Asaas: " + e.getMessage(), e);
@@ -45,7 +49,7 @@ public class PaymentService {
         return createdCustomer.getId();
     }
 
-    private AsaasPaymentResponse createTransaction(String customerId, OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address) {
+    private AsaasPaymentResponse createTransaction(String customerId, OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address, String directorWallet) {
         AsaasPaymentRequest.AsaasPaymentRequestBuilder requestBuilder = AsaasPaymentRequest.builder()
                 .customer(customerId)
                 .billingType(payment.getMethod().name())
@@ -74,6 +78,14 @@ public class PaymentService {
                     .phone(user.getPhone())
                     .mobilePhone(user.getPhone())
                     .build());
+
+
+            RequestSplit ownerSplit = RequestSplit.builder().walletId(OWNER_WALLET).percentualValue(80.0).build();
+            RequestSplit directorSplit = RequestSplit.builder().walletId(directorWallet).percentualValue(20.0).build();
+            List<RequestSplit> requestSplitList = new ArrayList<>();
+            requestSplitList.add(ownerSplit);
+            requestSplitList.add(directorSplit);
+            requestBuilder.split(requestSplitList);
         }
 
         return asaasApiClient.createPayment(apiKey, requestBuilder.build());

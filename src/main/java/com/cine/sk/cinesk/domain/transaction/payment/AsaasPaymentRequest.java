@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
@@ -15,6 +16,8 @@ public class AsaasPaymentRequest {
     private String dueDate;
     private CreditCard creditCard;
     private CreditCardHolderInfo creditCardHolderInfo;
+
+    private List<RequestSplit> split;
 
     @Data @Builder public static class CreditCard {
         private String holderName, number, expiryMonth, expiryYear, ccv;

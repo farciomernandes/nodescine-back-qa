@@ -6,8 +6,13 @@ import com.cine.sk.cinesk.domain.movie.category.CategoryRepository;
 import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
 import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import com.cine.sk.cinesk.domain.movie.genre.GenreService;
+import com.cine.sk.cinesk.domain.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -100,6 +105,12 @@ public class MovieService {
     @Transactional
     public EnhancedFilmDTO create(EnhancedFilmDTO dto) {
         Movie movie = toEntity(dto);
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("Session not found");
+        }
+        String email = authentication.getName();
+        movie.setCreatedBy(email);
 
         Category category = categoryRepository.findByName(dto.getCategory()).orElse(null);
         if (category == null) {

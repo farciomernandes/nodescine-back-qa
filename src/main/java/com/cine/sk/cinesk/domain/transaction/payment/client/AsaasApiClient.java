@@ -22,7 +22,7 @@ public interface AsaasApiClient {
     @PostMapping("/customers")
     AsaasCustomerResponse createCustomer(@RequestHeader("access_token") String accessToken, @RequestBody AsaasCustomerResponse customerData);
 
-    @PostMapping("/v3/accounts")
+    @PostMapping("/accounts")
     AsaasAccountResponse createAccount(@RequestHeader("access_token") String accessToken, @RequestBody AsaasAccountRequest paymentRequest);
 
     @PostMapping("/payments")
