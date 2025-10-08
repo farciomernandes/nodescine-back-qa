@@ -86,7 +86,7 @@ public class TransactionService {
         Movie movie = movieRepository.findById(transaction.getMovieId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Filme não encontrado"));
 
-        var order = OrderDTO.builder().total(BigDecimal.valueOf(movie.getPrice())).build();
+        var order = OrderDTO.builder().total(movie.getPrice()).build();
         var userPayment = UserPaymentDTO.builder().cpf(user.getCpf())
                 .name(user.getName())
                 .email(user.getEmail())

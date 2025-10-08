@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +29,15 @@ public class EnhancedFilmController {
         return ResponseEntity.ok(enhancedFilmService.findById(id));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<List<EnhancedFilmDTO>> findMyMovies() {
+        return ResponseEntity.ok(enhancedFilmService.findMyMovies());
+    }
+
+
     @GetMapping
-    public ResponseEntity<List<EnhancedFilmDTO>> getAllFilms() {
-        return ResponseEntity.ok(enhancedFilmService.findAll());
+    public ResponseEntity<Page<EnhancedFilmDTO>> getAllFilms(Pageable pageable, @RequestParam(required = false) String searchTerm) {
+        return ResponseEntity.ok(enhancedFilmService.findAll(searchTerm, pageable));
     }
 
     @Transactional

@@ -44,6 +44,14 @@ public class AuthService {
     public ResponseEntity<String> register(RegisterDTO request) {
         var existingOpt = userRepository.findByEmail(request.getEmail());
         User user;
+        String phone;
+        if (request.getPhone() == null) return null;
+        phone = request.getPhone().replaceAll("\\D", "");
+
+        if (!phone.matches("^[0-9]{11}$")) {
+            throw new IllegalArgumentException("O telefone deve ter 11 dígitos após limpeza");
+        }
+
         if (existingOpt.isPresent()) {
             User existing = existingOpt.get();
             if (existing.getStatus() == UserStatus.INACTIVE) {
@@ -57,7 +65,7 @@ public class AuthService {
                 existing.setAddressNumber(request.getAddressNumber());
                 existing.setComplement(request.getComplement());
                 existing.setPostalCode(request.getPostalCode());
-                existing.setPhone(request.getPhone());
+                existing.setPhone(phone);
                 existing.setProvince(request.getProvince());
                 user = existing;
             } else {
@@ -76,11 +84,9 @@ public class AuthService {
             user.setAddressNumber(request.getAddressNumber());
             user.setComplement(request.getComplement());
             user.setPostalCode(request.getPostalCode());
-            user.setPhone(request.getPhone());
+            user.setPhone(phone);
             user.setProvince(request.getProvince());
         }
-
-
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }
@@ -90,6 +96,11 @@ public class AuthService {
         if(request.getRoles() == null){
             throw new IllegalArgumentException("Roles cannot be null");
         }
+
+        if(request.getBirthDate() == null){
+            throw new IllegalArgumentException("Birth date cannot be null");
+        }
+
         var existingOpt = userRepository.findByEmail(request.getEmail());
         User user;
 
@@ -104,7 +115,6 @@ public class AuthService {
         if (!phone.matches("^[0-9]{11}$")) {
             throw new IllegalArgumentException("O telefone deve ter 11 dígitos após limpeza");
         }
-
 
         if (existingOpt.isPresent()) {
             User existing = existingOpt.get();

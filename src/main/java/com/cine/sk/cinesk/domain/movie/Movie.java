@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +29,7 @@ public class Movie extends AbstractEntity {
 
     private Integer year;
 
-    private Long price;
+    private BigDecimal price;
 
     private Integer durationInMinutes;
 
@@ -60,4 +61,6 @@ public class Movie extends AbstractEntity {
     private Set<Genre> genres = new HashSet<>();
 
     private String createdBy;
+
+    private Boolean active;
 }

@@ -1,10 +1,31 @@
 package com.cine.sk.cinesk.domain.movie;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
+    @Query("SELECT DISTINCT m FROM Movie m " +
+            "LEFT JOIN m.genres g " +
+            "LEFT JOIN m.category c " +
+            "LEFT JOIN m.cast ac " +
+            "WHERE m.active = true AND (:search IS NULL OR :search = '' OR " +
+            "LOWER(m.title) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(m.description) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(m.director) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(g.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(ac) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Movie> findAllByFilters(@Param("search") String search, Pageable pageable);
 
+    Page<Movie> findAllByActiveTrue(Pageable pageable);
+
+    List<Movie> findAllByCreatedBy(String email);
 }

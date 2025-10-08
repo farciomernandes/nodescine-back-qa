@@ -7,6 +7,8 @@ import com.cine.sk.cinesk.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 
 @Getter
 @Setter
@@ -28,7 +30,7 @@ public class Transaction extends AbstractEntity {
     private Movie movie;
 
     @Column(nullable = false)
-    private Long amount;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private String date;

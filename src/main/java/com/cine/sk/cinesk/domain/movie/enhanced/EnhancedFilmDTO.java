@@ -4,6 +4,7 @@ import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class EnhancedFilmDTO {
     private String director;
     private Integer year;
     private String category;
-    private Long price;
+    private BigDecimal price;
     private List<GenreDTO> genres;
     private String duration;
     private String poster;

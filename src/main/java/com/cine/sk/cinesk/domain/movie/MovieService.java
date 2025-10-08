@@ -9,6 +9,9 @@ import com.cine.sk.cinesk.domain.movie.genre.GenreService;
 import com.cine.sk.cinesk.domain.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,16 +29,24 @@ public class MovieService {
     private final CategoryRepository categoryRepository;
     private final GenreService genreService;
 
-    public List<EnhancedFilmDTO> findAll() {
-        return movieRepository.findAll().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public Page<EnhancedFilmDTO> findAll(String searchTerm, Pageable pageable) {
+        if(searchTerm == null || searchTerm.isBlank()){
+            return movieRepository.findAllByActiveTrue(pageable).map(this::toDTO);
+        }
+        Page<Movie> moviePage = movieRepository.findAllByFilters(searchTerm, pageable);
+        return toResponse(moviePage);
     }
 
     public EnhancedFilmDTO findById(Long id) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
         return toDTO(movie);
+    }
+
+    public List<EnhancedFilmDTO> findByUserEmail(String email) {
+        return movieRepository.findAllByCreatedBy(email).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     private EnhancedFilmDTO toDTO(Movie entity) {
@@ -56,6 +67,13 @@ public class MovieService {
         dto.setPoster(entity.getPoster());
         dto.setCast(entity.getCast());
         return dto;
+    }
+
+    private Page<EnhancedFilmDTO> toResponse(Page<Movie> moviePage) {
+        List<EnhancedFilmDTO> responses = moviePage.getContent().stream()
+                .map(this::toDTO)
+                .toList();
+        return new PageImpl<>(responses, moviePage.getPageable(), moviePage.getTotalElements());
     }
 
     private Movie toEntity(EnhancedFilmDTO dto) {
@@ -133,7 +151,7 @@ public class MovieService {
                             .orElseGet(() -> genreService.save(new GenreDTO(null, genreDTO.getName())));
                 })
                 .collect(Collectors.toSet()));
-
+        movie.setActive(true);
         movie = movieRepository.save(movie);
         return toDTO(movie);
     }
@@ -169,6 +187,7 @@ public class MovieService {
                     .collect(Collectors.toSet()));
         }
 
+        movie.setActive(true);
         movie = movieRepository.save(movie);
         return toDTO(movie);
     }
@@ -176,7 +195,8 @@ public class MovieService {
     public void delete(Long id) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Filme não encontrado com o ID: " + id));
-        movieRepository.delete(movie);
+        movie.setActive(false);
+        movieRepository.save(movie);
     }
 
 

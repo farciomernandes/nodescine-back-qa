@@ -2,9 +2,17 @@ package com.cine.sk.cinesk.domain.movie.enhanced;
 
 import com.cine.sk.cinesk.domain.file.aws.AwsService;
 import com.cine.sk.cinesk.domain.movie.MovieService;
+import com.cine.sk.cinesk.domain.user.User;
+import com.cine.sk.cinesk.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -14,13 +22,29 @@ public class EnhancedFilmService {
 
     private final MovieService movieService;
     private final AwsService awsService;
+    private final UserService userService;
 
-    public List<EnhancedFilmDTO> findAll() {
-        return movieService.findAll();
+    private User currentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autorizado ou não encontrado");
+        }
+        String email = auth.getName();
+        return userService.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autorizado ou não encontrado"));
+    }
+
+    public Page<EnhancedFilmDTO> findAll(String searchTerm, Pageable pageable) {
+        return movieService.findAll(searchTerm, pageable);
     }
 
     public EnhancedFilmDTO findById(Long id) {
         return movieService.findById(id);
+    }
+
+    public List<EnhancedFilmDTO> findMyMovies() {
+        User user = currentUser();
+        return movieService.findByUserEmail(user.getEmail());
     }
 
     public EnhancedFilmDTO create(EnhancedFilmDTO dto) {
