@@ -20,7 +20,8 @@ public class PaymentService {
     @Value("${ASAAS_API_KEY:test}")
     private String apiKey;
 
-    private String OWNER_WALLET = "e0ec6a7b-eaad-4d43-a519-bb4211b0b41a";
+    @Value("${OWNER_WALLET:test}")
+    private String OwnerWallet;
 
     public ProcessPaymentResponse process(OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address, String movieWallet) {
         try {
@@ -80,7 +81,7 @@ public class PaymentService {
                     .build());
 
 
-            RequestSplit ownerSplit = RequestSplit.builder().walletId(OWNER_WALLET).percentualValue(80.0).build();
+            RequestSplit ownerSplit = RequestSplit.builder().walletId(OwnerWallet).percentualValue(80.0).build();
             RequestSplit directorSplit = RequestSplit.builder().walletId(directorWallet).percentualValue(20.0).build();
             List<RequestSplit> requestSplitList = new ArrayList<>();
             requestSplitList.add(ownerSplit);
