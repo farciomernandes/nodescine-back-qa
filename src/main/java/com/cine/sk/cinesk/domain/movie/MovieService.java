@@ -6,16 +6,12 @@ import com.cine.sk.cinesk.domain.movie.category.CategoryRepository;
 import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
 import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import com.cine.sk.cinesk.domain.movie.genre.GenreService;
-import com.cine.sk.cinesk.domain.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,7 +58,7 @@ public class MovieService {
     }
 
     public List<EnhancedFilmDTO> findByUserEmail(String email) {
-        return movieRepository.findAllByCreatedBy(email).stream()
+        return movieRepository.findByCreatedBy(email).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }

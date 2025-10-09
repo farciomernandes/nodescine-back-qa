@@ -107,10 +107,10 @@ public class TransactionService {
                 .neighborhood(user.getProvince())
                 .complement(user.getComplement())
                 .zipCode(user.getPostalCode())
-                        .number(user.getAddressNumber()).build();
+                .number(user.getAddressNumber()).build();
         User userDirector = userService.findByEmail(movie.getCreatedBy())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autorizado ou não encontrado"));
-        var response = paymentService.process(order,userPayment, transaction.getPayment(), address, userDirector.getWalletId());
+        var response = paymentService.process(order, userPayment, transaction.getPayment(), address, userDirector.getWalletId());
 
         Transaction tx = Transaction.builder()
                 .user(user)
@@ -147,8 +147,57 @@ public class TransactionService {
         return transactions;
     }
 
+    private SalesTransactionDTO calculateTotalsForMovieAndStatus(Movie movie, OrderStatusEnum status) {
+        List<Transaction> transactions = transactionRepository.findByMovieIdAndStatus(movie.getId(), status);
+
+        BigDecimal totalAmount = transactions.stream()
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal systemTax = totalAmount.multiply(TAX_RATE);
+        BigDecimal total = totalAmount.add(systemTax);
+
+        return SalesTransactionDTO.builder()
+                .movieId(movie.getId())
+                .movieName(movie.getTitle())
+                .amount(totalAmount)
+                .status(status)
+                .total(total)
+                .systemTax(systemTax)
+                .transactions(transactions)
+                .build();
+    }
+
+    public List<SalesTransactionDTO> getTransactionsByCreatedByAndMovie() {
+        User user = currentUser();
+        List<Movie> movies;
+        var isAdmin = user.getRoles() != null && user.getRoles().contains(Role.MODERATOR);
+        if (isAdmin) {
+            movies = movieRepository.findAll();
+        } else {
+            movies = movieRepository.findByCreatedBy(user.getEmail());
+        }
+        if (movies.isEmpty()) {
+            return null;
+        }
+
+        return movies.stream()
+                .flatMap(movie ->
+                        Arrays.stream(OrderStatusEnum.values())
+                                .map(status -> calculateTotalsForMovieAndStatus(movie, status))
+                                .filter(dto -> dto.getAmount().compareTo(BigDecimal.ZERO) > 0)
+                )
+                .peek(dto -> {
+                    if (isAdmin) {
+                        dto.setAmount(dto.getSystemTax());
+                        dto.setTotal(dto.getSystemTax());
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
     private SalesTransactionDTO calculateTotalsForStatus(User user, OrderStatusEnum status) {
-        List<Transaction> transactions = transactionRepository.findByUserAndStatus(user, status);
+        List<Transaction> transactions = transactionRepository.findByMovieCreatedByAndStatus(user.getEmail(), status);
 
         BigDecimal totalAmount = transactions.stream()
                 .map(Transaction::getAmount)
@@ -162,6 +211,7 @@ public class TransactionService {
                 .status(status)
                 .total(total)
                 .systemTax(systemTax)
+                .transactions(transactions)
                 .build();
     }
 

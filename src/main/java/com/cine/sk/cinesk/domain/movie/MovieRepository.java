@@ -48,5 +48,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     Page<Movie> findAllByActiveTrue(Pageable pageable);
 
-    List<Movie> findAllByCreatedBy(String email);
+    List<Movie> findByCreatedBy(String createdBy);
 }
