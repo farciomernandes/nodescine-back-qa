@@ -48,6 +48,11 @@ public class TransactionService {
         return tx;
     }
 
+    public List<Transaction> getMy() {
+        User user = currentUser();
+        return findTransactionByUser(user);
+    }
+
     public TransactionResponse createMock(CreateTransactionDTO transaction) {
         User user = currentUser();
 

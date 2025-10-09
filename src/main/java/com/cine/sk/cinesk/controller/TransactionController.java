@@ -34,4 +34,9 @@ public class TransactionController {
         TransactionResponse created = transactionService.createMock(createTransaction);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<Transaction>> getMe() {
+        return ResponseEntity.ok(transactionService.getMy());
+    }
 }
