@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,19 @@ public class EnhancedFilmController {
     @GetMapping
     public ResponseEntity<Page<EnhancedFilmDTO>> getAllFilms(Pageable pageable, @RequestParam(required = false) String searchTerm) {
         return ResponseEntity.ok(enhancedFilmService.findAll(searchTerm, pageable));
+    }
+
+    @GetMapping("/filter")
+    public Page<EnhancedFilmDTO> getAllMovies(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String director,
+            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String cast,
+            @PageableDefault(size = 10, sort = "title") Pageable pageable
+    ) {
+        return enhancedFilmService.findAll(title, description, director, genre, category, cast, pageable);
     }
 
     @Transactional

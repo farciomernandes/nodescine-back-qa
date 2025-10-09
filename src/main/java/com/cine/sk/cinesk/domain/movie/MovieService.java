@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +37,23 @@ public class MovieService {
         Page<Movie> moviePage = movieRepository.findAllByFilters(searchTerm, pageable);
         return toResponse(moviePage);
     }
+
+    public Page<EnhancedFilmDTO> findAll( String title, String description, String director, String genre,
+                                          String category, String cast, Pageable pageable ) {
+        boolean isAllBlank = Stream.of(title, description, director, genre, category, cast)
+                .allMatch(s -> s == null || s.isBlank());
+
+        Page<Movie> moviePage;
+
+        if (isAllBlank) {
+            moviePage = movieRepository.findAllByActiveTrue(pageable);
+        } else {
+            moviePage = movieRepository.findAllByFilters(title, description, director, genre, category, cast, pageable);
+        }
+
+        return moviePage.map(this::toDTO);
+    }
+
 
     public EnhancedFilmDTO findById(Long id) {
         Movie movie = movieRepository.findById(id)
