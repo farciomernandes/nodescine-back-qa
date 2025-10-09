@@ -1,9 +1,6 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.transaction.CreateTransactionDTO;
-import com.cine.sk.cinesk.domain.transaction.Transaction;
-import com.cine.sk.cinesk.domain.transaction.TransactionResponse;
-import com.cine.sk.cinesk.domain.transaction.TransactionService;
+import com.cine.sk.cinesk.domain.transaction.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +35,10 @@ public class TransactionController {
     @GetMapping("/me")
     public ResponseEntity<List<Transaction>> getMe() {
         return ResponseEntity.ok(transactionService.getMy());
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<List<SalesTransactionDTO>> summary() {
+        return ResponseEntity.ok(transactionService.findSalesResult());
     }
 }

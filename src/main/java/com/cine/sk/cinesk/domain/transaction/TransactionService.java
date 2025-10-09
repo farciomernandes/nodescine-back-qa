@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.domain.transaction;
 
+import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.email.EmailService;
 import com.cine.sk.cinesk.domain.movie.Movie;
 import com.cine.sk.cinesk.domain.movie.MovieRepository;
@@ -16,8 +17,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,8 @@ public class TransactionService {
     private final UserService userService;
     private final PaymentService paymentService;
     private final EmailService emailService;
+
+    private static final BigDecimal TAX_RATE = new BigDecimal("0.2");
 
     private User currentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -126,4 +131,44 @@ public class TransactionService {
     public List<Transaction> findTransactionByUser(User user) {
         return transactionRepository.findByUser(user);
     }
+
+    public List<SalesTransactionDTO> getTransactionsByUserAndStatus(User user, boolean isAdmin) {
+        List<SalesTransactionDTO> transactions = Arrays.stream(OrderStatusEnum.values())
+                .map(status -> calculateTotalsForStatus(user, status))
+                .collect(Collectors.toList());
+
+        if (isAdmin) {
+            transactions.forEach(dto -> {
+                dto.setAmount(dto.getSystemTax());
+                dto.setTotal(dto.getSystemTax());
+            });
+        }
+
+        return transactions;
+    }
+
+    private SalesTransactionDTO calculateTotalsForStatus(User user, OrderStatusEnum status) {
+        List<Transaction> transactions = transactionRepository.findByUserAndStatus(user, status);
+
+        BigDecimal totalAmount = transactions.stream()
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal systemTax = totalAmount.multiply(TAX_RATE);
+        BigDecimal total = totalAmount.add(systemTax);
+
+        return SalesTransactionDTO.builder()
+                .amount(totalAmount)
+                .status(status)
+                .total(total)
+                .systemTax(systemTax)
+                .build();
+    }
+
+    public List<SalesTransactionDTO> findSalesResult() {
+        User user = currentUser();
+        var isAdmin = user.getRoles() != null && user.getRoles().contains(Role.MODERATOR);
+        return getTransactionsByUserAndStatus(user, isAdmin);
+    }
+
 }
