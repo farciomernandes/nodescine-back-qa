@@ -134,16 +134,8 @@ public class TransactionService {
 
     public List<SalesTransactionDTO> getTransactionsByUserAndStatus(User user, boolean isAdmin) {
         List<SalesTransactionDTO> transactions = Arrays.stream(OrderStatusEnum.values())
-                .map(status -> calculateTotalsForStatus(user, status))
+                .map(status -> calculateTotalsForStatus(user, status,isAdmin))
                 .collect(Collectors.toList());
-
-        if (isAdmin) {
-            transactions.forEach(dto -> {
-                dto.setAmount(dto.getSystemTax());
-                dto.setTotal(dto.getSystemTax());
-            });
-        }
-
         return transactions;
     }
 
@@ -187,17 +179,16 @@ public class TransactionService {
                                 .map(status -> calculateTotalsForMovieAndStatus(movie, status))
                                 .filter(dto -> dto.getAmount().compareTo(BigDecimal.ZERO) > 0)
                 )
-                .peek(dto -> {
-                    if (isAdmin) {
-                        dto.setAmount(dto.getSystemTax());
-                        dto.setTotal(dto.getSystemTax());
-                    }
-                })
                 .collect(Collectors.toList());
     }
 
-    private SalesTransactionDTO calculateTotalsForStatus(User user, OrderStatusEnum status) {
-        List<Transaction> transactions = transactionRepository.findByMovieCreatedByAndStatus(user.getEmail(), status);
+    private SalesTransactionDTO calculateTotalsForStatus(User user, OrderStatusEnum status, Boolean isAdmin) {
+        List<Transaction> transactions;
+        if (isAdmin) {
+            transactions = transactionRepository.findByStatus(status);
+        } else {
+            transactions = transactionRepository.findByMovieCreatedByAndStatus(user.getEmail(), status);
+        }
 
         BigDecimal totalAmount = transactions.stream()
                 .map(Transaction::getAmount)
