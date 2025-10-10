@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -163,12 +162,7 @@ public class TransactionService {
             return null;
         }
 
-        return movies.stream()
-                .flatMap(movie ->
-                        Arrays.stream(OrderStatusEnum.values())
-                                .map(status -> calculateTotalsForMovie(movie))
-                )
-                .collect(Collectors.toList());
+        return movies.stream().map(this::calculateTotalsForMovie).collect(Collectors.toList());
     }
 
     private SalesTransactionSuDTO calculateTotal(User user, Boolean isAdmin) {
