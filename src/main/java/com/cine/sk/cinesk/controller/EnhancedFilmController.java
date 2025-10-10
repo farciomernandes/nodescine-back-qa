@@ -70,8 +70,14 @@ public class EnhancedFilmController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EnhancedFilmDTO> update(@PathVariable Long id, @Valid @RequestBody EnhancedFilmDTO dto) {
-        return ResponseEntity.ok(enhancedFilmService.update(id, dto));
+    public ResponseEntity<EnhancedFilmDTO> update(@PathVariable Long id, @Valid @RequestPart("dto") EnhancedFilmDTO dto,
+                                                  @RequestPart(value = "file", required = false) MultipartFile file) {
+        var movie = enhancedFilmService.update(id, dto);
+        if (file != null && !file.isEmpty()) {
+            var movieWithPoster = enhancedFilmService.insertPoster(movie.getId(), file);
+            return ResponseEntity.ok(movieWithPoster);
+        }
+        return ResponseEntity.ok(movie);
     }
 
     @PostMapping(value = "/poster", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

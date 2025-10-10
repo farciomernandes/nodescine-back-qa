@@ -4,6 +4,8 @@ import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.email.EmailService;
 import com.cine.sk.cinesk.domain.movie.Movie;
 import com.cine.sk.cinesk.domain.movie.MovieRepository;
+import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
+import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import com.cine.sk.cinesk.domain.transaction.payment.*;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
@@ -144,9 +146,36 @@ public class TransactionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return TransactionByMovieDTO.builder()
-            .movie(movie)
+            .movie(toDTO(movie))
             .totalAmount(totalAmount)
             .build();
+    }
+
+    private String minutesToDuration(Integer minutes) {
+        if (minutes == null) return null;
+        long hours = minutes / 60;
+        long mins = minutes % 60;
+        return String.format("%dh %dm", hours, mins);
+    }
+
+    private EnhancedFilmDTO toDTO(Movie entity) {
+        EnhancedFilmDTO dto = new EnhancedFilmDTO();
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setDirector(entity.getDirector());
+        dto.setYear(entity.getYear());
+        dto.setCategory(entity.getCategory() != null ? entity.getCategory().getName() : null);
+        dto.setGenres(entity.getGenres().stream()
+            .map(genre -> new GenreDTO(genre.getId(), genre.getName()))
+            .collect(Collectors.toList()));
+        dto.setDuration(minutesToDuration(entity.getDurationInMinutes()));
+        dto.setMovieUrl(entity.getMovieUrl());
+        dto.setTrailerUrl(entity.getTrailer());
+        dto.setPrice(entity.getPrice());
+        dto.setSynopsis(entity.getDescription());
+        dto.setPoster(entity.getPoster());
+        dto.setCast(entity.getCast());
+        return dto;
     }
 
     public List<TransactionByMovieDTO> getTransactionsByCreatedByAndMovie() {
@@ -201,7 +230,7 @@ public class TransactionService {
 
 
     private TransactionByMovieDTO transactionToDTO(BigDecimal totalAmount, Movie movie){
-        return TransactionByMovieDTO.builder().totalAmount(totalAmount).movie(movie).build();
+        return TransactionByMovieDTO.builder().totalAmount(totalAmount).movie(toDTO(movie)).build();
     }
 
     private TransactionDTO transactionToDTOsoVai(Transaction transaction){
