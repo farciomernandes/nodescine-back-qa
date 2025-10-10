@@ -155,14 +155,14 @@ public class AuthService {
             user.setIncomeValue(request.getIncomeValue());
         }
 
-        if(user.getRoles() != null && user.getRoles().contains(Role.MOVIE_DIRECTOR)){
-            if(user.getIncomeValue() == null){
+        /*if (user.getRoles() != null && user.getRoles().contains(Role.MOVIE_DIRECTOR)) {
+            if (user.getIncomeValue() == null) {
                 throw new IllegalArgumentException("Income value cannot be null for movie directors");
             }
             AsaasAccountRequest asaasAccount = map(user);
             String walletId = paymentService.createAccount(asaasAccount);
             user.setWalletId(walletId);
-        }
+        }*/
 
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
