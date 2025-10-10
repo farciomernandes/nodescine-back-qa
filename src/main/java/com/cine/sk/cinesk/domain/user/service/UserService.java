@@ -33,6 +33,10 @@ public class UserService {
         return ResponseEntity.ok(mapToDto(user));
     }
 
+    public long countUsers() {
+        return userRepository.count();
+    }
+
     public ResponseEntity<UserDTO> updateById(Long id, UpdateUserDTO request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));

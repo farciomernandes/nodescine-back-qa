@@ -6,6 +6,7 @@ import com.cine.sk.cinesk.domain.movie.Movie;
 import com.cine.sk.cinesk.domain.movie.MovieRepository;
 import com.cine.sk.cinesk.domain.transaction.payment.*;
 import com.cine.sk.cinesk.domain.user.User;
+import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
 import com.cine.sk.cinesk.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,9 +54,9 @@ public class TransactionService {
         return tx;
     }
 
-    public List<Transaction> getMy() {
+    public List<TransactionDTO> getMy() {
         User user = currentUser();
-        return findTransactionByUser(user);
+        return findTransactionByUser(user).stream().map(this::transactionToDTOsoVai).toList();
     }
 
     public TransactionResponse createMock(CreateTransactionDTO transaction) {
@@ -75,10 +76,10 @@ public class TransactionService {
         var tx = transactionRepository.save(transactionToSave);
 
         // Aqui seria colocado order se fosse a oficinal
-        this.emailService.sendEmail(currentUser().getEmail(),
+        /*this.emailService.sendEmail(currentUser().getEmail(),
                 "Nordescine - Transação iniciada" + movie.getTitle() + "  R$ " + movie.getPrice(),
                 "✅ Email de confirmação de transação enviado com sucesso, aguardando confirmação da operadora."
-        );
+        );*/
         return TransactionResponse.builder()
                 .id(tx.getId())
                 .transactionId(tx.getTransactionId())
@@ -129,38 +130,27 @@ public class TransactionService {
     }
 
     public List<Transaction> findTransactionByUser(User user) {
-        return transactionRepository.findByUser(user);
+        return transactionRepository.findByUser(user).stream().map(transaction -> transaction).toList();
     }
 
-    public List<SalesTransactionDTO> getTransactionsByUserAndStatus(User user, boolean isAdmin) {
-        List<SalesTransactionDTO> transactions = Arrays.stream(OrderStatusEnum.values())
-                .map(status -> calculateTotalsForStatus(user, status,isAdmin))
-                .collect(Collectors.toList());
-        return transactions;
+    public SalesTransactionSuDTO getTransactionsByUserAndStatus(User user, boolean isAdmin) {
+        return calculateTotal(user, isAdmin);
     }
 
-    private SalesTransactionDTO calculateTotalsForMovieAndStatus(Movie movie, OrderStatusEnum status) {
-        List<Transaction> transactions = transactionRepository.findByMovieIdAndStatus(movie.getId(), status);
+    private TransactionByMovieDTO calculateTotalsForMovie(Movie movie) {
+        List<Transaction> transactions = transactionRepository.findByMovie(movie.getId());
 
         BigDecimal totalAmount = transactions.stream()
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal systemTax = totalAmount.multiply(TAX_RATE);
-        BigDecimal total = totalAmount.add(systemTax);
-
-        return SalesTransactionDTO.builder()
-                .movieId(movie.getId())
-                .movieName(movie.getTitle())
-                .amount(totalAmount)
-                .status(status)
-                .total(total)
-                .systemTax(systemTax)
-                .transactions(transactions)
-                .build();
+        return TransactionByMovieDTO.builder()
+            .movie(movie)
+            .totalAmount(totalAmount)
+            .build();
     }
 
-    public List<SalesTransactionDTO> getTransactionsByCreatedByAndMovie() {
+    public List<TransactionByMovieDTO> getTransactionsByCreatedByAndMovie() {
         User user = currentUser();
         List<Movie> movies;
         var isAdmin = user.getRoles() != null && user.getRoles().contains(Role.MODERATOR);
@@ -176,19 +166,24 @@ public class TransactionService {
         return movies.stream()
                 .flatMap(movie ->
                         Arrays.stream(OrderStatusEnum.values())
-                                .map(status -> calculateTotalsForMovieAndStatus(movie, status))
-                                .filter(dto -> dto.getAmount().compareTo(BigDecimal.ZERO) > 0)
+                                .map(status -> calculateTotalsForMovie(movie))
                 )
                 .collect(Collectors.toList());
     }
 
-    private SalesTransactionDTO calculateTotalsForStatus(User user, OrderStatusEnum status, Boolean isAdmin) {
+    private SalesTransactionSuDTO calculateTotal(User user, Boolean isAdmin) {
         List<Transaction> transactions;
+        Long totalUser;
+        Long totalMovie = movieRepository.count();
         if (isAdmin) {
-            transactions = transactionRepository.findByStatus(status);
+            transactions = transactionRepository.findAll();
+            totalUser = userService.countUsers();
         } else {
-            transactions = transactionRepository.findByMovieCreatedByAndStatus(user.getEmail(), status);
+            transactions = transactionRepository.findByUser(user);
+            totalUser = null;
         }
+
+        transactions.removeIf(t -> t.getStatus() == OrderStatusEnum.FAILED || t.getStatus() == OrderStatusEnum.CANCELED);
 
         BigDecimal totalAmount = transactions.stream()
                 .map(Transaction::getAmount)
@@ -197,19 +192,25 @@ public class TransactionService {
         BigDecimal systemTax = totalAmount.multiply(TAX_RATE);
         BigDecimal total = totalAmount.add(systemTax);
 
-        return SalesTransactionDTO.builder()
-                .amount(totalAmount)
-                .status(status)
-                .total(total)
-                .systemTax(systemTax)
-                .transactions(transactions)
+        return SalesTransactionSuDTO.builder()
+                .totalAmount(totalAmount)
+                .totalUser(totalUser)
+                .totalMovie(totalMovie)
                 .build();
     }
 
-    public List<SalesTransactionDTO> findSalesResult() {
+    public SalesTransactionSuDTO findSalesResult() {
         User user = currentUser();
         var isAdmin = user.getRoles() != null && user.getRoles().contains(Role.MODERATOR);
         return getTransactionsByUserAndStatus(user, isAdmin);
     }
 
+
+    private TransactionByMovieDTO transactionToDTO(BigDecimal totalAmount, Movie movie){
+        return TransactionByMovieDTO.builder().totalAmount(totalAmount).movie(movie).build();
+    }
+
+    private TransactionDTO transactionToDTOsoVai(Transaction transaction){
+        return TransactionDTO.builder().transactionId(transaction.getId()).movie(transaction.getMovie()).build();
+    }
 }

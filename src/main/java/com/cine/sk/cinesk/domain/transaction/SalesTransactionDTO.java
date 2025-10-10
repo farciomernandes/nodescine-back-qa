@@ -2,6 +2,7 @@ package com.cine.sk.cinesk.domain.transaction;
 
 
 import com.cine.sk.cinesk.domain.transaction.payment.OrderStatusEnum;
+import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -19,5 +20,5 @@ public class SalesTransactionDTO {
     private OrderStatusEnum status;
     private BigDecimal total;
     private BigDecimal systemTax;
-    private List<Transaction> transactions;
+    private List<TransactionDTO> transactions;
 }
