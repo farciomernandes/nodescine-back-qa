@@ -28,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -255,6 +256,17 @@ public class AuthService {
                 .map(this::transactionToDTO)
                 .collect(Collectors.toList());
 
+        BigDecimal totalAmount;
+        int totalMovies;
+        if(!transactions.isEmpty()){
+            totalAmount = transactions.stream()
+                    .map(t -> t.getMovie().getPrice() != null ? t.getMovie().getPrice() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            totalMovies = transactions.size();
+        } else {
+            totalAmount = BigDecimal.ZERO;
+            totalMovies = 0;
+        }
 
         var dto = UserDTO.builder()
                 .id(user.getId())
@@ -271,6 +283,8 @@ public class AuthService {
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .transactions(transactions)
+                .totalAmount(totalAmount)
+                .totalMovie(totalMovies)
                 .roles(user.getRoles())
                 .build();
         return ResponseEntity.ok(dto);

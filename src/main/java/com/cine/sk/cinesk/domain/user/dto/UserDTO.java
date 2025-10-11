@@ -2,15 +2,13 @@ package com.cine.sk.cinesk.domain.user.dto;
 
 import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.user.enums.UserStatus;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,5 +56,9 @@ public class UserDTO {
     private Set<Role> roles;
 
     private List<TransactionDTO> transactions = new ArrayList<>();
+
+    private BigDecimal totalAmount;
+
+    private int totalMovie;
 
 }
