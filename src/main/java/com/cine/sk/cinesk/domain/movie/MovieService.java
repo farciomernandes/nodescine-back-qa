@@ -178,6 +178,14 @@ public class MovieService {
             movie.setTitle(dto.getTitle());
             movie.setSlug(titleToSlug(dto.getTitle()));
         }
+
+        if(dto.getPrice() != null) movie.setPrice(dto.getPrice());
+        if(dto.getDuration() != null) movie.setDurationInMinutes(durationToMinutes(dto.getDuration()));
+        if(dto.getMovieUrl() != null) movie.setMovieUrl(dto.getMovieUrl());
+        if(dto.getTrailerUrl() != null) movie.setTrailer(dto.getTrailerUrl());
+        if(dto.getSynopsis() != null) movie.setDescription(dto.getSynopsis());
+        if(dto.getCast() != null) movie.setCast(dto.getCast());
+
         if (dto.getDirector() != null) movie.setDirector(dto.getDirector());
         if (dto.getYear() != null) movie.setYear(dto.getYear());
         if (dto.getCategory() != null) {
