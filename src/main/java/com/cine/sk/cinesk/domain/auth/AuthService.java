@@ -6,6 +6,7 @@ import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
 import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
 import com.cine.sk.cinesk.domain.transaction.payment.AsaasAccountRequest;
+import com.cine.sk.cinesk.domain.transaction.payment.AsaasWebhook;
 import com.cine.sk.cinesk.domain.transaction.payment.PaymentService;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
@@ -17,6 +18,7 @@ import com.cine.sk.cinesk.domain.user.dto.UserDTO;
 import com.cine.sk.cinesk.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +44,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+
+    @Value("${URL_BASE:http://localhost:8080}")
+    private String urlBase;
 
     public ResponseEntity<String> register(RegisterDTO request) {
         var existingOpt = userRepository.findByEmail(request.getEmail());
@@ -156,20 +162,31 @@ public class AuthService {
             user.setIncomeValue(request.getIncomeValue());
         }
 
-        /*if (user.getRoles() != null && user.getRoles().contains(Role.MOVIE_DIRECTOR)) {
+        if (user.getRoles() != null && user.getRoles().contains(Role.MOVIE_DIRECTOR)) {
             if (user.getIncomeValue() == null) {
                 throw new IllegalArgumentException("Income value cannot be null for movie directors");
             }
             AsaasAccountRequest asaasAccount = map(user);
             String walletId = paymentService.createAccount(asaasAccount);
             user.setWalletId(walletId);
-        }*/
+        }
 
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }
 
     public AsaasAccountRequest map(User user) {
+
+        AsaasWebhook asaasWebhook = new AsaasWebhook();
+        asaasWebhook.setName(user.getEmail());
+        asaasWebhook.setEvents(Arrays.stream(AsaasWebhook.Event.values()).toList());
+        asaasWebhook.setEnabled(true);
+        asaasWebhook.setUrl(urlBase + "/asaas/webhook");
+        asaasWebhook.setApiVersion(3);
+        asaasWebhook.setInterrupted(false);
+        asaasWebhook.setEmail(user.getEmail());
+        asaasWebhook.setSendType("SEQUENTIALLY");
+
         AsaasAccountRequest dto = new AsaasAccountRequest();
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());

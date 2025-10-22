@@ -18,12 +18,10 @@ public class WebhookService {
             case "PAYMENT_REFUNDED":
                 transaction.setStatus(OrderStatusEnum.CANCELED);
                 transactionService.save(transaction);
-                //createPayment(payment);
                 break;
             case "PAYMENT_RECEIVED": //TODO: PAGAMENTO RECEBIDO
                 transaction.setStatus(OrderStatusEnum.PAID);
                 transactionService.save(transaction);
-                //receivePayment(payment);
                 break;
             case "PAYMENT_OVERDUE:": //TODO: PAGAMENTO VENCIDO
                 transaction.setStatus(OrderStatusEnum.CANCELED);

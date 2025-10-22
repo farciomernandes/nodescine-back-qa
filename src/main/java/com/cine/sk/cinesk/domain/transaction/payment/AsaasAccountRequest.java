@@ -20,18 +20,5 @@ public class AsaasAccountRequest {
     private String phone;
     private String site;
     private String complement;
-    private List<WebhookDto> webhooks;
-
-    @Data
-    public static class WebhookDto {
-        private String name;
-        private String url;
-        private String email;
-        private Boolean enabled;
-        private Boolean interrupted;
-        private Integer apiVersion;
-        private String authToken;
-        private String sendType;
-        private List<String> events;
-    }
+    private List<AsaasWebhook> webhooks;
 }
