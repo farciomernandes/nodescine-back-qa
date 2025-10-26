@@ -23,14 +23,24 @@ public class PaymentService {
     @Value("${OWNER_WALLET:test}")
     private String OwnerWallet;
 
-    public ProcessPaymentResponse process(OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address, String movieWallet) {
+    public PaymentResponse process(OrderDTO order, UserPaymentDTO user, PaymentDTO payment, AddressDTO address, String movieWallet) {
         try {
+            AsaasPixResponse qrcode = null;
             String customerId = findOrCreateCustomer(user, address);
             AsaasPaymentResponse transactionResponse = createTransaction(customerId, order, user, payment, address, movieWallet);
-            return buildProcessPaymentResponse(transactionResponse);
+            if(payment.getMethod() == PaymentMethodEnum.PIX){
+                qrcode = getQrCodePix(transactionResponse.getId());
+            }
+
+            ProcessPaymentResponse processPaymentResponse = buildProcessPaymentResponse(transactionResponse);
+            return new PaymentResponse(processPaymentResponse, qrcode);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falha ao processar pagamento com Asaas: " + e.getMessage(), e);
         }
+    }
+
+    private AsaasPixResponse getQrCodePix(String id) {
+        return asaasApiClient.getQrCodePix(id);
     }
 
     private String findOrCreateCustomer(UserPaymentDTO user, AddressDTO address) {
@@ -80,13 +90,23 @@ public class PaymentService {
                     .mobilePhone(user.getPhone())
                     .build());
 
-
             RequestSplit ownerSplit = RequestSplit.builder().walletId(OwnerWallet).percentualValue(80.0).build();
             RequestSplit directorSplit = RequestSplit.builder().walletId(directorWallet).percentualValue(20.0).build();
             List<RequestSplit> requestSplitList = new ArrayList<>();
             requestSplitList.add(ownerSplit);
             requestSplitList.add(directorSplit);
             requestBuilder.split(requestSplitList);
+        }else if (payment.getMethod() == PaymentMethodEnum.PIX) {
+            RequestSplit ownerSplit = RequestSplit.builder().walletId(OwnerWallet).percentualValue(80.0).build();
+            RequestSplit directorSplit = RequestSplit.builder().walletId(directorWallet).percentualValue(20.0).build();
+            List<RequestSplit> requestSplitList = new ArrayList<>();
+            requestSplitList.add(ownerSplit);
+            requestSplitList.add(directorSplit);
+            requestBuilder.split(requestSplitList);
+            // CRIAR COBRANCA PIX - https://api-sandbox.asaas.com/v3/payments
+            //TODO - CRIAR CHAVE PIX -  https://api-sandbox.asaas.com/v3/pix/addressKeys
+            //TODO: RESGATAR O QRCODE - https://api-sandbox.asaas.com/v3/payments/{id}/pixQrCode
+            //TODO: RETORNAR UM OBJETO COM O QRCODE
         }
 
         return asaasApiClient.createPayment(apiKey, requestBuilder.build());
