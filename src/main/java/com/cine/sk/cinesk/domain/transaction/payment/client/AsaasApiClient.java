@@ -29,5 +29,5 @@ public interface AsaasApiClient {
     AsaasPaymentResponse createPayment(@RequestHeader("access_token") String accessToken, @RequestBody AsaasPaymentRequest paymentRequest);
 
     @GetMapping("/payments/{id}/pixQrCode")
-    AsaasPixResponse getQrCodePix(@PathVariable String id);
+    AsaasPixResponse getQrCodePix(@RequestHeader("access_token") String accessToken, @PathVariable String id);
 }

@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.domain.transaction.payment;
 
+import com.cine.sk.cinesk.domain.transaction.payment.client.AsaasPixResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -12,7 +13,7 @@ public class AsaasPaymentResponse {
     private String id, status, billingType, externalReference, bankSlipUrl;
     private BigDecimal value;
     @JsonProperty("qrCode")
-    private PixInfo pixQrCode;
+    private AsaasPixResponse pixQrCode;
     private CardInfo creditCard;
 
     @Data public static class PixInfo { private String encodedImage, payload; }

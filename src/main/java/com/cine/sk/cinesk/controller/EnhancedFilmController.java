@@ -54,10 +54,9 @@ public class EnhancedFilmController {
         return enhancedFilmService.findAll(title, description, director, genre, category, cast, pageable);
     }
 
-    @Transactional
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EnhancedFilmDTO> create(
-            @Valid @RequestPart("dto") EnhancedFilmDTO dto,
+            @RequestPart(value = "dto", required = true) EnhancedFilmDTO dto,
             @RequestPart(value = "file", required = false) MultipartFile file) {
 
         var created = enhancedFilmService.create(dto);

@@ -28,19 +28,14 @@ public class PaymentService {
             AsaasPixResponse qrcode = null;
             String customerId = findOrCreateCustomer(user, address);
             AsaasPaymentResponse transactionResponse = createTransaction(customerId, order, user, payment, address, movieWallet);
-            if(payment.getMethod() == PaymentMethodEnum.PIX){
-                qrcode = getQrCodePix(transactionResponse.getId());
-            }
-
-            ProcessPaymentResponse processPaymentResponse = buildProcessPaymentResponse(transactionResponse);
-            return new PaymentResponse(processPaymentResponse, qrcode);
+            return buildProcessPaymentResponse(transactionResponse);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falha ao processar pagamento com Asaas: " + e.getMessage(), e);
         }
     }
 
     private AsaasPixResponse getQrCodePix(String id) {
-        return asaasApiClient.getQrCodePix(id);
+        return asaasApiClient.getQrCodePix(apiKey, id);
     }
 
     private String findOrCreateCustomer(UserPaymentDTO user, AddressDTO address) {
@@ -97,10 +92,8 @@ public class PaymentService {
             requestSplitList.add(directorSplit);
             requestBuilder.split(requestSplitList);
         }else if (payment.getMethod() == PaymentMethodEnum.PIX) {
-            RequestSplit ownerSplit = RequestSplit.builder().walletId(OwnerWallet).percentualValue(80.0).build();
             RequestSplit directorSplit = RequestSplit.builder().walletId(directorWallet).percentualValue(20.0).build();
             List<RequestSplit> requestSplitList = new ArrayList<>();
-            requestSplitList.add(ownerSplit);
             requestSplitList.add(directorSplit);
             requestBuilder.split(requestSplitList);
             // CRIAR COBRANCA PIX - https://api-sandbox.asaas.com/v3/payments
@@ -117,16 +110,15 @@ public class PaymentService {
         return asaasAccountResponse.getWalletId();
     }
 
-    private ProcessPaymentResponse buildProcessPaymentResponse(AsaasPaymentResponse response) {
-        Object transactionDetails;
+    private PaymentResponse buildProcessPaymentResponse(AsaasPaymentResponse response) {
+        Object transactionDetails = null;
         PaymentMethodEnum method = PaymentMethodEnum.valueOf(response.getBillingType());
+        AsaasPixResponse qrcode = null;
 
         if (method == PaymentMethodEnum.PIX) {
-            transactionDetails = PixTransactionDTO.builder()
-                    .paymentInfo(buildBaseTransaction(response))
-                    .encodedImage(response.getPixQrCode().getEncodedImage())
-                    .payload(response.getPixQrCode().getPayload())
-                    .build();
+                qrcode = getQrCodePix(response.getId());
+                response.setPixQrCode(qrcode);
+
         } else if (method == PaymentMethodEnum.BOLETO) {
             transactionDetails = BoletoTransactionDTO.builder()
                     .paymentInfo(buildBaseTransaction(response))
@@ -143,11 +135,13 @@ public class PaymentService {
                     .build();
         }
 
-        return ProcessPaymentResponse.builder()
+        ProcessPaymentResponse processPaymentResponse = ProcessPaymentResponse.builder()
                 .transactionId(response.getId())
                 .status(OrderStatusEnum.PENDING)
                 .transaction(transactionDetails)
                 .build();
+
+        return new PaymentResponse(processPaymentResponse, qrcode);
     }
 
     private BaseTransactionDTO buildBaseTransaction(AsaasPaymentResponse response) {

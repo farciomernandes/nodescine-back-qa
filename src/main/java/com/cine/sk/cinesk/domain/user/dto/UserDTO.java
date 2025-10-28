@@ -61,4 +61,6 @@ public class UserDTO {
 
     private int totalMovie;
 
+    private String walletId;
+
 }
