@@ -17,6 +17,8 @@ public class AsaasPaymentRequest {
     private CreditCard creditCard;
     private CreditCardHolderInfo creditCardHolderInfo;
 
+    //TODO: incluir objeto de callback
+
     private List<RequestSplit> split;
 
     @Data @Builder public static class CreditCard {

@@ -61,7 +61,7 @@ public class PaymentService {
                 .billingType(payment.getMethod().name())
                 .value(order.getTotal())
                 .dueDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
-                .description("CineSK - Pedido #" + order.getId())
+                .description("CineSK - Pedido: " + customerId)
                 .externalReference(payment.getMethod().name() + " - " + order.getId());
 
         if (payment.getMethod() == PaymentMethodEnum.CREDIT_CARD) {
@@ -96,10 +96,6 @@ public class PaymentService {
             List<RequestSplit> requestSplitList = new ArrayList<>();
             requestSplitList.add(directorSplit);
             requestBuilder.split(requestSplitList);
-            // CRIAR COBRANCA PIX - https://api-sandbox.asaas.com/v3/payments
-            //TODO - CRIAR CHAVE PIX -  https://api-sandbox.asaas.com/v3/pix/addressKeys
-            //TODO: RESGATAR O QRCODE - https://api-sandbox.asaas.com/v3/payments/{id}/pixQrCode
-            //TODO: RETORNAR UM OBJETO COM O QRCODE
         }
 
         return asaasApiClient.createPayment(apiKey, requestBuilder.build());
