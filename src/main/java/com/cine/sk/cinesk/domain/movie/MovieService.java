@@ -80,6 +80,7 @@ public class MovieService {
         dto.setSynopsis(entity.getDescription());
         dto.setPoster(entity.getPoster());
         dto.setCast(entity.getCast());
+        dto.setSlug(entity.getSlug());
         return dto;
     }
 
