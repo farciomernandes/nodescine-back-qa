@@ -55,6 +55,12 @@ public class TransactionService {
         return tx;
     }
 
+    public Transaction findByTransactionId(String transactionId) {
+        return transactionRepository.findByTransactionId(transactionId).orElse(null);
+    }
+
+
+
     public List<TransactionDTO> getMy() {
         User user = currentUser();
         return findTransactionByUser(user).stream().map(this::transactionToDTOsoVai).toList();
@@ -92,7 +98,7 @@ public class TransactionService {
 
     }
 
-    public Transaction create(CreateTransactionDTO transaction) {
+    public TransactionResponse create(CreateTransactionDTO transaction) {
         User user = currentUser();
 
         Movie movie = movieRepository.findById(transaction.getMovieId())
@@ -119,15 +125,25 @@ public class TransactionService {
                 .movie(movie)
                 .amount(movie.getPrice())
                 .date(OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .status(response.getStatus())
-                .transactionId(response.getTransactionId())
+                .status(response.getPaymentResponse().getStatus())
+                .transactionId(response.getPaymentResponse().getTransactionId())
                 .build();
+
 
         this.emailService.sendEmail(currentUser().getEmail(),
                 "Nordescine - Transação iniciada" + movie.getTitle() + "  R$ " + order.getTotal(),
                 "✅ Email de confirmação de transação enviado com sucesso, aguardando confirmação da operadora."
         );
-        return transactionRepository.save(tx);
+        Transaction saved = transactionRepository.save(tx);
+        return TransactionResponse.builder()
+            .id(saved.getId())
+            .transactionId(saved.getTransactionId())
+            .amount(saved.getAmount())
+            .status(saved.getStatus())
+            .date(saved.getDate())
+            .movieId(saved.getMovie().getId())
+            .pix(response.getPix())
+            .build();
     }
 
     public List<Transaction> findTransactionByUser(User user) {
@@ -235,5 +251,9 @@ public class TransactionService {
 
     private TransactionDTO transactionToDTOsoVai(Transaction transaction){
         return TransactionDTO.builder().transactionId(transaction.getId()).movie(transaction.getMovie()).build();
+    }
+
+    public void save(Transaction transaction) {
+        transactionRepository.save(transaction);
     }
 }

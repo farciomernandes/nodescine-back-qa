@@ -23,5 +23,6 @@ public class EnhancedFilmDTO {
     private String movieUrl;
     private String trailerUrl;
     private String synopsis;
+    private String slug;
     List<String> cast = new ArrayList<>();
 }
