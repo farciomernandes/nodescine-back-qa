@@ -21,6 +21,11 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getById(id));
     }
 
+    @GetMapping("/customer/{id}")
+    public ResponseEntity<List<TransactionDTO>> getByCustomerId(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.getByCustomerId(id));
+    }
+
     @PostMapping
     public ResponseEntity<TransactionResponse> create(@RequestBody CreateTransactionDTO createTransaction) {
         TransactionResponse created = transactionService.create(createTransaction);

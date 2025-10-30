@@ -26,4 +26,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT t FROM Transaction t WHERE t.movie.id = :movieId AND t.status = :status")
     List<Transaction> findByMovieIdAndStatus(Long movieId, OrderStatusEnum status);
+
+    List<Transaction> findAllByUser_Id(Long userId);
 }

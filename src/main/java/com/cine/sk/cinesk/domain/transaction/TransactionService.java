@@ -59,11 +59,13 @@ public class TransactionService {
         return transactionRepository.findByTransactionId(transactionId).orElse(null);
     }
 
-
-
     public List<TransactionDTO> getMy() {
         User user = currentUser();
         return findTransactionByUser(user).stream().map(this::transactionToDTOsoVai).toList();
+    }
+
+    public List<TransactionDTO> getByCustomerId(Long customerId) {
+        return transactionRepository.findAllByUser_Id(customerId).stream().map(this::transactionToDTOsoVai).toList();
     }
 
     public TransactionResponse createMock(CreateTransactionDTO transaction) {
@@ -191,6 +193,9 @@ public class TransactionService {
         dto.setSynopsis(entity.getDescription());
         dto.setPoster(entity.getPoster());
         dto.setCast(entity.getCast());
+        dto.setSlug(entity.getSlug());
+        dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
+        dto.setProducerDeadline(entity.getProducerDeadline());
         return dto;
     }
 
