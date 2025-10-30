@@ -71,7 +71,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/test/**", "/asaas/webhook/**").permitAll()
                         .requestMatchers("/auth/register/moderator").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.POST, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
-                        .requestMatchers(HttpMethod.GET, "/transactions/customer/", "/transactions/customer/**").hasAnyAuthority(Role.MODERATOR.name())
+                        .requestMatchers(HttpMethod.GET, "/transactions/customer/", "/transactions/customer/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.PUT, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.GET, "/enhanced-films", "/enhanced-films/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/all").hasAnyAuthority(Role.MODERATOR.name())
