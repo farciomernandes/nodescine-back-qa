@@ -268,4 +268,8 @@ public class TransactionService {
     public void save(Transaction transaction) {
         transactionRepository.save(transaction);
     }
+
+    public List<TransactionDTO> getByUserId(Long id) {
+        return transactionRepository.findAllByUser_Id(id).stream().map(this::transactionToDTOsoVai).toList();
+    }
 }

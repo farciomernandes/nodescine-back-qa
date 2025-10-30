@@ -2,8 +2,11 @@ package com.cine.sk.cinesk.domain.user.service;
 
 import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.auth.usertoken.UserTokenRepository;
+import com.cine.sk.cinesk.domain.transaction.Transaction;
+import com.cine.sk.cinesk.domain.transaction.TransactionRepository;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
+import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
 import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import com.cine.sk.cinesk.domain.user.dto.UpdateUserDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
@@ -24,13 +27,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final UserTokenRepository userTokenRepository;
 
     public ResponseEntity<UserDTO> getById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return ResponseEntity.ok(mapToDto(user));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return ResponseEntity.ok(mapToDtoWithTransaction(user));
     }
 
     public long countUsers() {
@@ -39,7 +43,7 @@ public class UserService {
 
     public ResponseEntity<UserDTO> updateById(Long id, UpdateUserDTO request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         if (!isSelfOrStaff(user)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
@@ -69,7 +73,7 @@ public class UserService {
         }
 
         User saved = userRepository.save(user);
-        return ResponseEntity.ok(mapToDto(saved));
+        return ResponseEntity.ok(mapToDtoWithTransaction(saved));
     }
 
     @Transactional
@@ -89,7 +93,7 @@ public class UserService {
             userTokenRepository.deactivateAllUserTokens(user.getEmail());
             userRepository.save(user);
         }
-        
+
         return ResponseEntity.noContent().build();
     }
 
@@ -107,29 +111,66 @@ public class UserService {
         return false;
     }
 
-    public Optional<User> findByEmail(String email){
+    public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public Optional<User> findById(Long id){
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
+    }
+
+    private TransactionDTO transactionToDTOsoVai(Transaction transaction){
+        return TransactionDTO.builder().transactionId(transaction.getId()).movie(transaction.getMovie()).build();
+    }
+
+    private UserDTO mapToDtoWithTransaction(User user) {
+        List<TransactionDTO> transactionsDTO = transactionRepository.findAllByUser_Id(user.getId())
+            .stream().map(this::transactionToDTOsoVai).toList();
+
+        return UserDTO.builder()
+            .id(user.getId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .status(user.getStatus())
+            .createdAt(user.getCreatedAt())
+            .complement(user.getComplement())
+            .roles(user.getRoles())
+            .walletId(user.getWalletId())
+            .cpf(user.getCpf())
+            .address(user.getAddress())
+            .addressNumber(user.getAddressNumber())
+            .phone(user.getPhone())
+            .province(user.getProvince())
+            .postalCode(user.getPostalCode())
+            .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt() : null)
+            .transactions(transactionsDTO)
+            .build();
     }
 
     private UserDTO mapToDto(User user) {
         return UserDTO.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .status(user.getStatus())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt() : null)
-                .transactions(null)
-                .build();
+            .id(user.getId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .status(user.getStatus())
+            .createdAt(user.getCreatedAt())
+            .complement(user.getComplement())
+            .roles(user.getRoles())
+            .walletId(user.getWalletId())
+            .cpf(user.getCpf())
+            .address(user.getAddress())
+            .addressNumber(user.getAddressNumber())
+            .phone(user.getPhone())
+            .province(user.getProvince())
+            .postalCode(user.getPostalCode())
+            .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt() : null)
+            .transactions(null)
+            .build();
     }
 
     public ResponseEntity<List<UserDTO>> getAll() {
         List<User> users = userRepository.findAll();
-        var usersDTO = users.stream().map(this::mapToDto).toList();
+        var usersDTO = users.stream().map(this::mapToDtoWithTransaction).toList();
         return ResponseEntity.ok(usersDTO);
     }
 }
