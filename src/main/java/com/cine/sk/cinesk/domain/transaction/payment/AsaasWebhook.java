@@ -21,6 +21,7 @@ public class AsaasWebhook {
         PAYMENT_RECEIVED,
         PAYMENT_OVERDUE,
         PAYMENT_DELETED,
-        PAYMENT_CREATED
+        PAYMENT_CREATED,
+        PAYMENT_CONFIRMED
     }
 }

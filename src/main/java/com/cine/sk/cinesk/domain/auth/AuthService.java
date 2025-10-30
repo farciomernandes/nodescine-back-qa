@@ -45,7 +45,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    @Value("${URL_BASE:http://localhost:8080}")
+    @Value("${WEB_HOOK_ASAAS:https://nodescine-back-qa.onrender.com/api/}")
     private String urlBase;
 
     public ResponseEntity<String> register(RegisterDTO request) {
@@ -181,7 +181,7 @@ public class AuthService {
         asaasWebhook.setName(user.getEmail());
         asaasWebhook.setEvents(Arrays.stream(AsaasWebhook.Event.values()).toList());
         asaasWebhook.setEnabled(true);
-        asaasWebhook.setUrl(urlBase + "/asaas/webhook");
+        asaasWebhook.setUrl(urlBase + "/asaas/webhook/" );
         asaasWebhook.setApiVersion(3);
         asaasWebhook.setInterrupted(false);
         asaasWebhook.setEmail(user.getEmail());
@@ -203,7 +203,7 @@ public class AuthService {
         dto.setBirthDate(user.getBirthDate());
         dto.setCompanyType(null);
         dto.setSite(null);
-        dto.setWebhooks(null);
+        dto.setWebhooks(List.of(asaasWebhook));
 
         return dto;
     }

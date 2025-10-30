@@ -21,8 +21,7 @@ public class WebHookController {
     public ResponseEntity<Map<String, Boolean>> handleWebhook(@RequestBody Map<String, Object> body) {
         String event = (String) body.get("event");
         Map<String, Object> payment = (Map<String, Object>) body.get("payment");
-        webhookService.processWebhookPayload(event, payment.get("id").toString());
-
+        webhookService.processWebhookPayloadAsync(event, payment.get("id").toString());
         return ResponseEntity.ok(Map.of("received", true));
     }
 
