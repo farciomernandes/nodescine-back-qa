@@ -42,6 +42,10 @@ public class EnhancedFilmService {
         return movieService.findById(id);
     }
 
+    public EnhancedFilmDTO findBySlug(String slug) {
+        return movieService.findBySlug(slug);
+    }
+
     public List<EnhancedFilmDTO> findMyMovies() {
         User user = currentUser();
         return movieService.findByUserEmail(user.getEmail());

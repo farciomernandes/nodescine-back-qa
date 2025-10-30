@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,6 +57,10 @@ public class MovieService {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
         return toDTO(movie);
+    }
+
+    public EnhancedFilmDTO findBySlug(String slug) {
+        return movieRepository.findBySlug(slug).map(this::toDTO).orElse(null);
     }
 
     public List<EnhancedFilmDTO> findByUserEmail(String email) {
@@ -111,7 +117,7 @@ public class MovieService {
 
     private String titleToSlug(String title) {
         if (title == null) return null;
-        return title.toLowerCase().replaceAll("[^a-z0-9]+", "-");
+        return title.toLowerCase().replaceAll("[^a-z0-9]+", "_");
     }
 
     private String minutesToDuration(Integer minutes) {
@@ -141,6 +147,11 @@ public class MovieService {
 
     @Transactional
     public EnhancedFilmDTO create(EnhancedFilmDTO dto) {
+        String slug = titleToSlug(dto.getTitle());
+        if (movieRepository.existsBySlug(slug)) {
+            throw new RuntimeException("Movie with slug " + slug + " already exists");
+        }
+
         Movie movie = toEntity(dto);
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -180,8 +191,16 @@ public class MovieService {
                 .orElseThrow(() -> new RuntimeException("Filme não encontrado com ID: " + id));
 
         if (dto.getTitle() != null) {
+            String newSlug = titleToSlug(dto.getTitle());
+            if (!Objects.equals(movie.getSlug(), newSlug)) {
+                Optional<Movie> movieSlug = movieRepository.findBySlug(newSlug);
+                    if (movieSlug.isPresent() && !movieSlug.get().getId().equals(id)) {
+                        throw new RuntimeException("Slug já existe: " + newSlug);
+                    }
+
+                movie.setSlug(newSlug);
+            }
             movie.setTitle(dto.getTitle());
-            movie.setSlug(titleToSlug(dto.getTitle()));
         }
 
         if(dto.getPrice() != null) movie.setPrice(dto.getPrice());

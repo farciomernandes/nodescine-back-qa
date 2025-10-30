@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
@@ -49,4 +50,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     Page<Movie> findAllByActiveTrue(Pageable pageable);
 
     List<Movie> findByCreatedBy(String createdBy);
+
+    Optional<Movie> findBySlug(String slug);
+
+    boolean existsBySlug(String slug);
+
 }
