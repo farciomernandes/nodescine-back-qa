@@ -19,6 +19,10 @@ public class WebhookService {
                 transaction.setStatus(OrderStatusEnum.CANCELED);
                 transactionService.save(transaction);
                 break;
+            case "PAYMENT_CONFIRMED":
+                transaction.setStatus(OrderStatusEnum.PAID);
+                transactionService.save(transaction);
+                break;
             case "PAYMENT_RECEIVED": //TODO: PAGAMENTO RECEBIDO
                 transaction.setStatus(OrderStatusEnum.PAID);
                 transactionService.save(transaction);
