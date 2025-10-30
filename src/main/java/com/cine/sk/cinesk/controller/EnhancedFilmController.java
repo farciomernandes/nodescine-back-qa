@@ -30,7 +30,7 @@ public class EnhancedFilmController {
         return ResponseEntity.ok(enhancedFilmService.findById(id));
     }
 
-    @GetMapping("/{slug}")
+    @GetMapping("/slug/{slug}")
     public ResponseEntity<EnhancedFilmDTO> findBySlug(
         @Parameter(description = "Movie Slug", required = true)
         @PathVariable String slug) {
