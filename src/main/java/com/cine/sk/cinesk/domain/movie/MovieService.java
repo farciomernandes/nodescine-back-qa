@@ -81,6 +81,8 @@ public class MovieService {
         dto.setPoster(entity.getPoster());
         dto.setCast(entity.getCast());
         dto.setSlug(entity.getSlug());
+        dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
+        dto.setProducerDeadline(entity.getProducerDeadline());
         return dto;
     }
 
@@ -102,6 +104,8 @@ public class MovieService {
         entity.setMovieUrl(dto.getMovieUrl());
         entity.setTrailer(dto.getTrailerUrl());
         entity.setDurationInMinutes(durationToMinutes(dto.getDuration()));
+        entity.setProducerDeadline(dto.getProducerDeadline());
+        entity.setIsAdultConfirmed(dto.getIsAdultConfirmed());
         return entity;
     }
 
@@ -210,6 +214,8 @@ public class MovieService {
                     .collect(Collectors.toSet()));
         }
 
+        movie.setProducerDeadline(dto.getProducerDeadline());
+        movie.setIsAdultConfirmed(dto.getIsAdultConfirmed());
         movie.setActive(true);
         movie = movieRepository.save(movie);
         return toDTO(movie);

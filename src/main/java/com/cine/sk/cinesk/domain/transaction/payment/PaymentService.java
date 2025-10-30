@@ -85,10 +85,8 @@ public class PaymentService {
                     .mobilePhone(user.getPhone())
                     .build());
 
-            RequestSplit ownerSplit = RequestSplit.builder().walletId(OwnerWallet).percentualValue(80.0).build();
             RequestSplit directorSplit = RequestSplit.builder().walletId(directorWallet).percentualValue(20.0).build();
             List<RequestSplit> requestSplitList = new ArrayList<>();
-            requestSplitList.add(ownerSplit);
             requestSplitList.add(directorSplit);
             requestBuilder.split(requestSplitList);
         }else if (payment.getMethod() == PaymentMethodEnum.PIX) {

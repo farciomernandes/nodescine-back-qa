@@ -12,7 +12,7 @@ public class WebhookService {
 
     private final TransactionService transactionService;
 
-    public void processWebhookPayload(String event, String id) {
+    private void processWebhookPayload(String event, String id) {
         Transaction transaction = transactionService.findByTransactionId(id);
         switch (event) { //TODO: PAGAMENTO === COBRANCA
             case "PAYMENT_REFUNDED":
@@ -40,5 +40,9 @@ public class WebhookService {
         }
 
 
+    }
+
+    public void processWebhookPayloadAsync(String event, String id) {
+        processWebhookPayload(event, id);
     }
 }

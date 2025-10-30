@@ -63,4 +63,8 @@ public class Movie extends AbstractEntity {
     private String createdBy;
 
     private Boolean active;
+
+    private String producerDeadline;
+
+    private Boolean isAdultConfirmed;
 }

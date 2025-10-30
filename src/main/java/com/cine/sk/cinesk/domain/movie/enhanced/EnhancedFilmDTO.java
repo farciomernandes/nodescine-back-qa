@@ -25,4 +25,6 @@ public class EnhancedFilmDTO {
     private String synopsis;
     private String slug;
     List<String> cast = new ArrayList<>();
+    private Boolean isAdultConfirmed;
+    private String producerDeadline;
 }
