@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.controller;
 
+import com.cine.sk.cinesk.domain.transaction.webhook.WebhookRequestDTO;
 import com.cine.sk.cinesk.domain.transaction.webhook.WebhookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,13 @@ public class WebHookController {
     private final WebhookService webhookService;
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<Map<String, Boolean>> handleWebhook(@RequestBody Map<String, Object> body) {
-        String event = (String) body.get("event");
-        Map<String, Object> payment = (Map<String, Object>) body.get("payment");
-        webhookService.processWebhookPayloadAsync(event, payment.get("id").toString());
+    public ResponseEntity<Map<String, Boolean>> handleWebhook(@RequestBody WebhookRequestDTO request) {
+        String event = request.getEvent();
+        String paymentId = request.getPayment().getId();
+
+        webhookService.processWebhookPayloadAsync(event, paymentId);
         return ResponseEntity.ok(Map.of("received", true));
     }
+
 
 }
