@@ -48,6 +48,11 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getMy());
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<TransactionDTO>> getByUserId(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.getByUserId(id));
+    }
+
     @GetMapping("/summary")
     public ResponseEntity<SalesTransactionSuDTO> summary() {
         return ResponseEntity.ok(transactionService.findSalesResult());
