@@ -30,6 +30,13 @@ public class EnhancedFilmController {
         return ResponseEntity.ok(enhancedFilmService.findById(id));
     }
 
+    @GetMapping("/{slug}")
+    public ResponseEntity<EnhancedFilmDTO> findBySlug(
+        @Parameter(description = "Movie Slug", required = true)
+        @PathVariable String slug) {
+        return ResponseEntity.ok(enhancedFilmService.findBySlug(slug));
+    }
+
     @GetMapping("/me")
     public ResponseEntity<List<EnhancedFilmDTO>> findMyMovies() {
         return ResponseEntity.ok(enhancedFilmService.findMyMovies());
