@@ -111,6 +111,10 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> findById(Long id){
+        return userRepository.findById(id);
+    }
+
     private UserDTO mapToDto(User user) {
         return UserDTO.builder()
                 .id(user.getId())

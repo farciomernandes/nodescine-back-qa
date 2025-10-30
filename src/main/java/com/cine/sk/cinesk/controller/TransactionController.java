@@ -21,9 +21,14 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getById(id));
     }
 
-    @GetMapping("/customer/{id}")
-    public ResponseEntity<List<TransactionDTO>> getByCustomerId(@PathVariable Long id) {
-        return ResponseEntity.ok(transactionService.getByCustomerId(id));
+    @GetMapping("/director/summary/by-movie/{id}")
+    public ResponseEntity<List<TransactionByMovieDTO>> getDirectorIdByMovie(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.getDirectorId(id));
+    }
+
+    @GetMapping("/director/summary/{id}")
+    public ResponseEntity<SalesTransactionSuDTO> getDirectorIdSummary(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.findSalesResult(id));
     }
 
     @PostMapping

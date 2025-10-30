@@ -64,8 +64,11 @@ public class TransactionService {
         return findTransactionByUser(user).stream().map(this::transactionToDTOsoVai).toList();
     }
 
-    public List<TransactionDTO> getByCustomerId(Long customerId) {
-        return transactionRepository.findAllByUser_Id(customerId).stream().map(this::transactionToDTOsoVai).toList();
+    public List<TransactionByMovieDTO> getDirectorId(Long id) {
+        User user = userService.findById(id).orElseThrow( () -> new RuntimeException("User not found"));
+
+        List<Movie> movies = movieRepository.findByCreatedBy(user.getEmail());
+        return movies.stream().map(this::calculateTotalsForMovie).collect(Collectors.toList());
     }
 
     public TransactionResponse createMock(CreateTransactionDTO transaction) {
@@ -249,6 +252,10 @@ public class TransactionService {
         return getTransactionsByUserAndStatus(user, isAdmin);
     }
 
+    public SalesTransactionSuDTO findSalesResult(Long id) {
+        User user = userService.findById(id).orElseThrow( () -> new RuntimeException("User not found"));
+        return getTransactionsByUserAndStatus(user, false);
+    }
 
     private TransactionByMovieDTO transactionToDTO(BigDecimal totalAmount, Movie movie){
         return TransactionByMovieDTO.builder().totalAmount(totalAmount).movie(toDTO(movie)).build();
