@@ -46,13 +46,13 @@ public class TransactionService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autorizado ou não encontrado"));
     }
 
-    public Transaction getById(Long id) {
+    public TransactionDTO getById(Long id) {
         User user = currentUser();
 
         Transaction tx = transactionRepository.findById(id)
                 .filter(t -> t.getUser() != null && t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transação não encontrada"));
-        return tx;
+        return transactionToDTOsoVai(tx);
     }
 
     public Transaction findByTransactionId(String transactionId) {
