@@ -262,7 +262,7 @@ public class TransactionService {
     }
 
     private TransactionDTO transactionToDTOsoVai(Transaction transaction){
-        return TransactionDTO.builder().transactionId(transaction.getId()).movie(transaction.getMovie()).build();
+        return TransactionDTO.builder().transactionId(transaction.getId()).status(transaction.getStatus()).movie(transaction.getMovie()).build();
     }
 
     public void save(Transaction transaction) {
