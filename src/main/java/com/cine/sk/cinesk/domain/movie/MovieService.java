@@ -49,7 +49,7 @@ public class MovieService {
             moviePage = movieRepository.findAllByFilters(title, description, director, genre, category, cast, pageable);
         }
 
-        return moviePage.map(this::toDTO);
+        return moviePage.map(this::toDTOMainPage);
     }
 
 
@@ -89,6 +89,31 @@ public class MovieService {
         dto.setSlug(entity.getSlug());
         dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
         dto.setProducerDeadline(entity.getProducerDeadline());
+        dto.setMovieType(entity.getMovieType());
+        return dto;
+    }
+
+    private EnhancedFilmDTO toDTOMainPage(Movie entity) {
+        EnhancedFilmDTO dto = new EnhancedFilmDTO();
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setDirector(entity.getDirector());
+        dto.setYear(entity.getYear());
+        dto.setCategory(entity.getCategory() != null ? entity.getCategory().getName() : null);
+        dto.setGenres(entity.getGenres().stream()
+            .map(genre -> new GenreDTO(genre.getId(), genre.getName()))
+            .collect(Collectors.toList()));
+        dto.setDuration(minutesToDuration(entity.getDurationInMinutes()));
+        dto.setMovieUrl(null);
+        dto.setTrailerUrl(entity.getTrailer());
+        dto.setPrice(entity.getPrice());
+        dto.setSynopsis(entity.getDescription());
+        dto.setPoster(entity.getPoster());
+        dto.setCast(entity.getCast());
+        dto.setSlug(entity.getSlug());
+        dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
+        dto.setProducerDeadline(entity.getProducerDeadline());
+        dto.setMovieType(entity.getMovieType());
         return dto;
     }
 
@@ -112,6 +137,7 @@ public class MovieService {
         entity.setDurationInMinutes(durationToMinutes(dto.getDuration()));
         entity.setProducerDeadline(dto.getProducerDeadline());
         entity.setIsAdultConfirmed(dto.getIsAdultConfirmed());
+        entity.setMovieType(dto.getMovieType());
         return entity;
     }
 
@@ -235,6 +261,7 @@ public class MovieService {
 
         movie.setProducerDeadline(dto.getProducerDeadline());
         movie.setIsAdultConfirmed(dto.getIsAdultConfirmed());
+        movie.setMovieType(dto.getMovieType());
         movie.setActive(true);
         movie = movieRepository.save(movie);
         return toDTO(movie);
