@@ -1,5 +1,6 @@
 package com.cine.sk.cinesk.domain.movie.enhanced;
 
+import com.cine.sk.cinesk.domain.movie.MovieType;
 import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,4 +28,5 @@ public class EnhancedFilmDTO {
     List<String> cast = new ArrayList<>();
     private Boolean isAdultConfirmed;
     private String producerDeadline;
+    private MovieType movieType;
 }

@@ -43,6 +43,10 @@ public class Movie extends AbstractEntity {
     
     private String movieUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MovieType movieType;
+
     @ElementCollection
     @CollectionTable(name = "movie_cast", joinColumns = @JoinColumn(name = "movie_id"))
     @Column(name = "actor_name")
