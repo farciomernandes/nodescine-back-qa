@@ -1,4 +1,4 @@
-FROM openjdk:24-jdk-slim AS build
+FROM openjdk:21-ea-1-slim AS build
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # --- Fase final, só com o JAR ---
-FROM openjdk:24-jdk-slim
+FROM openjdk:21-ea-1-slim
 
 WORKDIR /app
 
