@@ -87,11 +87,10 @@ public class TransactionService {
                 .build();
         var tx = transactionRepository.save(transactionToSave);
 
-        // Aqui seria colocado order se fosse a oficinal
-        /*this.emailService.sendEmail(currentUser().getEmail(),
+        this.emailService.sendEmail(currentUser().getEmail(),
                 "Nordescine - Transação iniciada" + movie.getTitle() + "  R$ " + movie.getPrice(),
                 "✅ Email de confirmação de transação enviado com sucesso, aguardando confirmação da operadora."
-        );*/
+        );
         return TransactionResponse.builder()
                 .id(tx.getId())
                 .transactionId(tx.getTransactionId())
