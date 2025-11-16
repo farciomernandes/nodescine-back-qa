@@ -3,6 +3,7 @@ package com.cine.sk.cinesk.domain.transaction;
 import com.cine.sk.cinesk.domain.AbstractEntity;
 import com.cine.sk.cinesk.domain.movie.Movie;
 import com.cine.sk.cinesk.domain.transaction.payment.OrderStatusEnum;
+import com.cine.sk.cinesk.domain.transaction.payment.PaymentMethodEnum;
 import com.cine.sk.cinesk.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,4 +39,8 @@ public class Transaction extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatusEnum status;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum type;
 }
