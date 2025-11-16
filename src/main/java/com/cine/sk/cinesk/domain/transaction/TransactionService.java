@@ -83,6 +83,7 @@ public class TransactionService {
                 .amount(movie.getPrice())
                 .transactionId(UUID.randomUUID().toString())
                 .date(OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                .type(transaction.getPayment().getMethod())
                 .status(OrderStatusEnum.PENDING)
                 .build();
         var tx = transactionRepository.save(transactionToSave);
@@ -131,6 +132,7 @@ public class TransactionService {
                 .date(OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                 .status(response.getPaymentResponse().getStatus())
                 .transactionId(response.getPaymentResponse().getTransactionId())
+                .type(transaction.getPayment().getMethod())
                 .build();
 
 
