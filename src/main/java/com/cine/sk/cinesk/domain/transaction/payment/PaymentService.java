@@ -113,11 +113,6 @@ public class PaymentService {
                 qrcode = getQrCodePix(response.getId());
                 response.setPixQrCode(qrcode);
 
-        } else if (method == PaymentMethodEnum.BOLETO) {
-            transactionDetails = BoletoTransactionDTO.builder()
-                    .paymentInfo(buildBaseTransaction(response))
-                    .bankSlipUrl(response.getBankSlipUrl())
-                    .build();
         } else {
             transactionDetails = CreditCardTransactionDTO.builder()
                     .paymentInfo(buildBaseTransaction(response))

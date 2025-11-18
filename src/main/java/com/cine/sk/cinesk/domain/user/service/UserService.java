@@ -2,6 +2,9 @@ package com.cine.sk.cinesk.domain.user.service;
 
 import com.cine.sk.cinesk.domain.auth.enums.Role;
 import com.cine.sk.cinesk.domain.auth.usertoken.UserTokenRepository;
+import com.cine.sk.cinesk.domain.movie.Movie;
+import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
+import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
 import com.cine.sk.cinesk.domain.transaction.TransactionRepository;
 import com.cine.sk.cinesk.domain.user.User;
@@ -10,6 +13,7 @@ import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
 import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import com.cine.sk.cinesk.domain.user.dto.UpdateUserDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserDTO;
+import com.cine.sk.cinesk.domain.util.ConverterUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +26,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.cine.sk.cinesk.domain.util.ConverterUtil.movieToEnhancedFilmDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -120,7 +127,7 @@ public class UserService {
     }
 
     private TransactionDTO transactionToDTOsoVai(Transaction transaction){
-        return TransactionDTO.builder().transactionId(transaction.getId()).movie(transaction.getMovie()).build();
+        return TransactionDTO.builder().transactionId(transaction.getId()).movie(movieToEnhancedFilmDTO(transaction.getMovie())).build();
     }
 
     private UserDTO mapToDtoWithTransaction(User user) {

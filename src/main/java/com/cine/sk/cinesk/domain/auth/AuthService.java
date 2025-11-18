@@ -4,6 +4,9 @@ import com.cine.sk.cinesk.domain.auth.dto.AuthRequestDTO;
 import com.cine.sk.cinesk.domain.auth.dto.AuthResponseDTO;
 import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
 import com.cine.sk.cinesk.domain.auth.enums.Role;
+import com.cine.sk.cinesk.domain.movie.Movie;
+import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
+import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
 import com.cine.sk.cinesk.domain.transaction.payment.AsaasAccountRequest;
 import com.cine.sk.cinesk.domain.transaction.payment.AsaasWebhook;
@@ -34,6 +37,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.cine.sk.cinesk.domain.util.ConverterUtil.movieToEnhancedFilmDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -309,6 +314,7 @@ public class AuthService {
     }
 
     private TransactionDTO transactionToDTO(Transaction transaction) {
-        return TransactionDTO.builder().transactionId(transaction.getId()).movie(transaction.getMovie()).build();
+        EnhancedFilmDTO movieDTO = movieToEnhancedFilmDTO(transaction.getMovie());
+        return TransactionDTO.builder().transactionId(transaction.getId()).movie(movieDTO).build();
     }
 }

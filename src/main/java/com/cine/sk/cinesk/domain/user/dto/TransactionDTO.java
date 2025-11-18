@@ -1,8 +1,10 @@
 package com.cine.sk.cinesk.domain.user.dto;
 
-import com.cine.sk.cinesk.domain.movie.Movie;
+import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
 import com.cine.sk.cinesk.domain.transaction.payment.OrderStatusEnum;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -17,5 +19,11 @@ public class TransactionDTO {
 
     private OrderStatusEnum status;
 
-    private Movie movie;
+    private EnhancedFilmDTO movie;
+
+    private boolean expired;
+
+    private String encodedImagePix;
+
+    private String payloadPix;
 }

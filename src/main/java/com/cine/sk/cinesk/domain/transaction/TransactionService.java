@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -23,6 +24,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.cine.sk.cinesk.domain.util.ConverterUtil.movieToEnhancedFilmDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -52,16 +55,17 @@ public class TransactionService {
         Transaction tx = transactionRepository.findById(id)
                 .filter(t -> t.getUser() != null && t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transação não encontrada"));
-        return transactionToDTOsoVai(tx);
+        return toDTO(tx);
     }
 
     public Transaction findByTransactionId(String transactionId) {
         return transactionRepository.findByTransactionId(transactionId).orElse(null);
     }
 
+    @Transactional
     public List<TransactionDTO> getMy() {
         User user = currentUser();
-        return findTransactionByUser(user).stream().map(this::transactionToDTOsoVai).toList();
+        return findTransactionByUser(user).parallelStream().map(this::toDTO).toList();
     }
 
     public List<TransactionByMovieDTO> getDirectorId(Long id) {
@@ -133,6 +137,8 @@ public class TransactionService {
                 .status(response.getPaymentResponse().getStatus())
                 .transactionId(response.getPaymentResponse().getTransactionId())
                 .type(transaction.getPayment().getMethod())
+                .encodedImagePix(transaction.getPayment().getMethod() == PaymentMethodEnum.PIX ? response.getPix().getEncodedImage() : null)
+                .payloadPix(transaction.getPayment().getMethod() == PaymentMethodEnum.PIX ? response.getPix().getPayload() : null)
                 .build();
 
 
@@ -152,8 +158,9 @@ public class TransactionService {
             .build();
     }
 
+    @Transactional
     public List<Transaction> findTransactionByUser(User user) {
-        return transactionRepository.findByUser(user).stream().map(transaction -> transaction).toList();
+        return transactionRepository.findByUserWithDetails(user);
     }
 
     public SalesTransactionSuDTO getTransactionsByUserAndStatus(User user, boolean isAdmin) {
@@ -168,39 +175,9 @@ public class TransactionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return TransactionByMovieDTO.builder()
-            .movie(toDTO(movie))
+            .movie(movieToEnhancedFilmDTO(movie))
             .totalAmount(totalAmount)
             .build();
-    }
-
-    private String minutesToDuration(Integer minutes) {
-        if (minutes == null) return null;
-        long hours = minutes / 60;
-        long mins = minutes % 60;
-        return String.format("%dh %dm", hours, mins);
-    }
-
-    private EnhancedFilmDTO toDTO(Movie entity) {
-        EnhancedFilmDTO dto = new EnhancedFilmDTO();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
-        dto.setDirector(entity.getDirector());
-        dto.setYear(entity.getYear());
-        dto.setCategory(entity.getCategory() != null ? entity.getCategory().getName() : null);
-        dto.setGenres(entity.getGenres().stream()
-            .map(genre -> new GenreDTO(genre.getId(), genre.getName()))
-            .collect(Collectors.toList()));
-        dto.setDuration(minutesToDuration(entity.getDurationInMinutes()));
-        dto.setMovieUrl(entity.getMovieUrl());
-        dto.setTrailerUrl(entity.getTrailer());
-        dto.setPrice(entity.getPrice());
-        dto.setSynopsis(entity.getDescription());
-        dto.setPoster(entity.getPoster());
-        dto.setCast(entity.getCast());
-        dto.setSlug(entity.getSlug());
-        dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
-        dto.setProducerDeadline(entity.getProducerDeadline());
-        return dto;
     }
 
     public List<TransactionByMovieDTO> getTransactionsByCreatedByAndMovie() {
@@ -258,19 +235,56 @@ public class TransactionService {
         return getTransactionsByUserAndStatus(user, false);
     }
 
-    private TransactionByMovieDTO transactionToDTO(BigDecimal totalAmount, Movie movie){
-        return TransactionByMovieDTO.builder().totalAmount(totalAmount).movie(toDTO(movie)).build();
-    }
+    @Transactional
+    protected TransactionDTO toDTO(Transaction transaction) {
+        EnhancedFilmDTO movieDTO = movieToEnhancedFilmDTO(transaction.getMovie());
+        boolean expired = false;
+        String producerDeadline = movieDTO.getProducerDeadline();
 
-    private TransactionDTO transactionToDTOsoVai(Transaction transaction){
-        return TransactionDTO.builder().transactionId(transaction.getId()).createdAt(transaction.getCreatedAt()).status(transaction.getStatus()).movie(transaction.getMovie()).build();
+        if (producerDeadline != null && !producerDeadline.isBlank()) {
+            try {
+                long hours = Long.parseLong(producerDeadline.replace("h", "").trim());
+                OffsetDateTime transactionDate = OffsetDateTime.parse(transaction.getDate());
+                OffsetDateTime expirationDate = transactionDate.plusHours(hours);
+
+                if (OffsetDateTime.now().isAfter(expirationDate)) {
+                    expired = true;
+                    movieDTO.setMovieUrl(null);
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid producerDeadline format: " + producerDeadline);
+            }
+        }
+
+        if(transaction.getStatus().equals(OrderStatusEnum.PENDING)
+            && transaction.getType() != null
+            && transaction.getType().equals(PaymentMethodEnum.PIX)) {
+            return TransactionDTO.builder()
+                .transactionId(transaction.getId())
+                .createdAt(transaction.getCreatedAt())
+                .status(transaction.getStatus())
+                .movie(movieDTO)
+                .encodedImagePix(transaction.getEncodedImagePix())
+                .payloadPix(transaction.getPayloadPix())
+                .expired(expired)
+                .build();
+        }
+
+        return TransactionDTO.builder()
+                .transactionId(transaction.getId())
+                .createdAt(transaction.getCreatedAt())
+                .status(transaction.getStatus())
+                .movie(movieDTO)
+                .expired(expired)
+                .build();
     }
 
     public void save(Transaction transaction) {
         transactionRepository.save(transaction);
     }
 
+    @Transactional
     public List<TransactionDTO> getByUserId(Long id) {
-        return transactionRepository.findAllByUser_Id(id).stream().map(this::transactionToDTOsoVai).toList();
+        return transactionRepository.findAllByUser_Id(id).stream().map(this::toDTO).toList();
     }
 }
