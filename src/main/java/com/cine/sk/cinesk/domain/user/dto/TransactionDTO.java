@@ -22,4 +22,8 @@ public class TransactionDTO {
     private EnhancedFilmDTO movie;
 
     private boolean expired;
+
+    private String encodedImagePix;
+
+    private String payloadPix;
 }

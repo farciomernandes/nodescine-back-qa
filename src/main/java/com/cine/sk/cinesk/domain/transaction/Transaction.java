@@ -43,4 +43,9 @@ public class Transaction extends AbstractEntity {
     @Column
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum type;
+
+    @Lob
+    private String encodedImagePix;
+
+    private String payloadPix;
 }

@@ -135,6 +135,8 @@ public class TransactionService {
                 .status(response.getPaymentResponse().getStatus())
                 .transactionId(response.getPaymentResponse().getTransactionId())
                 .type(transaction.getPayment().getMethod())
+                .encodedImagePix(transaction.getPayment().getMethod() == PaymentMethodEnum.PIX ? response.getPix().getEncodedImage() : null)
+                .payloadPix(transaction.getPayment().getMethod() == PaymentMethodEnum.PIX ? response.getPix().getPayload() : null)
                 .build();
 
 
@@ -248,6 +250,19 @@ public class TransactionService {
             } catch (NumberFormatException e) {
                 System.err.println("Invalid producerDeadline format: " + producerDeadline);
             }
+        }
+
+        if(transaction.getStatus().equals(OrderStatusEnum.PENDING)
+            && transaction.getType().equals(PaymentMethodEnum.PIX)) {
+            return TransactionDTO.builder()
+                .transactionId(transaction.getId())
+                .createdAt(transaction.getCreatedAt())
+                .status(transaction.getStatus())
+                .movie(movieDTO)
+                .expired(expired)
+                .encodedImagePix(transaction.getEncodedImagePix())
+                .payloadPix(transaction.getPayloadPix())
+                .build();
         }
 
         return TransactionDTO.builder()
