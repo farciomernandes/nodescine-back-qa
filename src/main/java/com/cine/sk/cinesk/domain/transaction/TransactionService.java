@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -61,6 +62,7 @@ public class TransactionService {
         return transactionRepository.findByTransactionId(transactionId).orElse(null);
     }
 
+    @Transactional
     public List<TransactionDTO> getMy() {
         User user = currentUser();
         return findTransactionByUser(user).parallelStream().map(this::toDTO).toList();
@@ -156,6 +158,7 @@ public class TransactionService {
             .build();
     }
 
+    @Transactional
     public List<Transaction> findTransactionByUser(User user) {
         return transactionRepository.findByUserWithDetails(user);
     }
@@ -232,7 +235,8 @@ public class TransactionService {
         return getTransactionsByUserAndStatus(user, false);
     }
 
-    private TransactionDTO toDTO(Transaction transaction) {
+    @Transactional
+    protected TransactionDTO toDTO(Transaction transaction) {
         EnhancedFilmDTO movieDTO = movieToEnhancedFilmDTO(transaction.getMovie());
         boolean expired = false;
         String producerDeadline = movieDTO.getProducerDeadline();
@@ -253,15 +257,16 @@ public class TransactionService {
         }
 
         if(transaction.getStatus().equals(OrderStatusEnum.PENDING)
+            && transaction.getType() != null
             && transaction.getType().equals(PaymentMethodEnum.PIX)) {
             return TransactionDTO.builder()
                 .transactionId(transaction.getId())
                 .createdAt(transaction.getCreatedAt())
                 .status(transaction.getStatus())
                 .movie(movieDTO)
-                .expired(expired)
                 .encodedImagePix(transaction.getEncodedImagePix())
                 .payloadPix(transaction.getPayloadPix())
+                .expired(expired)
                 .build();
         }
 
@@ -278,6 +283,7 @@ public class TransactionService {
         transactionRepository.save(transaction);
     }
 
+    @Transactional
     public List<TransactionDTO> getByUserId(Long id) {
         return transactionRepository.findAllByUser_Id(id).stream().map(this::toDTO).toList();
     }
