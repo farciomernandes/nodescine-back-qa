@@ -90,6 +90,8 @@ public class MovieService {
         dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
         dto.setProducerDeadline(entity.getProducerDeadline());
         dto.setMovieType(entity.getMovieType());
+        dto.setBanner(entity.getBanner());
+        dto.setBackground(entity.getBackgroud());
         return dto;
     }
 
@@ -138,6 +140,8 @@ public class MovieService {
         entity.setProducerDeadline(dto.getProducerDeadline());
         entity.setIsAdultConfirmed(dto.getIsAdultConfirmed());
         entity.setMovieType(dto.getMovieType());
+        entity.setBackgroud(dto.getBackground());
+        entity.setBanner(dto.getBanner());
         return entity;
     }
 
