@@ -78,4 +78,14 @@ public class EnhancedFilmService {
     public Page<EnhancedFilmDTO> findAll(String title, String description, String director, String genre, String category, String cast, Pageable pageable) {
         return movieService.findAll(title, description, director, genre, category, cast, pageable);
     }
+
+    public EnhancedFilmDTO insertBanner(Long id, MultipartFile file) {
+        var uploaded = awsService.upload(file, "banner", id.toString(), file.getName());
+        return movieService.insertBanner(uploaded, id);
+    }
+
+    public EnhancedFilmDTO insertBackgroud(Long id, MultipartFile file) {
+        var uploaded = awsService.upload(file, "backgroud", id.toString(), file.getName());
+        return movieService.insertBackgroud(uploaded, id);
+    }
 }

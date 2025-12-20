@@ -90,6 +90,8 @@ public class MovieService {
         dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
         dto.setProducerDeadline(entity.getProducerDeadline());
         dto.setMovieType(entity.getMovieType());
+        dto.setBanner(entity.getBanner());
+        dto.setBackground(entity.getBackgroud());
         return dto;
     }
 
@@ -138,6 +140,8 @@ public class MovieService {
         entity.setProducerDeadline(dto.getProducerDeadline());
         entity.setIsAdultConfirmed(dto.getIsAdultConfirmed());
         entity.setMovieType(dto.getMovieType());
+        entity.setBackgroud(dto.getBackground());
+        entity.setBanner(dto.getBanner());
         return entity;
     }
 
@@ -281,6 +285,26 @@ public class MovieService {
             throw new RuntimeException("Movie not found with id: " + id + " ");
         }
         movie.setPoster(file.getUri());
+        movie = movieRepository.save(movie);
+        return toDTO(movie);
+    }
+
+    public EnhancedFilmDTO insertBanner(File uploaded, Long id) {
+        Movie movie = movieRepository.findById(id).orElse(null);
+        if (movie == null) {
+            throw new RuntimeException("Movie not found with id: " + id + " ");
+        }
+        movie.setBanner(uploaded.getUri());
+        movie = movieRepository.save(movie);
+        return toDTO(movie);
+    }
+
+    public EnhancedFilmDTO insertBackgroud(File uploaded, Long id) {
+        Movie movie = movieRepository.findById(id).orElse(null);
+        if (movie == null) {
+            throw new RuntimeException("Movie not found with id: " + id + " ");
+        }
+        movie.setBackgroud(uploaded.getUri());
         movie = movieRepository.save(movie);
         return toDTO(movie);
     }

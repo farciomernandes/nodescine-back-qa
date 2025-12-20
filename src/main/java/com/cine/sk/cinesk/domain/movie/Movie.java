@@ -38,6 +38,12 @@ public class Movie extends AbstractEntity {
 
     @Column(columnDefinition = "TEXT")
     private String poster;
+
+    @Column(columnDefinition = "TEXT")
+    private String banner;
+
+    @Column(columnDefinition = "TEXT")
+    private String backgroud;
     
     private String trailer;
     

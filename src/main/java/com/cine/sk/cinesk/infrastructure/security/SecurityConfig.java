@@ -77,6 +77,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/all").hasAnyAuthority(Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.DELETE, "/genres", "/genres/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.GET, "/genres", "/genres/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/banners", "/banners/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
+                        .requestMatchers(HttpMethod.DELETE, "/banners", "/banners/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
+                        .requestMatchers(HttpMethod.GET, "/banners", "/banners/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
