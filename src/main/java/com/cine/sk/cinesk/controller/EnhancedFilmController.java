@@ -64,26 +64,48 @@ public class EnhancedFilmController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EnhancedFilmDTO> create(
             @RequestPart(value = "dto", required = true) EnhancedFilmDTO dto,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @RequestPart(value = "poster", required = false) MultipartFile poster,
+            @RequestPart(value = "banner", required = false) MultipartFile banner,
+            @RequestPart(value = "background", required = false) MultipartFile background) {
 
         var created = enhancedFilmService.create(dto);
-        if (file != null && !file.isEmpty()) {
-            var movieWithPoster = enhancedFilmService.insertPoster(created.getId(), file);
-            return ResponseEntity.ok(movieWithPoster);
+
+        EnhancedFilmDTO result = null;
+        if (poster != null && !poster.isEmpty()) {
+            result = enhancedFilmService.insertPoster(created.getId(), poster);
         }
 
-        return ResponseEntity.ok(created);
+        if (banner != null && !banner.isEmpty()) {
+            result = enhancedFilmService.insertBanner(created.getId(), banner);
+        }
+
+        if (background != null && !background.isEmpty()) {
+            result = enhancedFilmService.insertBackgroud(created.getId(), background);
+        }
+
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<EnhancedFilmDTO> update(@PathVariable Long id, @Valid @RequestPart("dto") EnhancedFilmDTO dto,
-                                                  @RequestPart(value = "file", required = false) MultipartFile file) {
+                                                  @RequestPart(value = "poster", required = false) MultipartFile poster,
+                                                  @RequestPart(value = "banner", required = false) MultipartFile banner,
+                                                  @RequestPart(value = "background", required = false) MultipartFile background) {
         var movie = enhancedFilmService.update(id, dto);
-        if (file != null && !file.isEmpty()) {
-            var movieWithPoster = enhancedFilmService.insertPoster(movie.getId(), file);
-            return ResponseEntity.ok(movieWithPoster);
+        EnhancedFilmDTO result = null;
+        if (poster != null && !poster.isEmpty()) {
+            result = enhancedFilmService.insertPoster(movie.getId(), poster);
         }
-        return ResponseEntity.ok(movie);
+
+        if (banner != null && !banner.isEmpty()) {
+            result = enhancedFilmService.insertBanner(movie.getId(), banner);
+        }
+
+        if (background != null && !background.isEmpty()) {
+            result = enhancedFilmService.insertBackgroud(movie.getId(), background);
+        }
+
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping(value = "/poster", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -92,6 +114,22 @@ public class EnhancedFilmController {
             @RequestParam("file") MultipartFile file) {
        enhancedFilmService.insertPoster(id, file);
        return ResponseEntity.ok("Poster inserted successfully");
+    }
+
+    @PostMapping(value = "/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> insertPBanner(
+        @RequestParam("id") Long id,
+        @RequestParam("file") MultipartFile file) {
+        enhancedFilmService.insertBanner(id, file);
+        return ResponseEntity.ok("Banner inserted successfully");
+    }
+
+    @PostMapping(value = "/backgroud", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> insertBackgroud(
+        @RequestParam("id") Long id,
+        @RequestParam("file") MultipartFile file) {
+        enhancedFilmService.insertBackgroud(id, file);
+        return ResponseEntity.ok("Backgroud inserted successfully");
     }
 
 

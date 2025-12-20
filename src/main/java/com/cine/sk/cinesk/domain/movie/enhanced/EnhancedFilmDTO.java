@@ -21,6 +21,8 @@ public class EnhancedFilmDTO {
     private List<GenreDTO> genres;
     private String duration;
     private String poster;
+    private String banner;
+    private String background;
     private String movieUrl;
     private String trailerUrl;
     private String synopsis;

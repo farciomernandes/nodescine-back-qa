@@ -284,4 +284,24 @@ public class MovieService {
         movie = movieRepository.save(movie);
         return toDTO(movie);
     }
+
+    public EnhancedFilmDTO insertBanner(File uploaded, Long id) {
+        Movie movie = movieRepository.findById(id).orElse(null);
+        if (movie == null) {
+            throw new RuntimeException("Movie not found with id: " + id + " ");
+        }
+        movie.setBanner(uploaded.getUri());
+        movie = movieRepository.save(movie);
+        return toDTO(movie);
+    }
+
+    public EnhancedFilmDTO insertBackgroud(File uploaded, Long id) {
+        Movie movie = movieRepository.findById(id).orElse(null);
+        if (movie == null) {
+            throw new RuntimeException("Movie not found with id: " + id + " ");
+        }
+        movie.setBackgroud(uploaded.getUri());
+        movie = movieRepository.save(movie);
+        return toDTO(movie);
+    }
 }
