@@ -64,9 +64,9 @@ public class EnhancedFilmController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EnhancedFilmDTO> create(
             @RequestPart(value = "dto", required = true) EnhancedFilmDTO dto,
-            @RequestPart(value = "filePoster", required = false) MultipartFile poster,
+            @RequestPart(value = "poster", required = false) MultipartFile poster,
             @RequestPart(value = "fileBanner", required = false) MultipartFile banner,
-            @RequestPart(value = "fileBackground", required = false) MultipartFile background) {
+            @RequestPart(value = "background", required = false) MultipartFile background) {
 
         var created = enhancedFilmService.create(dto);
 
