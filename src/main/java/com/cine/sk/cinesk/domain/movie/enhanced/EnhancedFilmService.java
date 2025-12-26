@@ -83,9 +83,4 @@ public class EnhancedFilmService {
         var uploaded = awsService.upload(file, "banner", id.toString(), file.getName());
         return movieService.insertBanner(uploaded, id);
     }
-
-    public EnhancedFilmDTO insertBackgroud(Long id, MultipartFile file) {
-        var uploaded = awsService.upload(file, "backgroud", id.toString(), file.getName());
-        return movieService.insertBackgroud(uploaded, id);
-    }
 }
