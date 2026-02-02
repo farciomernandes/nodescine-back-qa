@@ -1,6 +1,6 @@
 package com.cine.sk.cinesk.domain.user.dto;
 
-import com.cine.sk.cinesk.domain.auth.enums.Role;
+import com.cine.sk.cinesk.domain.auth.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;

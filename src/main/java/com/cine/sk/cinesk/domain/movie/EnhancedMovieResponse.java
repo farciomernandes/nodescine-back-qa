@@ -1,6 +1,5 @@
-package com.cine.sk.cinesk.domain.movie.enhanced;
+package com.cine.sk.cinesk.domain.movie;
 
-import com.cine.sk.cinesk.domain.movie.MovieType;
 import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class EnhancedFilmDTO {
+public class EnhancedMovieResponse {
     private Long id;
     private String title;
     private String director;

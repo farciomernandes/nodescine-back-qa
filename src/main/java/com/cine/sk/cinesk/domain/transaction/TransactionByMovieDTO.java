@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.domain.transaction;
 
 
-import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
+import com.cine.sk.cinesk.domain.movie.EnhancedMovieResponse;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -14,6 +14,6 @@ import java.math.BigDecimal;
 public class TransactionByMovieDTO {
 
     private BigDecimal totalAmount;
-    EnhancedFilmDTO movie;
+    EnhancedMovieResponse movie;
 
 }

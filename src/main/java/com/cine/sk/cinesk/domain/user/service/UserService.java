@@ -1,19 +1,15 @@
 package com.cine.sk.cinesk.domain.user.service;
 
-import com.cine.sk.cinesk.domain.auth.enums.Role;
+import com.cine.sk.cinesk.domain.auth.Role;
 import com.cine.sk.cinesk.domain.auth.usertoken.UserTokenRepository;
-import com.cine.sk.cinesk.domain.movie.Movie;
-import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
-import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
 import com.cine.sk.cinesk.domain.transaction.TransactionRepository;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
 import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
-import com.cine.sk.cinesk.domain.user.enums.UserStatus;
+import com.cine.sk.cinesk.domain.user.UserStatus;
 import com.cine.sk.cinesk.domain.user.dto.UpdateUserDTO;
-import com.cine.sk.cinesk.domain.user.dto.UserDTO;
-import com.cine.sk.cinesk.domain.util.ConverterUtil;
+import com.cine.sk.cinesk.domain.user.dto.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.cine.sk.cinesk.domain.util.ConverterUtil.movieToEnhancedFilmDTO;
 
@@ -38,7 +33,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserTokenRepository userTokenRepository;
 
-    public ResponseEntity<UserDTO> getById(Long id) {
+    public ResponseEntity<UserResponse> getById(Long id) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         return ResponseEntity.ok(mapToDtoWithTransaction(user));
@@ -48,7 +43,7 @@ public class UserService {
         return userRepository.count();
     }
 
-    public ResponseEntity<UserDTO> updateById(Long id, UpdateUserDTO request) {
+    public ResponseEntity<UserResponse> updateById(Long id, UpdateUserDTO request) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -130,11 +125,11 @@ public class UserService {
         return TransactionDTO.builder().transactionId(transaction.getId()).movie(movieToEnhancedFilmDTO(transaction.getMovie())).build();
     }
 
-    private UserDTO mapToDtoWithTransaction(User user) {
+    private UserResponse mapToDtoWithTransaction(User user) {
         List<TransactionDTO> transactionsDTO = transactionRepository.findAllByUser_Id(user.getId())
             .stream().map(this::transactionToDTOsoVai).toList();
 
-        return UserDTO.builder()
+        return UserResponse.builder()
             .id(user.getId())
             .name(user.getName())
             .email(user.getEmail())
@@ -154,8 +149,8 @@ public class UserService {
             .build();
     }
 
-    private UserDTO mapToDto(User user) {
-        return UserDTO.builder()
+    private UserResponse mapToDto(User user) {
+        return UserResponse.builder()
             .id(user.getId())
             .name(user.getName())
             .email(user.getEmail())
@@ -175,7 +170,7 @@ public class UserService {
             .build();
     }
 
-    public ResponseEntity<List<UserDTO>> getAll() {
+    public ResponseEntity<List<UserResponse>> getAll() {
         List<User> users = userRepository.findAll();
         var usersDTO = users.stream().map(this::mapToDtoWithTransaction).toList();
         return ResponseEntity.ok(usersDTO);

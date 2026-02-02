@@ -2,20 +2,13 @@ package com.cine.sk.cinesk.domain.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Builder;
 
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class AuthRequestDTO {
-
+public record AuthRequest(
     @Email
     @NotBlank
-    private String email;
-
+    String email,
     @NotBlank
-    private String password;
-
-}
+    String password
+) {}

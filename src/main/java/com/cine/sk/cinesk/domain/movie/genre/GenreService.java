@@ -23,7 +23,7 @@ public class GenreService {
 
     public ResponseEntity<List<GenreDTO>> getAll() {
         List<GenreDTO> genres = genreRepository.findAllActive().stream()
-                .map(genre -> objectMapper.convertValue(genre, GenreDTO.class))
+                .map(genre -> new GenreDTO(genre.getId(), genre.getName()))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(genres);
     }

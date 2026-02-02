@@ -1,11 +1,10 @@
 package com.cine.sk.cinesk.domain.transaction;
 
-import com.cine.sk.cinesk.domain.auth.enums.Role;
+import com.cine.sk.cinesk.domain.auth.Role;
 import com.cine.sk.cinesk.domain.email.EmailService;
 import com.cine.sk.cinesk.domain.movie.Movie;
 import com.cine.sk.cinesk.domain.movie.MovieRepository;
-import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
-import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
+import com.cine.sk.cinesk.domain.movie.EnhancedMovieResponse;
 import com.cine.sk.cinesk.domain.transaction.payment.*;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
@@ -237,7 +236,7 @@ public class TransactionService {
 
     @Transactional
     protected TransactionDTO toDTO(Transaction transaction) {
-        EnhancedFilmDTO movieDTO = movieToEnhancedFilmDTO(transaction.getMovie());
+        var movieDTO = movieToEnhancedFilmDTO(transaction.getMovie());
         boolean expired = false;
         String producerDeadline = movieDTO.getProducerDeadline();
 

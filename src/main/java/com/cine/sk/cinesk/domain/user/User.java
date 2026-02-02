@@ -1,11 +1,8 @@
 package com.cine.sk.cinesk.domain.user;
 
 import com.cine.sk.cinesk.domain.AbstractEntity;
-import com.cine.sk.cinesk.domain.auth.enums.Role;
-import com.cine.sk.cinesk.domain.movie.Movie;
+import com.cine.sk.cinesk.domain.auth.Role;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
-import com.cine.sk.cinesk.domain.transaction.TransactionStatus;
-import com.cine.sk.cinesk.domain.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

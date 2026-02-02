@@ -1,23 +1,21 @@
 package com.cine.sk.cinesk.domain.auth;
 
-import com.cine.sk.cinesk.domain.auth.dto.AuthRequestDTO;
-import com.cine.sk.cinesk.domain.auth.dto.AuthResponseDTO;
-import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequestDTO;
-import com.cine.sk.cinesk.domain.auth.enums.Role;
-import com.cine.sk.cinesk.domain.movie.Movie;
-import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
-import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
+
+import com.cine.sk.cinesk.domain.auth.dto.AuthRequest;
+import com.cine.sk.cinesk.domain.auth.dto.AuthResponse;
+import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequest;
+import com.cine.sk.cinesk.domain.movie.EnhancedMovieResponse;
 import com.cine.sk.cinesk.domain.transaction.Transaction;
 import com.cine.sk.cinesk.domain.transaction.payment.AsaasAccountRequest;
 import com.cine.sk.cinesk.domain.transaction.payment.AsaasWebhook;
 import com.cine.sk.cinesk.domain.transaction.payment.PaymentService;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.UserRepository;
+import com.cine.sk.cinesk.domain.user.UserStatus;
 import com.cine.sk.cinesk.domain.user.dto.TransactionDTO;
-import com.cine.sk.cinesk.domain.user.enums.UserStatus;
+import com.cine.sk.cinesk.domain.user.dto.UserRegisterRequest;
 import com.cine.sk.cinesk.domain.user.dto.CustomerRegisterDTO;
-import com.cine.sk.cinesk.domain.user.dto.RegisterDTO;
-import com.cine.sk.cinesk.domain.user.dto.UserDTO;
+import com.cine.sk.cinesk.domain.user.dto.UserResponse;
 import com.cine.sk.cinesk.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,12 +51,12 @@ public class AuthService {
     @Value("${WEB_HOOK_ASAAS:https://nodescine-back-qa.onrender.com/api/}")
     private String urlBase;
 
-    public ResponseEntity<String> register(RegisterDTO request) {
-        var existingOpt = userRepository.findByEmail(request.getEmail());
+    public ResponseEntity<String> register(UserRegisterRequest request) {
+        var existingOpt = userRepository.findByEmail(request.email());
         User user;
         String phone;
-        if (request.getPhone() == null) return null;
-        phone = request.getPhone().replaceAll("\\D", "");
+        if (request.phone() == null) return null;
+        phone = request.phone().replaceAll("\\D", "");
 
         if (!phone.matches("^[0-9]{11}$")) {
             throw new IllegalArgumentException("O telefone deve ter 11 dígitos após limpeza");
@@ -67,37 +65,37 @@ public class AuthService {
         if (existingOpt.isPresent()) {
             User existing = existingOpt.get();
             if (existing.getStatus() == UserStatus.INACTIVE) {
-                existing.setName(request.getName());
-                existing.setPassword(passwordEncoder.encode(request.getPassword()));
-                existing.setRoles(request.getRoles());
+                existing.setName(request.name());
+                existing.setPassword(passwordEncoder.encode(request.password()));
+                existing.setRoles(request.roles());
                 existing.setStatus(UserStatus.ACTIVE);
-                existing.setAvatar(request.getAvatar());
-                existing.setCpf(request.getCpf());
-                existing.setAddress(request.getAddress());
-                existing.setAddressNumber(request.getAddressNumber());
-                existing.setComplement(request.getComplement());
-                existing.setPostalCode(request.getPostalCode());
+                existing.setAvatar(request.avatar());
+                existing.setCpf(request.cpf());
+                existing.setAddress(request.address());
+                existing.setAddressNumber(request.addressNumber());
+                existing.setComplement(request.complement());
+                existing.setPostalCode(request.postalCode());
                 existing.setPhone(phone);
-                existing.setProvince(request.getProvince());
+                existing.setProvince(request.province());
                 user = existing;
             } else {
                 throw new IllegalArgumentException("Email already in use");
             }
         } else {
             user = new User();
-            user.setName(request.getName());
-            user.setEmail(request.getEmail());
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
-            user.setRoles(request.getRoles());
+            user.setName(request.name());
+            user.setEmail(request.email());
+            user.setPassword(passwordEncoder.encode(request.password()));
+            user.setRoles(request.roles());
             user.setStatus(UserStatus.ACTIVE);
-            user.setAvatar(request.getAvatar());
-            user.setCpf(request.getCpf());
-            user.setAddress(request.getAddress());
-            user.setAddressNumber(request.getAddressNumber());
-            user.setComplement(request.getComplement());
-            user.setPostalCode(request.getPostalCode());
+            user.setAvatar(request.avatar());
+            user.setCpf(request.cpf());
+            user.setAddress(request.address());
+            user.setAddressNumber(request.addressNumber());
+            user.setComplement(request.complement());
+            user.setPostalCode(request.postalCode());
             user.setPhone(phone);
-            user.setProvince(request.getProvince());
+            user.setProvince(request.province());
         }
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
@@ -213,20 +211,20 @@ public class AuthService {
         return dto;
     }
 
-    public ResponseEntity<AuthResponseDTO> login(@Valid AuthRequestDTO authRequestDTO) {
+    public ResponseEntity<AuthResponse> login(@Valid AuthRequest authRequestDTO) {
         try {
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    authRequestDTO.getEmail(),
-                    authRequestDTO.getPassword()
+                    authRequestDTO.email(),
+                    authRequestDTO.password()
                 )
             );
 
-            User user = userRepository.findByEmail(authRequestDTO.getEmail())
+            User user = userRepository.findByEmail(authRequestDTO.email())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             String token = jwtUtil.generateToken(user);
 
-            AuthResponseDTO response = AuthResponseDTO.builder()
+            AuthResponse response = AuthResponse.builder()
                 .token(token)
                 .email(user.getEmail())
                 .name(user.getName())
@@ -242,7 +240,7 @@ public class AuthService {
 
 
     @Transactional
-    public void changePassword(ChangePasswordRequestDTO request) {
+    public void changePassword(ChangePasswordRequest request) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalStateException("User is not authenticated");
@@ -263,7 +261,7 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public ResponseEntity<UserDTO> me() {
+    public ResponseEntity<UserResponse> me() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -282,7 +280,7 @@ public class AuthService {
         int totalMovies;
         if (!transactions.isEmpty()) {
             totalAmount = transactions.stream()
-                .map(t -> t.getMovie().getPrice() != null ? t.getMovie().getPrice() : BigDecimal.ZERO)
+                .map(t -> t.movie().getPrice() != null ? t.movie().getPrice() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
             totalMovies = transactions.size();
         } else {
@@ -290,7 +288,7 @@ public class AuthService {
             totalMovies = 0;
         }
 
-        var dto = UserDTO.builder()
+        var dto = UserResponse.builder()
             .id(user.getId())
             .name(user.getName())
             .email(user.getEmail())
@@ -314,7 +312,7 @@ public class AuthService {
     }
 
     private TransactionDTO transactionToDTO(Transaction transaction) {
-        EnhancedFilmDTO movieDTO = movieToEnhancedFilmDTO(transaction.getMovie());
+        EnhancedMovieResponse movieDTO = movieToEnhancedFilmDTO(transaction.getMovie());
         return TransactionDTO.builder().transactionId(transaction.getId()).movie(movieDTO).build();
     }
 }

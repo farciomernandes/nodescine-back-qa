@@ -1,4 +1,4 @@
-package com.cine.sk.cinesk.domain.user.enums;
+package com.cine.sk.cinesk.domain.user;
 
 
 public enum UserStatus {

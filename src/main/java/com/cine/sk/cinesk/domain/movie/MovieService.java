@@ -1,18 +1,24 @@
 package com.cine.sk.cinesk.domain.movie;
 
 import com.cine.sk.cinesk.domain.file.File;
+import com.cine.sk.cinesk.domain.file.AwsService;
 import com.cine.sk.cinesk.domain.movie.category.Category;
 import com.cine.sk.cinesk.domain.movie.category.CategoryRepository;
-import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
 import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 import com.cine.sk.cinesk.domain.movie.genre.GenreService;
+import com.cine.sk.cinesk.domain.user.User;
+import com.cine.sk.cinesk.domain.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,11 +30,13 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class MovieService {
 
+    private final AwsService awsService;
+    private final UserService userService;
     private final MovieRepository movieRepository;
     private final CategoryRepository categoryRepository;
     private final GenreService genreService;
 
-    public Page<EnhancedFilmDTO> findAll(String searchTerm, Pageable pageable) {
+    public Page<EnhancedMovieResponse> findAll(String searchTerm, Pageable pageable) {
         if(searchTerm == null || searchTerm.isBlank()){
             return movieRepository.findAllByActiveTrue(pageable).map(this::toDTO);
         }
@@ -36,8 +44,8 @@ public class MovieService {
         return toResponse(moviePage);
     }
 
-    public Page<EnhancedFilmDTO> findAll( String title, String description, String director, String genre,
-                                          String category, String cast, Pageable pageable ) {
+    public Page<EnhancedMovieResponse> findAll(String title, String description, String director, String genre,
+                                               String category, String cast, Pageable pageable ) {
         boolean isAllBlank = Stream.of(title, description, director, genre, category, cast)
                 .allMatch(s -> s == null || s.isBlank());
 
@@ -52,25 +60,29 @@ public class MovieService {
         return moviePage.map(this::toDTOMainPage);
     }
 
+    public EnhancedMovieResponse insertPoster(Long id, MultipartFile file) {
+        var uploaded = awsService.upload(file, "poster", id.toString(), file.getName());
+        return insertPoster(uploaded, id);
+    }
 
-    public EnhancedFilmDTO findById(Long id) {
+    public EnhancedMovieResponse findById(Long id) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
         return toDTO(movie);
     }
 
-    public EnhancedFilmDTO findBySlug(String slug) {
+    public EnhancedMovieResponse findBySlug(String slug) {
         return movieRepository.findBySlug(slug).map(this::toDTO).orElse(null);
     }
 
-    public List<EnhancedFilmDTO> findByUserEmail(String email) {
+    private List<EnhancedMovieResponse> findByUserEmail(String email) {
         return movieRepository.findByCreatedBy(email).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    private EnhancedFilmDTO toDTO(Movie entity) {
-        EnhancedFilmDTO dto = new EnhancedFilmDTO();
+    private EnhancedMovieResponse toDTO(Movie entity) {
+        EnhancedMovieResponse dto = new EnhancedMovieResponse();
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());
         dto.setDirector(entity.getDirector());
@@ -94,8 +106,8 @@ public class MovieService {
         return dto;
     }
 
-    private EnhancedFilmDTO toDTOMainPage(Movie entity) {
-        EnhancedFilmDTO dto = new EnhancedFilmDTO();
+    private EnhancedMovieResponse toDTOMainPage(Movie entity) {
+        EnhancedMovieResponse dto = new EnhancedMovieResponse();
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());
         dto.setDirector(entity.getDirector());
@@ -119,14 +131,14 @@ public class MovieService {
         return dto;
     }
 
-    private Page<EnhancedFilmDTO> toResponse(Page<Movie> moviePage) {
-        List<EnhancedFilmDTO> responses = moviePage.getContent().stream()
+    private Page<EnhancedMovieResponse> toResponse(Page<Movie> moviePage) {
+        List<EnhancedMovieResponse> responses = moviePage.getContent().stream()
                 .map(this::toDTO)
                 .toList();
         return new PageImpl<>(responses, moviePage.getPageable(), moviePage.getTotalElements());
     }
 
-    private Movie toEntity(EnhancedFilmDTO dto) {
+    private Movie toEntity(EnhancedMovieResponse dto) {
         Movie entity = new Movie();
         entity.setTitle(dto.getTitle());
         entity.setSlug(titleToSlug(dto.getTitle()));
@@ -174,8 +186,27 @@ public class MovieService {
         }
     }
 
+    private User currentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autorizado ou não encontrado");
+        }
+        String email = auth.getName();
+        return userService.findByEmail(email)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autorizado ou não encontrado"));
+    }
+
+    public List<EnhancedMovieResponse> findMyMovies() {
+        User user = currentUser();
+        return findByUserEmail(user.getEmail());
+    }
+
     @Transactional
-    public EnhancedFilmDTO create(EnhancedFilmDTO dto) {
+    public EnhancedMovieResponse create(EnhancedMovieResponse dto) {
+        if (dto.getGenres() == null || dto.getGenres().isEmpty()) {
+            throw new IllegalArgumentException("Precisa ter pelo menos um genero");
+        }
+
         String slug = titleToSlug(dto.getTitle());
         if (movieRepository.existsBySlug(slug)) {
             throw new RuntimeException("Movie with slug " + slug + " already exists");
@@ -203,11 +234,11 @@ public class MovieService {
 
         movie.setGenres(dto.getGenres().stream()
                 .map(genreDTO -> {
-                    if (genreDTO.getName() == null || genreDTO.getName().isBlank()) {
+                    if (genreDTO.name() == null || genreDTO.name().isBlank()) {
                         throw new IllegalArgumentException("Genre name is required");
                     }
-                    return genreService.findByName(genreDTO.getName())
-                            .orElseGet(() -> genreService.save(new GenreDTO(null, genreDTO.getName())));
+                    return genreService.findByName(genreDTO.name())
+                            .orElseGet(() -> genreService.save(new GenreDTO(null, genreDTO.name())));
                 })
                 .collect(Collectors.toSet()));
         movie.setActive(true);
@@ -215,7 +246,12 @@ public class MovieService {
         return toDTO(movie);
     }
 
-    public EnhancedFilmDTO update(Long id, EnhancedFilmDTO dto) {
+    public EnhancedMovieResponse insertBanner(Long id, MultipartFile file) {
+        var uploaded = awsService.upload(file, "banner", id.toString(), file.getName());
+        return insertBanner(uploaded, id);
+    }
+
+    public EnhancedMovieResponse update(Long id, EnhancedMovieResponse dto) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Filme não encontrado com ID: " + id));
 
@@ -253,11 +289,11 @@ public class MovieService {
         if (dto.getGenres() != null && !dto.getGenres().isEmpty()) {
             movie.setGenres(dto.getGenres().stream()
                     .map(genreDTO -> {
-                        if (genreDTO.getName() == null || genreDTO.getName().isBlank()) {
+                        if (genreDTO.name() == null || genreDTO.name().isBlank()) {
                             throw new IllegalArgumentException("Genre name is required");
                         }
-                        return genreService.findByName(genreDTO.getName())
-                                .orElseGet(() -> genreService.save(new GenreDTO(null, genreDTO.getName())));
+                        return genreService.findByName(genreDTO.name())
+                                .orElseGet(() -> genreService.save(new GenreDTO(null, genreDTO.name())));
                     })
                     .collect(Collectors.toSet()));
         }
@@ -278,7 +314,7 @@ public class MovieService {
     }
 
 
-    public EnhancedFilmDTO insertPoster(File file, Long id) {
+    public EnhancedMovieResponse insertPoster(File file, Long id) {
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie == null) {
             throw new RuntimeException("Movie not found with id: " + id + " ");
@@ -288,7 +324,7 @@ public class MovieService {
         return toDTO(movie);
     }
 
-    public EnhancedFilmDTO insertBanner(File uploaded, Long id) {
+    public EnhancedMovieResponse insertBanner(File uploaded, Long id) {
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie == null) {
             throw new RuntimeException("Movie not found with id: " + id + " ");

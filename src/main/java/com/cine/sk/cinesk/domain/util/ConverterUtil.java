@@ -1,14 +1,14 @@
 package com.cine.sk.cinesk.domain.util;
 
 import com.cine.sk.cinesk.domain.movie.Movie;
-import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
+import com.cine.sk.cinesk.domain.movie.EnhancedMovieResponse;
 import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
 
 import java.util.stream.Collectors;
 
 public class ConverterUtil {
-    public static EnhancedFilmDTO movieToEnhancedFilmDTO(Movie entity) {
-        EnhancedFilmDTO dto = new EnhancedFilmDTO();
+    public static EnhancedMovieResponse movieToEnhancedFilmDTO(Movie entity) {
+        EnhancedMovieResponse dto = new EnhancedMovieResponse();
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());
         dto.setDirector(entity.getDirector());

@@ -1,7 +1,7 @@
 package com.cine.sk.cinesk.controller;
 
-import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmDTO;
-import com.cine.sk.cinesk.domain.movie.enhanced.EnhancedFilmService;
+import com.cine.sk.cinesk.domain.movie.MovieService;
+import com.cine.sk.cinesk.domain.movie.EnhancedMovieResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,37 +18,38 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/enhanced-films")
-public class EnhancedFilmController {
+public class MovieController {
 
-    private final EnhancedFilmService enhancedFilmService;
+    private final MovieService movieService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<EnhancedFilmDTO> findById(
+    public ResponseEntity<EnhancedMovieResponse> findById(
             @Parameter(description = "Movie identifier", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(enhancedFilmService.findById(id));
+        return ResponseEntity.ok(movieService.findById(id));
     }
 
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<EnhancedFilmDTO> findBySlug(
+    public ResponseEntity<EnhancedMovieResponse> findBySlug(
         @Parameter(description = "Movie Slug", required = true)
         @PathVariable String slug) {
-        return ResponseEntity.ok(enhancedFilmService.findBySlug(slug));
+        return ResponseEntity.ok(movieService.findBySlug(slug));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<EnhancedFilmDTO>> findMyMovies() {
-        return ResponseEntity.ok(enhancedFilmService.findMyMovies());
+    public ResponseEntity<List<EnhancedMovieResponse>> findMyMovies() {
+
+        return ResponseEntity.ok(movieService.findMyMovies());
     }
 
 
     @GetMapping
-    public ResponseEntity<Page<EnhancedFilmDTO>> getAllFilms(Pageable pageable, @RequestParam(required = false) String searchTerm) {
-        return ResponseEntity.ok(enhancedFilmService.findAll(searchTerm, pageable));
+    public ResponseEntity<Page<EnhancedMovieResponse>> getAllFilms(Pageable pageable, @RequestParam(required = false) String searchTerm) {
+        return ResponseEntity.ok(movieService.findAll(searchTerm, pageable));
     }
 
     @GetMapping("/filter")
-    public Page<EnhancedFilmDTO> getAllMovies(
+    public Page<EnhancedMovieResponse> getAllMovies(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String director,
@@ -57,41 +58,41 @@ public class EnhancedFilmController {
             @RequestParam(required = false) String cast,
             @PageableDefault(size = 10, sort = "title") Pageable pageable
     ) {
-        return enhancedFilmService.findAll(title, description, director, genre, category, cast, pageable);
+        return movieService.findAll(title, description, director, genre, category, cast, pageable);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<EnhancedFilmDTO> create(
-            @RequestPart(value = "dto", required = true) EnhancedFilmDTO dto,
+    public ResponseEntity<EnhancedMovieResponse> create(
+            @RequestPart(value = "dto", required = true) EnhancedMovieResponse dto,
             @RequestPart(value = "poster", required = false) MultipartFile poster,
             @RequestPart(value = "fileBanner", required = false) MultipartFile banner) {
 
-        var created = enhancedFilmService.create(dto);
+        var created = movieService.create(dto);
 
-        EnhancedFilmDTO result = null;
+        EnhancedMovieResponse result = null;
         if (poster != null && !poster.isEmpty()) {
-            result = enhancedFilmService.insertPoster(created.getId(), poster);
+            result = movieService.insertPoster(created.getId(), poster);
         }
 
         if (banner != null && !banner.isEmpty()) {
-            result = enhancedFilmService.insertBanner(created.getId(), banner);
+            result = movieService.insertBanner(created.getId(), banner);
         }
 
         return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EnhancedFilmDTO> update(@PathVariable Long id, @Valid @RequestPart("dto") EnhancedFilmDTO dto,
-                                                  @RequestPart(value = "poster", required = false) MultipartFile poster,
-                                                  @RequestPart(value = "banner", required = false) MultipartFile banner) {
-        var movie = enhancedFilmService.update(id, dto);
-        EnhancedFilmDTO result = null;
+    public ResponseEntity<EnhancedMovieResponse> update(@PathVariable Long id, @Valid @RequestPart("dto") EnhancedMovieResponse dto,
+                                                        @RequestPart(value = "poster", required = false) MultipartFile poster,
+                                                        @RequestPart(value = "banner", required = false) MultipartFile banner) {
+        var movie = movieService.update(id, dto);
+        EnhancedMovieResponse result = null;
         if (poster != null && !poster.isEmpty()) {
-            result = enhancedFilmService.insertPoster(movie.getId(), poster);
+            result = movieService.insertPoster(movie.getId(), poster);
         }
 
         if (banner != null && !banner.isEmpty()) {
-            result = enhancedFilmService.insertBanner(movie.getId(), banner);
+            result = movieService.insertBanner(movie.getId(), banner);
         }
 
         return ResponseEntity.ok(result);
@@ -101,7 +102,7 @@ public class EnhancedFilmController {
     public ResponseEntity<String> insertPoster(
             @RequestParam("id") Long id,
             @RequestParam("file") MultipartFile file) {
-       enhancedFilmService.insertPoster(id, file);
+       movieService.insertPoster(id, file);
        return ResponseEntity.ok("Poster inserted successfully");
     }
 
@@ -109,13 +110,13 @@ public class EnhancedFilmController {
     public ResponseEntity<String> insertPBanner(
         @RequestParam("id") Long id,
         @RequestParam("file") MultipartFile file) {
-        enhancedFilmService.insertBanner(id, file);
+        movieService.insertBanner(id, file);
         return ResponseEntity.ok("Banner inserted successfully");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        enhancedFilmService.delete(id);
+        movieService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

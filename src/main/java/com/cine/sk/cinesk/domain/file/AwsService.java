@@ -1,14 +1,10 @@
-package com.cine.sk.cinesk.domain.file.aws;
+package com.cine.sk.cinesk.domain.file;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.cine.sk.cinesk.domain.file.File;
-import com.cine.sk.cinesk.domain.file.FileManagerService;
-import com.cine.sk.cinesk.domain.file.StorageType;
 
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;

@@ -1,6 +1,5 @@
 package com.cine.sk.cinesk.domain.email;
 
-import com.cine.sk.cinesk.domain.email.dto.EmailRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,7 @@ public class EmailService {
     @Value("${email.retry.delay-ms:1000}")
     private long retryDelayMs;
 
-    public void sendEmail(EmailRequestDTO emailRequest) {
+    public void sendEmail(EmailRequest emailRequest) {
         sendEmail(emailRequest.emailTo(), emailRequest.subject(), emailRequest.text());
     }
 
