@@ -2,6 +2,7 @@ package com.cine.sk.cinesk.domain.movie;
 
 import com.cine.sk.cinesk.domain.file.File;
 import com.cine.sk.cinesk.domain.file.AwsService;
+import com.cine.sk.cinesk.domain.file.R2Service;
 import com.cine.sk.cinesk.domain.movie.category.Category;
 import com.cine.sk.cinesk.domain.movie.category.CategoryRepository;
 import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class MovieService {
 
-    private final AwsService awsService;
+    private final R2Service r2Service;
     private final UserService userService;
     private final MovieRepository movieRepository;
     private final CategoryRepository categoryRepository;
@@ -61,7 +62,7 @@ public class MovieService {
     }
 
     public EnhancedMovieResponse insertPoster(Long id, MultipartFile file) {
-        var uploaded = awsService.upload(file, "poster", id.toString(), file.getName());
+        var uploaded = r2Service.upload(file, "poster", id.toString(), file.getName());
         return insertPoster(uploaded, id);
     }
 
@@ -247,7 +248,7 @@ public class MovieService {
     }
 
     public EnhancedMovieResponse insertBanner(Long id, MultipartFile file) {
-        var uploaded = awsService.upload(file, "banner", id.toString(), file.getName());
+        var uploaded = r2Service.upload(file, "banner", id.toString(), file.getName());
         return insertBanner(uploaded, id);
     }
 
