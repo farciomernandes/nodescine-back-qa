@@ -1,7 +1,6 @@
 package com.cine.sk.cinesk.domain.movie;
 
 import com.cine.sk.cinesk.domain.file.File;
-import com.cine.sk.cinesk.domain.file.AwsService;
 import com.cine.sk.cinesk.domain.file.R2Service;
 import com.cine.sk.cinesk.domain.movie.category.Category;
 import com.cine.sk.cinesk.domain.movie.category.CategoryRepository;
