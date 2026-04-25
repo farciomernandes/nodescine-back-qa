@@ -35,7 +35,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             "AND (:description IS NULL OR :description = '' OR LOWER(m.description) LIKE LOWER(CONCAT('%', :description, '%'))) " +
             "AND (:director IS NULL OR :director = '' OR LOWER(m.director) LIKE LOWER(CONCAT('%', :director, '%'))) " +
             "AND (:genre IS NULL OR :genre = '' OR LOWER(g.name) LIKE LOWER(CONCAT('%', :genre, '%'))) " +
-            "AND (:category IS NULL OR :category = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :category, '%'))) " +
+            "AND (:category IS NULL OR :category = '' OR LOWER(c.name) = LOWER(:category)) " +
             "AND (:cast IS NULL OR :cast = '' OR LOWER(ac) LIKE LOWER(CONCAT('%', :cast, '%')))")
     Page<Movie> findAllByFilters(
             @Param("title") String title,

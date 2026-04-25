@@ -5,6 +5,10 @@ import com.cine.sk.cinesk.domain.file.R2Service;
 import com.cine.sk.cinesk.domain.movie.category.Category;
 import com.cine.sk.cinesk.domain.movie.category.CategoryRepository;
 import com.cine.sk.cinesk.domain.movie.genre.GenreDTO;
+import com.cine.sk.cinesk.domain.movie.report.MovieReportRepository;
+import com.cine.sk.cinesk.domain.movie.report.MovieReport;
+import com.cine.sk.cinesk.domain.movie.report.ReportRequest;
+import org.springframework.beans.factory.annotation.Value;
 import com.cine.sk.cinesk.domain.movie.genre.GenreService;
 import com.cine.sk.cinesk.domain.user.User;
 import com.cine.sk.cinesk.domain.user.service.UserService;
@@ -35,6 +39,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final CategoryRepository categoryRepository;
     private final GenreService genreService;
+    private final MovieReportRepository movieReportRepository;
 
     public Page<EnhancedMovieResponse> findAll(String searchTerm, Pageable pageable) {
         if(searchTerm == null || searchTerm.isBlank()){
@@ -42,6 +47,22 @@ public class MovieService {
         }
         Page<Movie> moviePage = movieRepository.findAllByFilters(searchTerm, pageable);
         return toResponse(moviePage);
+    }
+
+    @Value("${app.prohibited-terms:}")
+    private String prohibitedTermsConfig;
+
+    private void checkProhibitedTerms(String title, String description) {
+        if ((prohibitedTermsConfig == null) || prohibitedTermsConfig.isBlank()) return;
+        String[] parts = prohibitedTermsConfig.split(",");
+        for (String raw : parts) {
+            String term = raw.trim().toLowerCase();
+            if (term.isBlank()) continue;
+            if ((title != null && title.toLowerCase().contains(term)) || (description != null && description.toLowerCase().contains(term))) {
+                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY,
+                        "Conteúdo contém termo proibido: " + term);
+            }
+        }
     }
 
     public Page<EnhancedMovieResponse> findAll(String title, String description, String director, String genre,
@@ -98,10 +119,12 @@ public class MovieService {
         dto.setSynopsis(entity.getDescription());
         dto.setPoster(entity.getPoster());
         dto.setCast(entity.getCast());
+        dto.setFormat(entity.getFormat()); // NOVO CAMPO
         dto.setSlug(entity.getSlug());
         dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
         dto.setProducerDeadline(entity.getProducerDeadline());
         dto.setMovieType(entity.getMovieType());
+        dto.setModerationStatus(entity.getModerationStatus());
         dto.setBanner(entity.getBanner());
         return dto;
     }
@@ -123,11 +146,13 @@ public class MovieService {
         dto.setSynopsis(entity.getDescription());
         dto.setPoster(entity.getPoster());
         dto.setCast(entity.getCast());
+        dto.setFormat(entity.getFormat()); // NOVO CAMPO
         dto.setSlug(entity.getSlug());
         dto.setIsAdultConfirmed(entity.getIsAdultConfirmed());
         dto.setProducerDeadline(entity.getProducerDeadline());
         dto.setBanner(entity.getBanner());
         dto.setMovieType(entity.getMovieType());
+        dto.setModerationStatus(entity.getModerationStatus());
         return dto;
     }
 
@@ -153,6 +178,8 @@ public class MovieService {
         entity.setIsAdultConfirmed(dto.getIsAdultConfirmed());
         entity.setMovieType(dto.getMovieType());
         entity.setBanner(dto.getBanner());
+        entity.setFormat(dto.getFormat()); // NOVO CAMPO
+        entity.setModerationStatus(dto.getModerationStatus());
         return entity;
     }
 
@@ -203,6 +230,14 @@ public class MovieService {
 
     @Transactional
     public EnhancedMovieResponse create(EnhancedMovieResponse dto) {
+        User user = currentUser();
+        if(user.getWalletId() == null || user.getWalletId().isBlank()) {
+            throw new RuntimeException("Usuário precisa ter uma carteira digital configurada para criar um filme.");
+        }
+        if (dto.getIsAdultConfirmed() != null && dto.getIsAdultConfirmed()) {
+            throw new IllegalArgumentException("Conteúdo classificado para maiores de 18 anos não é aceito pela plataforma.");
+        }
+        checkProhibitedTerms(dto.getTitle(), dto.getSynopsis());
         if (dto.getGenres() == null || dto.getGenres().isEmpty()) {
             throw new IllegalArgumentException("Precisa ter pelo menos um genero");
         }
@@ -241,6 +276,8 @@ public class MovieService {
                             .orElseGet(() -> genreService.save(new GenreDTO(null, genreDTO.name())));
                 })
                 .collect(Collectors.toSet()));
+        // New submissions should go to UNDER_REVIEW unless explicitly set
+        if (movie.getModerationStatus() == null) movie.setModerationStatus(ModerationStatus.UNDER_REVIEW);
         movie.setActive(true);
         movie = movieRepository.save(movie);
         return toDTO(movie);
@@ -254,6 +291,8 @@ public class MovieService {
     public EnhancedMovieResponse update(Long id, EnhancedMovieResponse dto) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Filme não encontrado com ID: " + id));
+
+        checkProhibitedTerms(dto.getTitle(), dto.getSynopsis());
 
         if (dto.getTitle() != null) {
             String newSlug = titleToSlug(dto.getTitle());
@@ -299,11 +338,27 @@ public class MovieService {
         }
 
         movie.setProducerDeadline(dto.getProducerDeadline());
+        if (dto.getIsAdultConfirmed() != null && dto.getIsAdultConfirmed()) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Conteúdo classificado para maiores de 18 anos não é aceito pela plataforma.");
+        }
         movie.setIsAdultConfirmed(dto.getIsAdultConfirmed());
+        if (dto.getModerationStatus() != null) movie.setModerationStatus(dto.getModerationStatus());
         movie.setMovieType(dto.getMovieType());
         movie.setActive(true);
         movie = movieRepository.save(movie);
         return toDTO(movie);
+    }
+
+    public void reportMovie(Long id, ReportRequest request) {
+        Movie movie = movieRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Filme não encontrado com ID: " + id));
+
+        MovieReport report = new MovieReport();
+        report.setMovie(movie);
+        report.setReason(request.getReason());
+        report.setReporterEmail(request.getReporterEmail());
+        movieReportRepository.save(report);
     }
 
     public void delete(Long id) {

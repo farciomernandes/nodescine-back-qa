@@ -119,4 +119,10 @@ public class MovieController {
         movieService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/report")
+    public ResponseEntity<String> reportMovie(@PathVariable Long id, @RequestBody com.cine.sk.cinesk.domain.movie.report.ReportRequest request) {
+        movieService.reportMovie(id, request);
+        return ResponseEntity.ok("Report received");
+    }
 }

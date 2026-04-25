@@ -101,6 +101,45 @@ public class AuthService {
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }
 
+    public ResponseEntity<AuthResponse> registerDirector(com.cine.sk.cinesk.domain.user.dto.MovieDirectorRegisterDTO request) {
+        var existingOpt = userRepository.findByEmail(request.getEmail());
+        User user;
+
+        if (existingOpt.isPresent()) {
+            User existing = existingOpt.get();
+            if (existing.getStatus() == UserStatus.INACTIVE) {
+                existing.setName(request.getName());
+                existing.setPassword(passwordEncoder.encode(request.getPassword()));
+                existing.setRoles(java.util.Set.of(Role.MOVIE_DIRECTOR));
+                existing.setStatus(UserStatus.ACTIVE);
+                existing.setAvatar(request.getAvatar());
+                user = existing;
+            } else {
+                throw new IllegalArgumentException("Email already in use");
+            }
+        } else {
+            user = new User();
+            user.setName(request.getName());
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setRoles(java.util.Set.of(Role.MOVIE_DIRECTOR));
+            user.setStatus(UserStatus.ACTIVE);
+            user.setAvatar(request.getAvatar());
+        }
+
+        userRepository.save(user);
+
+        String token = jwtUtil.generateToken(user);
+        AuthResponse response = AuthResponse.builder()
+                .token(token)
+                .email(user.getEmail())
+                .name(user.getName())
+                .roles(user.getRoles())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
 
     public ResponseEntity<String> registerCustomer(CustomerRegisterDTO request) {
         if (request.getRoles() == null) {

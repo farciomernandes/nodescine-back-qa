@@ -6,6 +6,7 @@ import com.cine.sk.cinesk.domain.auth.dto.ChangePasswordRequest;
 import com.cine.sk.cinesk.domain.auth.AuthService;
 import com.cine.sk.cinesk.domain.user.dto.CustomerRegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserRegisterRequest;
+import com.cine.sk.cinesk.domain.user.dto.MovieDirectorRegisterDTO;
 import com.cine.sk.cinesk.domain.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,11 @@ public class AuthController {
     @PostMapping("/register/moderator")
     public ResponseEntity<String> register(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
         return authService.register(userRegisterRequest);
+    }
+
+    @PostMapping("/register/director")
+    public ResponseEntity<AuthResponse> registerDirector(@Valid @RequestBody MovieDirectorRegisterDTO request) {
+        return authService.registerDirector(request);
     }
 
     @PostMapping("/register/customer")

@@ -20,6 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class Genre extends AbstractEntity {
 
+    @Column(unique = true)
     private String name;
 
     @JsonIgnore

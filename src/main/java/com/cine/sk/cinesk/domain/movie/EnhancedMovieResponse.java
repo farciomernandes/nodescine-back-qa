@@ -16,6 +16,7 @@ public class EnhancedMovieResponse {
     private String director;
     private Integer year;
     private String category;
+    private String format;
     private BigDecimal price;
     private List<GenreDTO> genres;
     private String duration;
@@ -28,6 +29,7 @@ public class EnhancedMovieResponse {
     private String slug;
     List<String> cast = new ArrayList<>();
     private Boolean isAdultConfirmed;
+    private ModerationStatus moderationStatus;
     private String producerDeadline;
     private MovieType movieType;
 }
