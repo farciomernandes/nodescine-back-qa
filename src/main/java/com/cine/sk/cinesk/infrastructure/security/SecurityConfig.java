@@ -22,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -70,7 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/auth/register/customer", "/auth/register/director",
                                 "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/test/**", "/asaas/webhook/**").permitAll()
                         .requestMatchers("/auth/register/moderator").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
-                        .requestMatchers(HttpMethod.POST, "/enhanced-films/*/report", "/enhanced-films/**/report").permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/enhanced-films/**/report", "POST")).permitAll()
                         .requestMatchers(HttpMethod.POST, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.GET, "/transactions/director/", "/transactions/director/**").hasAnyAuthority(Role.MODERATOR.name())
                         .requestMatchers(HttpMethod.PUT, "/enhanced-films", "/enhanced-films/**").hasAnyAuthority(Role.MOVIE_DIRECTOR.name(), Role.MODERATOR.name())

@@ -3,6 +3,9 @@ package com.cine.sk.cinesk.controller;
 import com.cine.sk.cinesk.domain.movie.MovieService;
 import com.cine.sk.cinesk.domain.movie.EnhancedMovieResponse;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -70,15 +73,24 @@ public class MovieController {
         return movieService.findAll(title, description, director, genre, category, cast, pageable);
     }
 
+    @Operation(summary = "Create movie",
+            description = "Creates a movie. Send 'dto' as a JSON part and optional files 'poster' and 'fileBanner'.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EnhancedMovieResponse> create(
+            @Parameter(description = "DTO JSON part", required = true,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = EnhancedMovieResponse.class)))
             @RequestPart(value = "dto", required = true) EnhancedMovieResponse dto,
+
+            @Parameter(description = "Poster image file", content = @Content(mediaType = "image/*"))
             @RequestPart(value = "poster", required = false) MultipartFile poster,
+
+            @Parameter(description = "Banner image file", content = @Content(mediaType = "image/*"))
             @RequestPart(value = "fileBanner", required = false) MultipartFile banner) {
 
         var created = movieService.create(dto);
 
-        EnhancedMovieResponse result = null;
+        // Start with created DTO and overwrite with responses from file uploads (if any)
+        EnhancedMovieResponse result = created;
         if (poster != null && !poster.isEmpty()) {
             result = movieService.insertPoster(created.getId(), poster);
         }
@@ -90,12 +102,14 @@ public class MovieController {
         return ResponseEntity.ok(result);
     }
 
+    @Operation(summary = "Update movie",
+            description = "Updates a movie. Send 'dto' as a JSON part and optional files 'poster' and 'banner'.")
     @PutMapping("/{id}")
     public ResponseEntity<EnhancedMovieResponse> update(@PathVariable Long id, @Valid @RequestPart("dto") EnhancedMovieResponse dto,
                                                         @RequestPart(value = "poster", required = false) MultipartFile poster,
                                                         @RequestPart(value = "banner", required = false) MultipartFile banner) {
         var movie = movieService.update(id, dto);
-        EnhancedMovieResponse result = null;
+        EnhancedMovieResponse result = movie;
         if (poster != null && !poster.isEmpty()) {
             result = movieService.insertPoster(movie.getId(), poster);
         }
