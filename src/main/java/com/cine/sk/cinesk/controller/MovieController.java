@@ -13,6 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
+import java.util.List;
+import com.cine.sk.cinesk.domain.movie.MovieFormat;
+
 import java.util.List;
 
 @RestController
@@ -46,6 +50,11 @@ public class MovieController {
     @GetMapping
     public ResponseEntity<Page<EnhancedMovieResponse>> getAllFilms(Pageable pageable, @RequestParam(required = false) String searchTerm) {
         return ResponseEntity.ok(movieService.findAll(searchTerm, pageable));
+    }
+
+    @GetMapping("/formats")
+    public ResponseEntity<List<MovieFormat>> getMovieFormats() {
+        return ResponseEntity.ok(Arrays.asList(MovieFormat.values()));
     }
 
     @GetMapping("/filter")

@@ -16,7 +16,7 @@ public class EnhancedMovieResponse {
     private String director;
     private Integer year;
     private String category;
-    private String format;
+    private MovieFormat format;
     private BigDecimal price;
     private List<GenreDTO> genres;
     private String duration;

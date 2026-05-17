@@ -60,7 +60,10 @@ public class Movie extends AbstractEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    private String format;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    @ColumnDefault("'UNKNOWN'")
+    private MovieFormat format = MovieFormat.UNKNOWN;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
