@@ -1,0 +1,21 @@
+dod:
+  - id: dod-1
+    description: "Todos os critérios da spec TOON implementados"
+  - id: dod-2
+    description: "Controller sem lógica de negócio"
+  - id: dod-3
+    description: "Nenhum DTO persistido diretamente"
+  - id: dod-4
+    description: "Nenhuma Entity exposta diretamente no ResponseEntity"
+  - id: dod-5
+    description: "Migration Flyway criada para qualquer DDL"
+  - id: dod-6
+    description: "Regra de segurança adicionada ao SecurityConfig (se necessário)"
+  - id: dod-7
+    description: "Nenhum System.out.println — usar SLF4J"
+  - id: dod-8
+    description: "Todos os erros usam ResponseStatusException com status HTTP correto"
+  - id: dod-9
+    description: "Injeção de dependência via @RequiredArgsConstructor + final"
+  - id: dod-10
+    description: "Código compila e sobe sem erros"

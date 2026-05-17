@@ -1,0 +1,13 @@
+dor:
+  - id: dor-1
+    description: "Requisito escrito em linguagem clara com critérios de aceitação"
+  - id: dor-2
+    description: "Módulo e actor identificados"
+  - id: dor-3
+    description: "Spec TOON criada em .github/specs/<modulo>/<feature>.toon.yaml"
+  - id: dor-4
+    description: "Nenhum termo novo criado sem adição ao domain-vocabulary.md"
+  - id: dor-5
+    description: "Impactos em SecurityConfig identificados"
+  - id: dor-6
+    description: "Migration SQL necessária identificada (se houver DDL)"

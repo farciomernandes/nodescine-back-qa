@@ -1,0 +1,30 @@
+feature: <PascalCase>
+module: <movie|user|transaction|auth|genre>
+actor: [CUSTOMER | MOVIE_DIRECTOR | MODERATOR | PUBLIC]
+endpoint:
+  method: GET | POST | PUT | DELETE
+  path: /api/<recurso>/<subrota>
+  auth: public | bearer
+  roles: []              # vazio se public
+request:
+  pathParams:
+    id: Long             # exemplo
+  queryParams:
+    page: Integer
+    size: Integer
+  body:
+    campo: Tipo          # exemplo
+response:
+  status: 200 | 201 | 204
+  body:
+    campo: Tipo
+rules:
+  - "Regra de negócio obrigatória 1"
+  - "Regra de negócio obrigatória 2"
+errors:
+  - status: 400
+    condition: "quando campo inválido"
+  - status: 401
+    condition: "quando token ausente ou inválido"
+  - status: 404
+    condition: "quando recurso não encontrado"
