@@ -20,6 +20,6 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
-    @Query("UPDATE Genre g SET g.deletedAt = :deleteAt WHERE g.id = :uuid")
+    @Query("UPDATE Genre g SET g.deletedAt = :deleteAt WHERE g.id = :id")
     void deleteById(LocalDateTime deleteAt, Long id);
 }
