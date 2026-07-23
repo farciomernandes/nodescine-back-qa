@@ -1,22 +1,3 @@
--- Criação das tabelas (banco zerado — Flyway roda antes do Hibernate DDL)
-CREATE TABLE IF NOT EXISTS categories (
-    id         BIGSERIAL PRIMARY KEY,
-    name       VARCHAR(255) UNIQUE,
-    slug       VARCHAR(255),
-    image_url  VARCHAR(255),
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS genre (
-    id         BIGSERIAL PRIMARY KEY,
-    name       VARCHAR(255) UNIQUE,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP
-);
-
 -- Seed de categorias regionais obrigatórias para NORDESCINE
 INSERT INTO categories (name, slug, created_at, updated_at) VALUES ('Ficção', 'ficcao', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) ON CONFLICT (name) DO NOTHING;
 INSERT INTO categories (name, slug, created_at, updated_at) VALUES ('Animação', 'animacao', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) ON CONFLICT (name) DO NOTHING;

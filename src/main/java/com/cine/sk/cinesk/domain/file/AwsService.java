@@ -32,10 +32,10 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class AwsService extends FileManagerService {
 
-    @Value("${AWS_S3_BUCKET}")
+    @Value("${AWS_S3_BUCKET:}")
     private String bucketName;
 
-    @Value("${AWS_S3_REGION}")
+    @Value("${AWS_S3_REGION:us-east-1}")
     private String region;
 
     @Value("${AWS_S3_ACCESS_KEY:}")
